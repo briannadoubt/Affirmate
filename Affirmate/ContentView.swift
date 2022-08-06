@@ -8,12 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @StateObject var authentication = AuthenticationObserver()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        switch authentication.state {
+        case .initial:
+            ProgressView()
+                .task {
+                    await authentication.setCurrentAuthenticationState()
+                }
+        case .loading:
+            ProgressView()
+        case .loggedOut:
+            AuthenticationView()
+                .environmentObject(authentication)
+        case .loggedIn:
+            AffirmateTabView()
+                .environmentObject(authentication)
         }
     }
 }

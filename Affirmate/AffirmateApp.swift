@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+struct ServerError: Decodable {
+    var error: String?
+    var reason: String?
+}
+
 @main
 struct AffirmateApp: App {
     var body: some Scene {

@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03498A6428701EED0081A221 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03498A6328701EED0081A221 /* Repository.swift */; };
+		03498A6728702E270081A221 /* LocalizedContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03498A6628702E270081A221 /* LocalizedContent.swift */; };
+		03772C85289734D9001DAE4B /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 03772C84289734D9001DAE4B /* SwiftKeychainWrapper */; };
+		03772C8E2897580C001DAE4B /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8A289757CA001DAE4B /* Message.swift */; };
+		03772C8F28975815001DAE4B /* ChatParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8D289757CA001DAE4B /* ChatParticipant.swift */; };
+		03772C9028975815001DAE4B /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C89289757CA001DAE4B /* Chat.swift */; };
+		03772C9128975815001DAE4B /* UserToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8B289757CA001DAE4B /* UserToken.swift */; };
+		03772C9228975815001DAE4B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8C289757CA001DAE4B /* User.swift */; };
+		03772C9428975965001DAE4B /* TaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C9328975965001DAE4B /* TaskButton.swift */; };
+		03772C97289759A3001DAE4B /* ThrowingTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C96289759A3001DAE4B /* ThrowingTaskButton.swift */; };
+		03772C9928975B04001DAE4B /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C9828975B04001DAE4B /* AuthenticationView.swift */; };
+		03772C9B28975CAB001DAE4B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C9A28975CAB001DAE4B /* Constants.swift */; };
+		03772C9D28975EB7001DAE4B /* ChatNavigationLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C9C28975EB7001DAE4B /* ChatNavigationLink.swift */; };
 		0389BC8C286FAB2A00CBDC3B /* AffirmateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BC8B286FAB2A00CBDC3B /* AffirmateApp.swift */; };
 		0389BC8E286FAB2A00CBDC3B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BC8D286FAB2A00CBDC3B /* ContentView.swift */; };
 		0389BC90286FAB2A00CBDC3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0389BC8F286FAB2A00CBDC3B /* Assets.xcassets */; };
@@ -14,6 +27,11 @@
 		0389BC9E286FAB2B00CBDC3B /* AffirmateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BC9D286FAB2B00CBDC3B /* AffirmateTests.swift */; };
 		0389BCA8286FAB2B00CBDC3B /* AffirmateUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BCA7286FAB2B00CBDC3B /* AffirmateUITests.swift */; };
 		0389BCAA286FAB2B00CBDC3B /* AffirmateUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BCA9286FAB2B00CBDC3B /* AffirmateUITestsLaunchTests.swift */; };
+		03FE3BBA2897214700208D5D /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BB92897214700208D5D /* HomeView.swift */; };
+		03FE3BBC289721A500208D5D /* ChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBB289721A500208D5D /* ChatsView.swift */; };
+		03FE3BBE2897220F00208D5D /* MeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBD2897220F00208D5D /* MeView.swift */; };
+		03FE3BC02897222D00208D5D /* AffirmateTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBF2897222D00208D5D /* AffirmateTabView.swift */; };
+		03FE3BC22897273A00208D5D /* AuthenticationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BC12897273A00208D5D /* AuthenticationObserver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +52,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		03498A6328701EED0081A221 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
+		03498A65287027710081A221 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		03498A6628702E270081A221 /* LocalizedContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedContent.swift; sourceTree = "<group>"; };
+		03772C89289757CA001DAE4B /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
+		03772C8A289757CA001DAE4B /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		03772C8B289757CA001DAE4B /* UserToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserToken.swift; sourceTree = "<group>"; };
+		03772C8C289757CA001DAE4B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		03772C8D289757CA001DAE4B /* ChatParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatParticipant.swift; sourceTree = "<group>"; };
+		03772C9328975965001DAE4B /* TaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskButton.swift; sourceTree = "<group>"; };
+		03772C96289759A3001DAE4B /* ThrowingTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThrowingTaskButton.swift; sourceTree = "<group>"; };
+		03772C9828975B04001DAE4B /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
+		03772C9A28975CAB001DAE4B /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		03772C9C28975EB7001DAE4B /* ChatNavigationLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatNavigationLink.swift; sourceTree = "<group>"; };
 		0389BC88286FAB2A00CBDC3B /* Affirmate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Affirmate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0389BC8B286FAB2A00CBDC3B /* AffirmateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateApp.swift; sourceTree = "<group>"; };
 		0389BC8D286FAB2A00CBDC3B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -45,6 +76,12 @@
 		0389BCA3286FAB2B00CBDC3B /* AffirmateUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0389BCA7286FAB2B00CBDC3B /* AffirmateUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateUITests.swift; sourceTree = "<group>"; };
 		0389BCA9286FAB2B00CBDC3B /* AffirmateUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		039303702899D8E700DA7085 /* AffirmateServer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AffirmateServer; sourceTree = "<group>"; };
+		03FE3BB92897214700208D5D /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		03FE3BBB289721A500208D5D /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
+		03FE3BBD2897220F00208D5D /* MeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeView.swift; sourceTree = "<group>"; };
+		03FE3BBF2897222D00208D5D /* AffirmateTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateTabView.swift; sourceTree = "<group>"; };
+		03FE3BC12897273A00208D5D /* AuthenticationObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationObserver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03772C85289734D9001DAE4B /* SwiftKeychainWrapper in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +110,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		03772C88289757CA001DAE4B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				03772C89289757CA001DAE4B /* Chat.swift */,
+				03772C8A289757CA001DAE4B /* Message.swift */,
+				03772C8B289757CA001DAE4B /* UserToken.swift */,
+				03772C8C289757CA001DAE4B /* User.swift */,
+				03772C8D289757CA001DAE4B /* ChatParticipant.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		03772C9528975972001DAE4B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				03772C9328975965001DAE4B /* TaskButton.swift */,
+				03772C96289759A3001DAE4B /* ThrowingTaskButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		0389BC7F286FAB2A00CBDC3B = {
 			isa = PBXGroup;
 			children = (
 				0389BC8A286FAB2A00CBDC3B /* Affirmate */,
 				0389BC9C286FAB2A00CBDC3B /* AffirmateTests */,
 				0389BCA6286FAB2B00CBDC3B /* AffirmateUITests */,
+				0389BCB6286FAC1400CBDC3B /* Packages */,
 				0389BC89286FAB2A00CBDC3B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -95,8 +155,21 @@
 		0389BC8A286FAB2A00CBDC3B /* Affirmate */ = {
 			isa = PBXGroup;
 			children = (
+				03498A65287027710081A221 /* Info.plist */,
 				0389BC8B286FAB2A00CBDC3B /* AffirmateApp.swift */,
+				03772C9C28975EB7001DAE4B /* ChatNavigationLink.swift */,
 				0389BC8D286FAB2A00CBDC3B /* ContentView.swift */,
+				03772C9828975B04001DAE4B /* AuthenticationView.swift */,
+				03FE3BC12897273A00208D5D /* AuthenticationObserver.swift */,
+				03FE3BBF2897222D00208D5D /* AffirmateTabView.swift */,
+				03FE3BB92897214700208D5D /* HomeView.swift */,
+				03FE3BBB289721A500208D5D /* ChatsView.swift */,
+				03FE3BBD2897220F00208D5D /* MeView.swift */,
+				03498A6628702E270081A221 /* LocalizedContent.swift */,
+				03498A6328701EED0081A221 /* Repository.swift */,
+				03772C9A28975CAB001DAE4B /* Constants.swift */,
+				03772C9528975972001DAE4B /* Components */,
+				03772C88289757CA001DAE4B /* Models */,
 				0389BC8F286FAB2A00CBDC3B /* Assets.xcassets */,
 				0389BC91286FAB2A00CBDC3B /* Affirmate.entitlements */,
 				0389BC92286FAB2A00CBDC3B /* Preview Content */,
@@ -129,6 +202,14 @@
 			path = AffirmateUITests;
 			sourceTree = "<group>";
 		};
+		0389BCB6286FAC1400CBDC3B /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				039303702899D8E700DA7085 /* AffirmateServer */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -145,6 +226,9 @@
 			dependencies = (
 			);
 			name = Affirmate;
+			packageProductDependencies = (
+				03772C84289734D9001DAE4B /* SwiftKeychainWrapper */,
+			);
 			productName = Affirmate;
 			productReference = 0389BC88286FAB2A00CBDC3B /* Affirmate.app */;
 			productType = "com.apple.product-type.application";
@@ -217,6 +301,9 @@
 				Base,
 			);
 			mainGroup = 0389BC7F286FAB2A00CBDC3B;
+			packageReferences = (
+				03772C83289734D9001DAE4B /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */,
+			);
 			productRefGroup = 0389BC89286FAB2A00CBDC3B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -259,8 +346,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03772C9428975965001DAE4B /* TaskButton.swift in Sources */,
+				03FE3BC02897222D00208D5D /* AffirmateTabView.swift in Sources */,
+				03772C9028975815001DAE4B /* Chat.swift in Sources */,
+				03772C8F28975815001DAE4B /* ChatParticipant.swift in Sources */,
+				03772C97289759A3001DAE4B /* ThrowingTaskButton.swift in Sources */,
+				03FE3BBC289721A500208D5D /* ChatsView.swift in Sources */,
+				03FE3BBA2897214700208D5D /* HomeView.swift in Sources */,
+				03498A6728702E270081A221 /* LocalizedContent.swift in Sources */,
+				03772C9228975815001DAE4B /* User.swift in Sources */,
+				03FE3BC22897273A00208D5D /* AuthenticationObserver.swift in Sources */,
+				03498A6428701EED0081A221 /* Repository.swift in Sources */,
+				03FE3BBE2897220F00208D5D /* MeView.swift in Sources */,
+				03772C8E2897580C001DAE4B /* Message.swift in Sources */,
+				03772C9928975B04001DAE4B /* AuthenticationView.swift in Sources */,
 				0389BC8E286FAB2A00CBDC3B /* ContentView.swift in Sources */,
 				0389BC8C286FAB2A00CBDC3B /* AffirmateApp.swift in Sources */,
+				03772C9128975815001DAE4B /* UserToken.swift in Sources */,
+				03772C9B28975CAB001DAE4B /* Constants.swift in Sources */,
+				03772C9D28975EB7001DAE4B /* ChatNavigationLink.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,6 +523,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Affirmate/Info.plist;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -432,6 +537,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG DEVELOPMENT";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -451,6 +557,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Affirmate/Info.plist;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -464,6 +571,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = PRODUCTION;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -600,6 +708,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		03772C83289734D9001DAE4B /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jrendel/SwiftKeychainWrapper.git";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		03772C84289734D9001DAE4B /* SwiftKeychainWrapper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 03772C83289734D9001DAE4B /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */;
+			productName = SwiftKeychainWrapper;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0389BC80286FAB2A00CBDC3B /* Project object */;
 }

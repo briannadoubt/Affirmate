@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "3CA73E74-78CA-4DA4-BD24-A4B36C39DA37"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "037019C4-2A6E-4E6F-9A86-73B866D91C58"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Affirmate/ResourceObserver.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "get()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B344AA08-BFF9-4D1F-9F75-F6ED1214A7F9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Affirmate/AppState.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
+            landmarkName = "login(email:password:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B344AA08-BFF9-4D1F-9F75-F6ED1214A7F9 - ab9468181bd24d91"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for Affirmate.AuthenticationObserver.login(email: Swift.String, password: Swift.String) async throws -&gt; ()"
+                  moduleName = "Affirmate"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/Affirmate/AppState.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "260">
+               </Location>
+               <Location
+                  uuid = "B344AA08-BFF9-4D1F-9F75-F6ED1214A7F9 - ab9468181bd24d91"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for Affirmate.AuthenticationObserver.login(email: Swift.String, password: Swift.String) async throws -&gt; ()"
+                  moduleName = "Affirmate"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/Affirmate/AppState.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "1048">
+               </Location>
+               <Location
+                  uuid = "B344AA08-BFF9-4D1F-9F75-F6ED1214A7F9 - cc63db52c358193"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Affirmate.AuthenticationObserver.login(email: Swift.String, password: Swift.String) async throws -&gt; ()"
+                  moduleName = "Affirmate"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/Affirmate/AppState.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "644">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D239445D-35FB-49C2-A886-B0A1C4549161"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Server/Sources/Server/Routes/AuthenticationRouteCollection.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "17"
+            endingLineNumber = "17"
+            landmarkName = "boot(routes:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D239445D-35FB-49C2-A886-B0A1C4549161 - 3886e2665ee8048e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 (Vapor.Request) async throws -&gt; Server.User in Server.AuthenticationRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/Server/Sources/Server/Routes/AuthenticationRouteCollection.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "17"
+                  endingLineNumber = "17"
+                  offsetFromSymbolStart = "136">
+               </Location>
+               <Location
+                  uuid = "D239445D-35FB-49C2-A886-B0A1C4549161 - bb9740de19423e8b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for closure #1 (Vapor.Request) async throws -&gt; Server.User in Server.AuthenticationRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/Server/Sources/Server/Routes/AuthenticationRouteCollection.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "17"
+                  endingLineNumber = "17"
+                  offsetFromSymbolStart = "196">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "72928AF7-7BB2-463D-8998-8C50BCC72F35"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
+            landmarkName = "test_newUser()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "72928AF7-7BB2-463D-8998-8C50BCC72F35 - 2ef1089dd8170705"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (XCTVapor.XCTHTTPResponse) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "38"
+                  endingLineNumber = "38"
+                  offsetFromSymbolStart = "440">
+               </Location>
+               <Location
+                  uuid = "72928AF7-7BB2-463D-8998-8C50BCC72F35 - 2ef1089dd8170705"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (XCTVapor.XCTHTTPResponse) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "38"
+                  endingLineNumber = "38"
+                  offsetFromSymbolStart = "732">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F38014F5-384C-475B-BA36-276D6994EC17"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Library/Developer/Xcode/DerivedData/Affirmate-eruwloipjtddexapofeyfntzbuke/SourcePackages/checkouts/fluent-kit/Sources/FluentKit/Model/Model+CRUD.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "20"
+            endingLineNumber = "20"
+            landmarkName = "_create(on:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F38014F5-384C-475B-BA36-276D6994EC17 - 95bb564f7cba4aa5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FluentKit.Model._create(on: FluentKit.Database) -&gt; NIOCore.EventLoopFuture&lt;()&gt;"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/Library/Developer/Xcode/DerivedData/Affirmate-eruwloipjtddexapofeyfntzbuke/SourcePackages/checkouts/fluent-kit/Sources/FluentKit/Model/Model+CRUD.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "628">
+               </Location>
+               <Location
+                  uuid = "F38014F5-384C-475B-BA36-276D6994EC17 - faf173625cd63d70"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FluentKit.Model._create(on: FluentKit.Database) -&gt; NIOCore.EventLoopFuture&lt;()&gt;"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/Library/Developer/Xcode/DerivedData/Affirmate-eruwloipjtddexapofeyfntzbuke/SourcePackages/checkouts/fluent-kit/Sources/FluentKit/Model/Model+CRUD.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "628">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "46EAE1EC-A01C-4E5D-A889-EFED35D23CDB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Library/Developer/Xcode/DerivedData/Affirmate-eruwloipjtddexapofeyfntzbuke/SourcePackages/checkouts/fluent-kit/Sources/FluentKit/Model/Model+CRUD.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "28"
+            endingLineNumber = "28"
+            landmarkName = "_create(on:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C68454C2-3FF8-496B-8D9A-4CEC195CCB1A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AffirmateServer/Sources/AffirmateServer/Routes/AuthenticationRouteCollection.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
+            landmarkName = "boot(routes:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C68454C2-3FF8-496B-8D9A-4CEC195CCB1A - 8b978ac95f5af05c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 (Vapor.Request) async throws -&gt; AffirmateServer.User.GetResponse in AffirmateServer.AuthenticationRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/AuthenticationRouteCollection.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "508">
+               </Location>
+               <Location
+                  uuid = "C68454C2-3FF8-496B-8D9A-4CEC195CCB1A - 8b978ac95f5affbf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 (Vapor.Request) async throws -&gt; AffirmateServer.User.GetResponse in AffirmateServer.AuthenticationRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/AuthenticationRouteCollection.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "19"
+                  endingLineNumber = "19"
+                  offsetFromSymbolStart = "372">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
