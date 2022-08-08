@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AuthenticationView: View {
     
-    @EnvironmentObject var authentication: AuthenticationObserver
+    @EnvironmentObject var authentication: Authentication
     
     @SceneStorage("auth.viewState") var viewState: AuthenticationViewState = .signUp
     
@@ -50,7 +50,7 @@ struct AuthenticationView: View {
     func login() {
         Task {
             do {
-                try await authentication.login(email: email, password: password)
+                try await authentication.login(username: username, password: password)
             } catch {
                 authentication.state = .loggedOut
                 showError(error)
@@ -70,6 +70,7 @@ struct AuthenticationView: View {
                     confirmPassword: confirmPassword
                 )
                 try await authentication.signUp(userCreate: newUser)
+                try await authentication.login(username: email, password: password)
             } catch {
                 authentication.state = .loggedOut
                 showError(error)

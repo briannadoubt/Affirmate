@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @StateObject var authentication = AuthenticationObserver()
+    @StateObject var authentication = Authentication()
     
     var body: some View {
         switch authentication.state {

@@ -18,11 +18,11 @@ final class User: Model, Content, Codable {
     static let schema = "users"
     
     enum Keys {
+        static let id = "id"
         static let firstName = "first_name"
         static let lastName = "last_name"
         static let username = "username"
         static let email = "email"
-        static let password = "password"
         static let passwordHash = "password_hash"
     }
     
@@ -49,7 +49,7 @@ extension User {
     /// Handle asyncronous database migration; creating and destroying the "User" table.
     struct Migration: AsyncMigration {
         /// The name of the migrator
-        var name: String { "CreateUser" }
+        var name: String { "UserMigration" }
         /// Outlines the `user` table schema
         func prepare(on database: Database) async throws {
             try await database.schema(User.schema)
@@ -122,7 +122,6 @@ extension User.Create: Decodable {
     
     init(from decoder: Decoder) throws {
         let container: KeyedDecodingContainer<User.Create.CodingKeys> = try decoder.container(keyedBy: User.Create.CodingKeys.self)
-        
         self.firstName = try container.decode(String.self, forKey: User.Create.CodingKeys.firstName)
         self.lastName = try container.decode(String.self, forKey: User.Create.CodingKeys.lastName)
         self.username = try container.decode(String.self, forKey: User.Create.CodingKeys.username)
@@ -168,13 +167,5 @@ extension User {
             self.username = username
             self.email = email
         }
-    }
-}
-
-extension User {
-    /// Generate a new user token for dynamic, 24-hour long sessions.
-    func generateToken() throws -> UserToken {
-        // 256-bits (32 bytes) for more security and things
-        try .init(value: [UInt8].random(count: 32).base64, userId: self.requireID())
     }
 }

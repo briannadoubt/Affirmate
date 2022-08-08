@@ -10,7 +10,7 @@ import Vapor
 
 struct ChatRouteCollection: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        let tokenProtected = routes.grouped(UserToken.authenticator())
+        let tokenProtected = routes.grouped(Token.authenticator())
         // MARK: - GET "/chat": Returns all authorized chats based on the user token session.
         let chat = tokenProtected.grouped("chat")
         chat.get { request async throws -> [Chat.GetResponse] in
@@ -90,13 +90,13 @@ struct ChatRouteCollection: RouteCollection {
 extension ChatRouteCollection {
     private func getChats(for currentUserId: UUID, on database: Database) async throws -> [Chat] {
         try await Chat.query(on: database)
-            .join(ChatParticipant.self, on: \ChatParticipant.$chat.$id == \Chat.$id)
-            .filter(ChatParticipant.self, \.$user.$id, .equal, currentUserId)
+            .join(Participant.self, on: \Participant.$chat.$id == \Chat.$id)
+            .filter(Participant.self, \.$user.$id, .equal, currentUserId)
             .all()
     }
-    private func getParticipants(for chatId: UUID, on database: Database) async throws -> [ChatParticipant] {
-        try await ChatParticipant.query(on: database)
-            .filter(ChatParticipant.self, \.$chat.$id, .equal, chatId)
+    private func getParticipants(for chatId: UUID, on database: Database) async throws -> [Participant] {
+        try await Participant.query(on: database)
+            .filter(Participant.self, \.$chat.$id, .equal, chatId)
             .all()
     }
     private func getMessages(for chatId: UUID, on database: Database) async throws -> [Message] {

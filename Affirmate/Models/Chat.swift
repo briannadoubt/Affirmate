@@ -17,7 +17,7 @@ struct Chat: Codable {
     
     struct GetResponse: Decodable {
         var chat: Chat
-        var participants: [ChatParticipant]
+        var participants: [Participant]
         var messages: [Message]
     }
 }

@@ -134,54 +134,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "72928AF7-7BB2-463D-8998-8C50BCC72F35"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
-            landmarkName = "test_newUser()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "72928AF7-7BB2-463D-8998-8C50BCC72F35 - 2ef1089dd8170705"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (XCTVapor.XCTHTTPResponse) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
-                  moduleName = "AffirmateServerTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "38"
-                  endingLineNumber = "38"
-                  offsetFromSymbolStart = "440">
-               </Location>
-               <Location
-                  uuid = "72928AF7-7BB2-463D-8998-8C50BCC72F35 - 2ef1089dd8170705"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (XCTVapor.XCTHTTPResponse) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
-                  moduleName = "AffirmateServerTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "38"
-                  endingLineNumber = "38"
-                  offsetFromSymbolStart = "732">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "F38014F5-384C-475B-BA36-276D6994EC17"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -246,47 +198,155 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C68454C2-3FF8-496B-8D9A-4CEC195CCB1A"
-            shouldBeEnabled = "Yes"
+            uuid = "BE6B14E0-8B6E-44CA-B5C6-8C98EB3030B7"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Sources/AffirmateServer/Routes/AuthenticationRouteCollection.swift"
+            filePath = "AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "19"
-            endingLineNumber = "19"
-            landmarkName = "boot(routes:)"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
+            landmarkName = "test_newUser()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "C68454C2-3FF8-496B-8D9A-4CEC195CCB1A - 8b978ac95f5af05c"
+                  uuid = "BE6B14E0-8B6E-44CA-B5C6-8C98EB3030B7 - bb5b7edac986c19c"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 (Vapor.Request) async throws -&gt; AffirmateServer.User.GetResponse in AffirmateServer.AuthenticationRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
+                  symbolName = "closure #1 (inout XCTVapor.XCTHTTPRequest) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
                   moduleName = "AffirmateServerTests"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/AuthenticationRouteCollection.swift"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "508">
+                  startingLineNumber = "38"
+                  endingLineNumber = "38"
+                  offsetFromSymbolStart = "352">
                </Location>
                <Location
-                  uuid = "C68454C2-3FF8-496B-8D9A-4CEC195CCB1A - 8b978ac95f5affbf"
+                  uuid = "BE6B14E0-8B6E-44CA-B5C6-8C98EB3030B7 - bb5b7edac986c1fd"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 (Vapor.Request) async throws -&gt; AffirmateServer.User.GetResponse in AffirmateServer.AuthenticationRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
+                  symbolName = "closure #1 (inout XCTVapor.XCTHTTPRequest) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
                   moduleName = "AffirmateServerTests"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/AuthenticationRouteCollection.swift"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "19"
-                  endingLineNumber = "19"
-                  offsetFromSymbolStart = "372">
+                  startingLineNumber = "39"
+                  endingLineNumber = "39"
+                  offsetFromSymbolStart = "352">
+               </Location>
+               <Location
+                  uuid = "BE6B14E0-8B6E-44CA-B5C6-8C98EB3030B7 - bb5b7edac986c1c2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (inout XCTVapor.XCTHTTPRequest) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "40"
+                  endingLineNumber = "40"
+                  offsetFromSymbolStart = "352">
+               </Location>
+               <Location
+                  uuid = "BE6B14E0-8B6E-44CA-B5C6-8C98EB3030B7 - bb5b7edac986c123"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (inout XCTVapor.XCTHTTPRequest) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "41"
+                  endingLineNumber = "41"
+                  offsetFromSymbolStart = "352">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CB8F6FF0-9C68-475E-BF3A-0E6CFABF06EA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
+            landmarkName = "test_newUser()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "CB8F6FF0-9C68-475E-BF3A-0E6CFABF06EA - 2ef1089dd8170799"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (XCTVapor.XCTHTTPResponse) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "42"
+                  endingLineNumber = "42"
+                  offsetFromSymbolStart = "1852">
+               </Location>
+               <Location
+                  uuid = "CB8F6FF0-9C68-475E-BF3A-0E6CFABF06EA - 2ef1089dd81707f8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (XCTVapor.XCTHTTPResponse) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "43"
+                  endingLineNumber = "43"
+                  offsetFromSymbolStart = "1852">
+               </Location>
+               <Location
+                  uuid = "CB8F6FF0-9C68-475E-BF3A-0E6CFABF06EA - 2ef1089dd81707df"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (XCTVapor.XCTHTTPResponse) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "44"
+                  endingLineNumber = "44"
+                  offsetFromSymbolStart = "1852">
+               </Location>
+               <Location
+                  uuid = "CB8F6FF0-9C68-475E-BF3A-0E6CFABF06EA - 2ef1089dd817043e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (XCTVapor.XCTHTTPResponse) throws -&gt; () in AffirmateServerTests.AuthenticationRouteCollectionTests.test_newUser() async throws -&gt; ()"
+                  moduleName = "AffirmateServerTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Tests/AffirmateServerTests/AuthenticationRouteCollectionTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "1572">
                </Location>
             </Locations>
          </BreakpointContent>

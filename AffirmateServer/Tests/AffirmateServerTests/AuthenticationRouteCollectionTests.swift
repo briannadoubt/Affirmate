@@ -15,11 +15,11 @@ final class AuthenticationRouteCollectionTests: XCTestCase {
     
     override func setUpWithError() throws {
         self.app = Application(.testing)
-        Task {
-            try await configure(app)
-        }
+        configure(app)
+        try? app.autoRevert().wait()
+        try? app.autoMigrate().wait()
     }
-
+    
     override func tearDown() {
         app.shutdown()
     }
@@ -32,14 +32,18 @@ final class AuthenticationRouteCollectionTests: XCTestCase {
         let email = "meow@fake.com"
         let password = "Test123$"
         let userCreate = User.Create(firstName: firstName, lastName: lastName, username: username, email: email, password: password, confirmPassword: password)
-        try app.test(.POST, "/auth/new") { request in
+        
+        try app.test(.POST, "/auth/new/") { request in
             request.headers.contentType = .json
             try request.content.encode(userCreate)
+            print(request)
         } afterResponse: { response in
             print(try JSONSerialization.jsonObject(with: response.body) as? [String: Any] ?? ["reason": "No error", "error": -1])
-            let expectedGetResponse = User.GetResponse(firstName: firstName, lastName: lastName, username: username, email: email)
             let getResponse = try response.content.decode(User.GetResponse.self)
-            XCTAssertEqual(getResponse, expectedGetResponse)
+            XCTAssertEqual(getResponse.firstName, firstName)
+            XCTAssertEqual(getResponse.lastName, lastName)
+            XCTAssertEqual(getResponse.username, username)
+            XCTAssertEqual(getResponse.email, email)
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  ChatParticipant.swift
+//  Participant.swift
 //  AffirmateServer
 //
 //  Created by Bri on 7/30/22.
@@ -8,10 +8,10 @@
 import Fluent
 import Vapor
 
-final class ChatParticipant: Model, Content {
+final class Participant: Model, Content {
     
-    static let schema = "chat_participant"
-    static let idKey = "chat_participant_id"
+    static let schema = "participant"
+    static let idKey = "participant_id"
     
     @ID(key: FieldKey.id) var id: UUID?
     @Field(key: "role") var role: Role
@@ -24,14 +24,14 @@ final class ChatParticipant: Model, Content {
     }
 }
 
-extension ChatParticipant {
+extension Participant {
     /// Handle asyncronous database migration; creating and destroying the "ChatParticipant" table.
     struct Migration: AsyncMigration {
         /// The name of the migrator
-        var name: String { "CreateChatParticipant" }
+        var name: String { "ParticipantMigration" }
         /// Outlines the `chat-participants` table schema
         func prepare(on database: Database) async throws {
-            try await database.schema("chat_participant")
+            try await database.schema(Participant.schema)
                 .id()
                 .field("role", .int, .required)
                 .field("user_id", .uuid, .required, .references(User.schema, .id))
@@ -40,7 +40,7 @@ extension ChatParticipant {
         }
         /// Destroys the `chat_participants` table
         func revert(on database: Database) async throws {
-            try await database.schema("chat_participant").delete()
+            try await database.schema(Participant.schema).delete()
         }
     }
 }

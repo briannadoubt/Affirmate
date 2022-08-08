@@ -27,9 +27,9 @@ struct AffirmateTabView: View {
                     Label("Chat", systemImage: tabSelection == .chat ? "message.fill" : "message")
                 }
             MeView()
-                .tag(TabSelection.chat)
+                .tag(TabSelection.me)
                 .tabItem {
-                    Label("Me", systemImage: tabSelection == .chat ? "person.fill" : "person")
+                    Label("Me", systemImage: tabSelection == .me ? "person.fill" : "person")
                 }
         }
     }

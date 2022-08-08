@@ -7,13 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		031FF1F328A08015008343CA /* ServerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031FF1F228A08015008343CA /* ServerError.swift */; };
 		03498A6428701EED0081A221 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03498A6328701EED0081A221 /* Repository.swift */; };
 		03498A6728702E270081A221 /* LocalizedContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03498A6628702E270081A221 /* LocalizedContent.swift */; };
+		035CE65A289F47D400B8C7A5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 035CE659289F47D400B8C7A5 /* Alamofire */; };
 		03772C85289734D9001DAE4B /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 03772C84289734D9001DAE4B /* SwiftKeychainWrapper */; };
 		03772C8E2897580C001DAE4B /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8A289757CA001DAE4B /* Message.swift */; };
-		03772C8F28975815001DAE4B /* ChatParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8D289757CA001DAE4B /* ChatParticipant.swift */; };
+		03772C8F28975815001DAE4B /* Participant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8D289757CA001DAE4B /* Participant.swift */; };
 		03772C9028975815001DAE4B /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C89289757CA001DAE4B /* Chat.swift */; };
-		03772C9128975815001DAE4B /* UserToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8B289757CA001DAE4B /* UserToken.swift */; };
+		03772C9128975815001DAE4B /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8B289757CA001DAE4B /* Token.swift */; };
 		03772C9228975815001DAE4B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8C289757CA001DAE4B /* User.swift */; };
 		03772C9428975965001DAE4B /* TaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C9328975965001DAE4B /* TaskButton.swift */; };
 		03772C97289759A3001DAE4B /* ThrowingTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C96289759A3001DAE4B /* ThrowingTaskButton.swift */; };
@@ -31,7 +33,7 @@
 		03FE3BBC289721A500208D5D /* ChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBB289721A500208D5D /* ChatsView.swift */; };
 		03FE3BBE2897220F00208D5D /* MeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBD2897220F00208D5D /* MeView.swift */; };
 		03FE3BC02897222D00208D5D /* AffirmateTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBF2897222D00208D5D /* AffirmateTabView.swift */; };
-		03FE3BC22897273A00208D5D /* AuthenticationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BC12897273A00208D5D /* AuthenticationObserver.swift */; };
+		03FE3BC22897273A00208D5D /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BC12897273A00208D5D /* Authentication.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,14 +54,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		031FF1F228A08015008343CA /* ServerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerError.swift; sourceTree = "<group>"; };
 		03498A6328701EED0081A221 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		03498A65287027710081A221 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		03498A6628702E270081A221 /* LocalizedContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedContent.swift; sourceTree = "<group>"; };
 		03772C89289757CA001DAE4B /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		03772C8A289757CA001DAE4B /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		03772C8B289757CA001DAE4B /* UserToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserToken.swift; sourceTree = "<group>"; };
+		03772C8B289757CA001DAE4B /* Token.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 		03772C8C289757CA001DAE4B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		03772C8D289757CA001DAE4B /* ChatParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatParticipant.swift; sourceTree = "<group>"; };
+		03772C8D289757CA001DAE4B /* Participant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Participant.swift; sourceTree = "<group>"; };
 		03772C9328975965001DAE4B /* TaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskButton.swift; sourceTree = "<group>"; };
 		03772C96289759A3001DAE4B /* ThrowingTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThrowingTaskButton.swift; sourceTree = "<group>"; };
 		03772C9828975B04001DAE4B /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
@@ -81,7 +84,7 @@
 		03FE3BBB289721A500208D5D /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
 		03FE3BBD2897220F00208D5D /* MeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeView.swift; sourceTree = "<group>"; };
 		03FE3BBF2897222D00208D5D /* AffirmateTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateTabView.swift; sourceTree = "<group>"; };
-		03FE3BC12897273A00208D5D /* AuthenticationObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationObserver.swift; sourceTree = "<group>"; };
+		03FE3BC12897273A00208D5D /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +93,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03772C85289734D9001DAE4B /* SwiftKeychainWrapper in Frameworks */,
+				035CE65A289F47D400B8C7A5 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,9 +119,9 @@
 			children = (
 				03772C89289757CA001DAE4B /* Chat.swift */,
 				03772C8A289757CA001DAE4B /* Message.swift */,
-				03772C8B289757CA001DAE4B /* UserToken.swift */,
+				03772C8B289757CA001DAE4B /* Token.swift */,
 				03772C8C289757CA001DAE4B /* User.swift */,
-				03772C8D289757CA001DAE4B /* ChatParticipant.swift */,
+				03772C8D289757CA001DAE4B /* Participant.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -157,10 +161,11 @@
 			children = (
 				03498A65287027710081A221 /* Info.plist */,
 				0389BC8B286FAB2A00CBDC3B /* AffirmateApp.swift */,
+				031FF1F228A08015008343CA /* ServerError.swift */,
 				03772C9C28975EB7001DAE4B /* ChatNavigationLink.swift */,
 				0389BC8D286FAB2A00CBDC3B /* ContentView.swift */,
 				03772C9828975B04001DAE4B /* AuthenticationView.swift */,
-				03FE3BC12897273A00208D5D /* AuthenticationObserver.swift */,
+				03FE3BC12897273A00208D5D /* Authentication.swift */,
 				03FE3BBF2897222D00208D5D /* AffirmateTabView.swift */,
 				03FE3BB92897214700208D5D /* HomeView.swift */,
 				03FE3BBB289721A500208D5D /* ChatsView.swift */,
@@ -228,6 +233,7 @@
 			name = Affirmate;
 			packageProductDependencies = (
 				03772C84289734D9001DAE4B /* SwiftKeychainWrapper */,
+				035CE659289F47D400B8C7A5 /* Alamofire */,
 			);
 			productName = Affirmate;
 			productReference = 0389BC88286FAB2A00CBDC3B /* Affirmate.app */;
@@ -303,6 +309,7 @@
 			mainGroup = 0389BC7F286FAB2A00CBDC3B;
 			packageReferences = (
 				03772C83289734D9001DAE4B /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */,
+				035CE658289F47D400B8C7A5 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = 0389BC89286FAB2A00CBDC3B /* Products */;
 			projectDirPath = "";
@@ -349,20 +356,21 @@
 				03772C9428975965001DAE4B /* TaskButton.swift in Sources */,
 				03FE3BC02897222D00208D5D /* AffirmateTabView.swift in Sources */,
 				03772C9028975815001DAE4B /* Chat.swift in Sources */,
-				03772C8F28975815001DAE4B /* ChatParticipant.swift in Sources */,
+				03772C8F28975815001DAE4B /* Participant.swift in Sources */,
 				03772C97289759A3001DAE4B /* ThrowingTaskButton.swift in Sources */,
+				031FF1F328A08015008343CA /* ServerError.swift in Sources */,
 				03FE3BBC289721A500208D5D /* ChatsView.swift in Sources */,
 				03FE3BBA2897214700208D5D /* HomeView.swift in Sources */,
 				03498A6728702E270081A221 /* LocalizedContent.swift in Sources */,
 				03772C9228975815001DAE4B /* User.swift in Sources */,
-				03FE3BC22897273A00208D5D /* AuthenticationObserver.swift in Sources */,
+				03FE3BC22897273A00208D5D /* Authentication.swift in Sources */,
 				03498A6428701EED0081A221 /* Repository.swift in Sources */,
 				03FE3BBE2897220F00208D5D /* MeView.swift in Sources */,
 				03772C8E2897580C001DAE4B /* Message.swift in Sources */,
 				03772C9928975B04001DAE4B /* AuthenticationView.swift in Sources */,
 				0389BC8E286FAB2A00CBDC3B /* ContentView.swift in Sources */,
 				0389BC8C286FAB2A00CBDC3B /* AffirmateApp.swift in Sources */,
-				03772C9128975815001DAE4B /* UserToken.swift in Sources */,
+				03772C9128975815001DAE4B /* Token.swift in Sources */,
 				03772C9B28975CAB001DAE4B /* Constants.swift in Sources */,
 				03772C9D28975EB7001DAE4B /* ChatNavigationLink.swift in Sources */,
 			);
@@ -710,6 +718,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		035CE658289F47D400B8C7A5 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		03772C83289734D9001DAE4B /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jrendel/SwiftKeychainWrapper.git";
@@ -721,6 +737,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		035CE659289F47D400B8C7A5 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 035CE658289F47D400B8C7A5 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
 		03772C84289734D9001DAE4B /* SwiftKeychainWrapper */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 03772C83289734D9001DAE4B /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */;

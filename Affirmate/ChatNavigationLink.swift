@@ -17,9 +17,9 @@ enum ChatError: LocalizedError {
 final class ChatObserver: ObservableObject {
     @Published var chat: Chat
     @Published var messages: [Message] = []
-    @Published var participants: [ChatParticipant] = []
+    @Published var participants: [Participant] = []
     
-    init(chat: Chat, messages: [Message] = [], participants: [ChatParticipant] = []) {
+    init(chat: Chat, messages: [Message] = [], participants: [Participant] = []) {
         self.chat = chat
         self.messages = messages
         self.participants = participants
@@ -96,7 +96,7 @@ struct ChatNavigationLink_Previews: PreviewProvider {
             chat: Chat.GetResponse(
                 chat: Chat(name: "Demo"),
                 participants: [
-                    ChatParticipant(
+                    Participant(
                         role: .admin,
                         user: User(
                             firstName: "Meow",

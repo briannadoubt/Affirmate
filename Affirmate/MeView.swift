@@ -8,8 +8,25 @@
 import SwiftUI
 
 struct MeView: View {
+    @EnvironmentObject var authentication: Authentication
+    func signOut() {
+        Task {
+            do {
+                try await authentication.signOut()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List {
+            Section {
+                Button(role: .destructive, action: signOut) {
+                    Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right.fill")
+                }
+            }
+        }
+        .navigationTitle("Me")
     }
 }
 

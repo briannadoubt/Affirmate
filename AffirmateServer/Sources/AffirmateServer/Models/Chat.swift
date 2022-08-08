@@ -21,7 +21,7 @@ extension Chat {
     /// Handle asyncronous database migration; creating and destroying the "Chat" table.
     struct Migration: AsyncMigration {
         /// The name of the migrator
-        var name: String { "CreateChat" }
+        var name: String { "ChatMigration" }
         /// Outlines the `chats` table schema
         func prepare(on database: Database) async throws {
             try await database.schema("chat")
@@ -48,7 +48,7 @@ extension Chat {
 extension Chat {
     struct GetResponse: Content {
         var chat: Chat
-        var participants: [ChatParticipant]
+        var participants: [Participant]
         var messages: [Message]
     }
 }

@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "8dd85aee02e39dd280c75eef88ffdb86eed4b07b",
+        "version" : "5.6.2"
+      }
+    },
+    {
       "identity" : "apns",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/apns.git",
@@ -70,6 +79,15 @@
       "state" : {
         "revision" : "a8b2839ea86c44a35c17f66eb0885f9e5b51a531",
         "version" : "2.4.0"
+      }
+    },
+    {
+      "identity" : "jwt",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/jwt.git",
+      "state" : {
+        "revision" : "506d238a707c0e7c1d2cf690863902eaf3bc4e94",
+        "version" : "4.2.1"
       }
     },
     {

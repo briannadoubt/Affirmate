@@ -11,7 +11,7 @@ enum Constants {
     #if PRODUCTION
     static let baseURL = URL(string: "https://affirmate.org")
     #else
-    static let baseURL = URL(string: "http://0.0.0.0:8080")
+    static let baseURL = URL(string: "http://localhost:8080")
     #endif
     static var authURL: URL? {
         Constants.baseURL?.appending(component: "auth")

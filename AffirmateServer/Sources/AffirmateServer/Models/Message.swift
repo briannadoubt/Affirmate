@@ -32,10 +32,10 @@ extension Message {
     /// Handle asyncronous database migration; creating and destroying the `messages` table.
     struct Migration: AsyncMigration {
         /// The name of the migrator
-        var name: String { "CreateChatParticipant" }
+        var name: String { "MessageMigration" }
         /// Outlines the `messages` table schema
         func prepare(on database: Database) async throws {
-            try await database.schema("message")
+            try await database.schema(Message.schema)
                 .id()
                 .field("text", .string)
                 .field("chat_id", .uuid, .required, .references(Chat.schema, "id"))
@@ -44,7 +44,7 @@ extension Message {
         }
         /// Destroys the `messages` table
         func revert(on database: Database) async throws {
-            try await database.schema("message").delete()
+            try await database.schema(Message.schema).delete()
         }
     }
 }
