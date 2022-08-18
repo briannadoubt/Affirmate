@@ -33,21 +33,17 @@ struct ChatRouteCollection: RouteCollection {
         
         // MARK: - GET "/chats": Returns all authorized chats based on the user token session.
         chatRoute.get { request async throws -> [Chat] in
-            guard let currentUserId = try request.auth.require(User.self).id else {
-                throw Abort(.forbidden)
-            }
+            let currentUserId = try request.auth.require(User.self).requireID()
             let chats = try await Chat.query(on: request.db)
                 .join(Participant.self, on: \Participant.$chat.$id == \Chat.$id)
                 .filter(Participant.self, \Participant.$user.$id, .equal, currentUserId)
                 .with(\.$messages) { message in
                     message
                         .with(\.$chat)
-                        .with(\.$sender)
                 }
                 .with(\.$participants) { participant in
                     participant
                         .with(\.$chat)
-                        .with(\.$user)
                 }
                 .all()
             return chats

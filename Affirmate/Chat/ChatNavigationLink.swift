@@ -12,26 +12,7 @@ enum ChatError: LocalizedError {
     case failedToBuildURL
     case failedToRetrieveTokenFromKeychain
     case serverError(ServerError)
-}
-
-final class ChatObserver: ObservableObject {
-    
-    @Published var chat: Chat
-    
-    let actor = ChatsActor()
-    
-    init(chat: Chat) {
-        self.chat = chat
-    }
-    
-    func getChat(chatId: UUID) async throws {
-        let chat = try await actor.get(chatId)
-        await setData(from: chat)
-    }
-    
-    @MainActor func setData(from chat: Chat) {
-        self.chat = chat
-    }
+    case chatIdNotFound
 }
 
 struct ChatNavigationLink: View {
@@ -48,8 +29,8 @@ struct ChatNavigationLink: View {
     
     var body: some View {
         NavigationLink {
-//            ChatView(chat: chat)
-//                .environmentObject(chatObserver)
+            ChatView(chat: chat)
+                .environmentObject(chatObserver)
         } label: {
             VStack {
                 if let lastMessage = chatObserver.chat.messages?.last {

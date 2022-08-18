@@ -52,14 +52,20 @@ struct AuthenticationRouteCollection: RouteCollection {
         // MARK: - GET: /auth/login
         // "/login" requires Basic Authentication data containing the username and password
         let passwordProtected = auth.grouped(User.authenticator(), User.guardMiddleware())
-        passwordProtected.get("login") { request async throws -> JWTToken.Response in
+        passwordProtected.get("login") { request async throws -> User.LoginResponse in
             print(request)
             let user = try request.auth.require(User.self)
             let payload = try JWTToken(user: user)
             let jwtToken = try request.jwt.sign(payload)
             let sessionToken = try user.generateToken()
             try await sessionToken.create(on: request.db)
-            return JWTToken.Response(jwtToken: jwtToken, sesionToken: sessionToken.value)
+            return User.LoginResponse(
+                jwt: JWTToken.Response(
+                    jwtToken: jwtToken,
+                    sesionToken: sessionToken.value
+                ),
+                user: user.getResponse
+            )
         }
         
         // MARK: - POST: /auth/validate

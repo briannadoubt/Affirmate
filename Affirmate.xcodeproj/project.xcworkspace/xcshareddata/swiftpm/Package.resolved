@@ -145,6 +145,15 @@
       }
     },
     {
+      "identity" : "reversedscrollview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/briannadoubt/ReversedScrollView.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "08604cf021b3d7b1acdb869832a1aee2f3b70156"
+      }
+    },
+    {
       "identity" : "routing-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/routing-kit.git",

@@ -15,6 +15,7 @@ final class Authentication: ObservableObject {
     @Published var currentUser: User?
     
     let http = HTTPActor()
+    let meActor = MeActor()
     
     @MainActor private func setState(to newState: Authentication.State) {
         withAnimation {
@@ -28,8 +29,13 @@ final class Authentication: ObservableObject {
     
     @MainActor func setCurrentUser(to user: User?) {
         withAnimation {
-            self.currentUser = currentUser
+            self.currentUser = user
         }
+    }
+    
+    func getCurrentUser() async throws {
+        let me = try await meActor.get()
+        await setCurrentUser(to: me)
     }
     
     func signUp(userCreate: User.Create) async throws {
@@ -44,8 +50,9 @@ final class Authentication: ObservableObject {
     }
     
     func login(username: String, password: String) async throws {
-        let tokenResponse = try await http.requestDecodable(Request.login(username: username, password: password), to: JWTToken.Response.self)
-        try HTTPActor.Interceptor.set(tokenResponse)
+        let loginResponse = try await http.requestDecodable(Request.login(username: username, password: password), to: User.LoginResponse.self)
+        try HTTPActor.Interceptor.set(loginResponse.jwt)
+        await setCurrentUser(to: loginResponse.user)
         await setState(to: .loggedIn)
     }
     

@@ -26,6 +26,13 @@ struct ContentView: View {
         case .loggedIn:
             AffirmateTabView()
                 .environmentObject(authentication)
+                .task {
+                    do {
+                        try await authentication.getCurrentUser()
+                    } catch {
+                        print("TODO: Show this error in the UI:", error)
+                    }
+                }
         }
     }
 }

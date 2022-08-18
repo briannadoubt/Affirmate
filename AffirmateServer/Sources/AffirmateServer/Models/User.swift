@@ -13,7 +13,15 @@ extension String {
     var validationKey: ValidationKey { ValidationKey(stringLiteral: self) }
 }
 
-final class User: Model, Content, Codable {
+protocol UserRepresentation {
+    var id: UUID? { get set }
+    var firstName: String { get set }
+    var lastName: String { get set }
+    var username: String { get set }
+    var email: String { get set }
+}
+
+final class User: Model, Content, Codable, UserRepresentation {
     
     static let schema = "users"
     
@@ -74,13 +82,13 @@ extension User: ModelAuthenticatable {
     static let usernameKey = \User.$username
     static let passwordHashKey = \User.$passwordHash
     func verify(password: String) throws -> Bool {
-        try Bcrypt.verify(password, created: self.passwordHash)
+        try Bcrypt.verify(password, created: passwordHash)
     }
 }
 
 extension User {
     /// The post parameter used to create a new user
-    struct Create: Content {
+    struct Create: Content, Validatable, Codable {
         var firstName: String
         var lastName: String
         var username: String
@@ -96,38 +104,23 @@ extension User {
             self.password = password
             self.confirmPassword = confirmPassword
         }
-    }
-}
-
-extension User.Create: Validatable {
-    static func validations(_ validations: inout Validations) {
-        validations.add("first_name", as: String.self, is: !.empty)
-        validations.add("last_name", as: String.self, is: !.empty)
-        validations.add("username", as: String.self, is: !.empty && .alphanumeric && .count(3...64))
-        validations.add("email", as: String.self, is: !.empty)
-        validations.add("password", as: String.self, is: .count(8...))
-    }
-}
-
-extension User.Create: Decodable {
-    
-    enum CodingKeys: String, CodingKey {
-        case firstName = "first_name"
-        case lastName = "last_name"
-        case username
-        case email
-        case password
-        case confirmPassword = "confirm_password"
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container: KeyedDecodingContainer<User.Create.CodingKeys> = try decoder.container(keyedBy: User.Create.CodingKeys.self)
-        self.firstName = try container.decode(String.self, forKey: User.Create.CodingKeys.firstName)
-        self.lastName = try container.decode(String.self, forKey: User.Create.CodingKeys.lastName)
-        self.username = try container.decode(String.self, forKey: User.Create.CodingKeys.username)
-        self.email = try container.decode(String.self, forKey: User.Create.CodingKeys.email)
-        self.password = try container.decode(String.self, forKey: User.Create.CodingKeys.password)
-        self.confirmPassword = try container.decode(String.self, forKey: User.Create.CodingKeys.confirmPassword)
+        
+        static func validations(_ validations: inout Validations) {
+            validations.add("first_name", as: String.self, is: !.empty)
+            validations.add("last_name", as: String.self, is: !.empty)
+            validations.add("username", as: String.self, is: !.empty && .alphanumeric && .count(3...64))
+            validations.add("email", as: String.self, is: !.empty)
+            validations.add("password", as: String.self, is: .count(8...))
+        }
+        
+        enum CodingKeys: String, CodingKey {
+            case firstName = "first_name"
+            case lastName = "last_name"
+            case username
+            case email
+            case password
+            case confirmPassword = "confirm_password"
+        }
     }
 }
 
@@ -135,8 +128,14 @@ extension User {
     var getResponse: GetResponse {
         GetResponse(id: id, firstName: firstName, lastName: lastName, username: username, email: email)
     }
+    
+    struct LoginResponse: Content {
+        var jwt: JWTToken.Response
+        var user: GetResponse
+    }
+    
     /// The get response for a user
-    struct GetResponse: Content, Equatable, Codable {
+    struct GetResponse: Content, Equatable, Codable, UserRepresentation {
         
         var id: UUID?
         var firstName: String
@@ -150,14 +149,6 @@ extension User {
             case lastName = "last_name"
             case username
             case email
-        }
-        
-        init(from decoder: Decoder) throws {
-            id = try decoder.container(keyedBy: CodingKeys.self).decode(UUID?.self, forKey: .id)
-            firstName = try decoder.container(keyedBy: CodingKeys.self).decode(String.self, forKey: .firstName)
-            lastName = try decoder.container(keyedBy: CodingKeys.self).decode(String.self, forKey: .lastName)
-            username = try decoder.container(keyedBy: CodingKeys.self).decode(String.self, forKey: .username)
-            email = try decoder.container(keyedBy: CodingKeys.self).decode(String.self, forKey: .email)
         }
         
         init(id: UUID? = nil, firstName: String, lastName: String, username: String, email: String) {

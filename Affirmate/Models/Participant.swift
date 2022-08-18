@@ -7,14 +7,10 @@
 
 import Foundation
 
-struct Relation: Object {
-    var id: UUID?
-}
-
 struct Participant: Object {
     var id: UUID?
     var role: Role
-    var user: User
+    var user: Representation
     var chat: Chat
     
     enum Role: String, CaseIterable, Codable, Hashable, Equatable {
