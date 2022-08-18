@@ -20,6 +20,7 @@ public func configure(_ app: Application) {
     // Configure migrations
     app.migrations.add(Chat.Migration())
     app.migrations.add(User.Migration())
+    app.migrations.add(SessionToken.Migration())
     app.migrations.add(Message.Migration())
     app.migrations.add(Participant.Migration())
     

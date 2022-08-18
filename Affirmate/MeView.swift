@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct MeView: View {
+    
     @EnvironmentObject var authentication: Authentication
+    
     func signOut() {
         Task {
             do {
@@ -18,15 +20,18 @@ struct MeView: View {
             }
         }
     }
+    
     var body: some View {
-        List {
-            Section {
-                Button(role: .destructive, action: signOut) {
-                    Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right.fill")
+        NavigationView {
+            List {
+                Section {
+                    Button(role: .destructive, action: signOut) {
+                        Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right.fill")
+                    }
                 }
             }
+            .navigationTitle(authentication.currentUser?.username ?? authentication.currentUser?.firstName ?? "Me")
         }
-        .navigationTitle("Me")
     }
 }
 

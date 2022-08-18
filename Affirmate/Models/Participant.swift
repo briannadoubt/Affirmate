@@ -7,13 +7,17 @@
 
 import Foundation
 
-struct Participant: Decodable {
+struct Relation: Object {
+    var id: UUID?
+}
+
+struct Participant: Object {
     var id: UUID?
     var role: Role
     var user: User
     var chat: Chat
     
-    enum Role: String, CaseIterable, Codable, Hashable {
+    enum Role: String, CaseIterable, Codable, Hashable, Equatable {
         case admin
         case participant
     }

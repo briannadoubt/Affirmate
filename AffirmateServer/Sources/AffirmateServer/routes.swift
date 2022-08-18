@@ -1,5 +1,6 @@
 import Fluent
 import Vapor
+import APNS
 
 func routes(_ app: Application) throws {
     app.get { req in
@@ -11,5 +12,4 @@ func routes(_ app: Application) throws {
     try app.register(collection: AuthenticationRouteCollection())
     try app.register(collection: MeRouteCollection())
     try app.register(collection: ChatRouteCollection())
-    
 }

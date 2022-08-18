@@ -13,8 +13,6 @@ enum Constants {
     #else
     static let baseURL = URL(string: "http://localhost:8080")
     #endif
-    static var authURL: URL? {
-        Constants.baseURL?.appending(component: "auth")
-    }
-    static let tokenKey = "org.affirmate.keys.token"
+    static let sessionTokenKey = "org.affirmate.keys.session"
+    static let jwtKey = "org.affirmate.keys.jwt"
 }

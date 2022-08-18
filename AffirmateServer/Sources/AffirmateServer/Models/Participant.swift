@@ -18,6 +18,15 @@ final class Participant: Model, Content {
     @Parent(key: "user_id") var user: User
     @Parent(key: "chat_id") var chat: Chat
     
+    init() { }
+    
+    init(id: UUID? = nil, role: Participant.Role, user: User.IDValue, chat: User.IDValue) {
+        self.id = id
+        self.role = role
+        self.$user.id = user
+        self.$chat.id = chat
+    }
+    
     enum Role: String, CaseIterable, Codable, Hashable {
         case admin
         case participant
@@ -33,7 +42,7 @@ extension Participant {
         func prepare(on database: Database) async throws {
             try await database.schema(Participant.schema)
                 .id()
-                .field("role", .int, .required)
+                .field("role", .string, .required)
                 .field("user_id", .uuid, .required, .references(User.schema, .id))
                 .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
                 .create()

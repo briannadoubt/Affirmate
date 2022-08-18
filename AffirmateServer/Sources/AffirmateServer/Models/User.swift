@@ -169,3 +169,12 @@ extension User {
         }
     }
 }
+
+extension User {
+    func generateToken() throws -> SessionToken {
+        try .init(
+            value: [UInt8].random(count: 32).base64,
+            userID: self.requireID()
+        )
+    }
+}

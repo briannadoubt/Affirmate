@@ -9,9 +9,9 @@ import Fluent
 import Vapor
 import JWT
 
-final class Token: Content, Authenticatable {
-    static let schema = "token"
-    static let expirationTime: TimeInterval = 60 * 15 // 15 minutes
+final class JWTToken: Content, Authenticatable {
+    static let schema = "jwt_token"
+    static let expirationTime = Date.distantFuture.timeIntervalSinceNow
     
     var expiration: ExpirationClaim
     var userId: UUID
@@ -27,14 +27,15 @@ final class Token: Content, Authenticatable {
     }
 }
 
-extension Token: JWTPayload {
+extension JWTToken: JWTPayload {
     func verify(using signer: JWTSigner) throws {
         try expiration.verifyNotExpired()
     }
 }
 
-extension Token {
+extension JWTToken {
     struct Response: Content {
-        var token: String
+        var jwtToken: String
+        var sesionToken: String
     }
 }

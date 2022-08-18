@@ -15,62 +15,35 @@ enum ChatError: LocalizedError {
 }
 
 final class ChatObserver: ObservableObject {
+    
     @Published var chat: Chat
-    @Published var messages: [Message] = []
-    @Published var participants: [Participant] = []
     
-    init(chat: Chat, messages: [Message] = [], participants: [Participant] = []) {
+    let actor = ChatsActor()
+    
+    init(chat: Chat) {
         self.chat = chat
-        self.messages = messages
-        self.participants = participants
     }
     
-    func getChat() async throws {
-        guard
-            let chatId = chat.id?.uuidString,
-            let chatUrl = Constants.baseURL?
-                .appending(component: "chat")
-                .appending(component: chatId)
-        else {
-            throw ChatError.failedToBuildURL
-        }
-        guard let token = KeychainWrapper.standard.string(forKey: Constants.tokenKey) else {
-            throw ChatError.failedToRetrieveTokenFromKeychain
-        }
-        var request = URLRequest(url: chatUrl)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authentication")
-        let (data, _) = try await URLSession.shared.data(for: request)
-        let decoder = JSONDecoder()
-        if let serverError = try? decoder.decode(ServerError.self, from: data) {
-            throw ChatError.serverError(serverError)
-        }
-        let chatResponse = try decoder.decode(Chat.GetResponse.self, from: data)
-        await setData(from: chatResponse)
+    func getChat(chatId: UUID) async throws {
+        let chat = try await actor.get(chatId)
+        await setData(from: chat)
     }
     
-    @MainActor func setData(from chatResponse: Chat.GetResponse) {
-        self.chat = chatResponse.chat
-        self.messages = chatResponse.messages
-        self.participants = chatResponse.participants
+    @MainActor func setData(from chat: Chat) {
+        self.chat = chat
     }
 }
 
 struct ChatNavigationLink: View {
     
     @StateObject var chatObserver: ChatObserver
-    let chat: Chat.GetResponse
+    let chat: Chat
     
     @State var lastMessageText: String?
     
-    init(chat: Chat.GetResponse) {
+    init(chat: Chat) {
         self.chat = chat
-        let observer = ChatObserver(
-            chat: chat.chat,
-            messages: chat.messages,
-            participants: chat.participants
-        )
-        _chatObserver = StateObject(wrappedValue: observer)
+        _chatObserver = StateObject(wrappedValue: ChatObserver(chat: chat))
     }
     
     var body: some View {
@@ -79,8 +52,8 @@ struct ChatNavigationLink: View {
 //                .environmentObject(chatObserver)
         } label: {
             VStack {
-                if let lastMessage = chatObserver.messages.last {
-                    Text(lastMessage.sender.username + ": ").bold()
+                if let lastMessage = chatObserver.chat.messages?.last {
+                    Text((lastMessage.sender.username ?? "") + ": ").bold()
                     Text(lastMessage.text)
                 } else {
                     Text("No messages yet...")
@@ -90,36 +63,9 @@ struct ChatNavigationLink: View {
     }
 }
 
-struct ChatNavigationLink_Previews: PreviewProvider {
-    static var previews: some View {
-        ChatNavigationLink(
-            chat: Chat.GetResponse(
-                chat: Chat(name: "Demo"),
-                participants: [
-                    Participant(
-                        role: .admin,
-                        user: User(
-                            firstName: "Meow",
-                            lastName: "Face",
-                            username: "Meow",
-                            email: "meow@meow.com"
-                        ),
-                        chat: Chat(name: "Meowmeow")
-                    )
-                ],
-                messages: [
-                    Message(
-                        text: "Meow!!!",
-                        chat: Chat(name: "Meowmeow"),
-                        sender: User(
-                            firstName: "Meow",
-                            lastName: "Face",
-                            username: "Meow",
-                            email: "meow@meow.com"
-                        )
-                    )
-                ]
-            )
-        )
-    }
-}
+//struct ChatNavigationLink_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ChatNavigationLink()
+//        )
+//    }
+//}

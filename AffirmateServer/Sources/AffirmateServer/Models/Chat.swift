@@ -14,7 +14,16 @@ final class Chat: Model, Content {
     static let idKey = "chat_id"
     
     @ID(key: FieldKey.id) var id: UUID?
-    @Field(key: "name") var name: String
+    @Field(key: "name") var name: String?
+    @Children(for: \.$chat) var messages: [Message]
+    @Children(for: \.$chat) var participants: [Participant]
+    
+    init() { }
+    
+    init(id: UUID? = nil, name: String?) {
+        self.id = id
+        self.name = name
+    }
 }
 
 extension Chat {
@@ -26,7 +35,7 @@ extension Chat {
         func prepare(on database: Database) async throws {
             try await database.schema("chat")
                 .id()
-                .field("name", .string, .required)
+                .field("name", .string)
                 .create()
         }
         /// Destroys the `chats` table
@@ -40,7 +49,7 @@ extension Chat {
     struct Create: Content, Validatable {
         var name: String?
         static func validations(_ validations: inout Validations) {
-            validations.add("name", as: String.self, is: !.empty)
+            validations.add("name", as: String.self)
         }
     }
 }

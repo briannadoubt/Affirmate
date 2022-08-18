@@ -9,29 +9,52 @@ import Fluent
 import Vapor
 
 struct ChatRouteCollection: RouteCollection {
+    
     func boot(routes: RoutesBuilder) throws {
-        let tokenProtected = routes.grouped(Token.authenticator())
-        // MARK: - GET "/chat": Returns all authorized chats based on the user token session.
-        let chat = tokenProtected.grouped("chat")
-        chat.get { request async throws -> [Chat.GetResponse] in
+        let tokenProtected = routes.grouped(SessionToken.authenticator(), SessionToken.guardMiddleware()) // Auth and guard with session token
+        let chatRoute = tokenProtected.grouped("chats")
+        
+        // MARK: - POST "/chats": Creates a new blank chat and adds the current user as a participant
+        chatRoute.post { request async throws -> HTTPStatus in
+            try await request.db.transaction { transaction in
+                let chatCreate = try request.content.decode(Chat.Create.self)
+                let newChat = Chat(name: chatCreate.name)
+                try await newChat.save(on: transaction)
+                let user = try request.auth.require(User.self)
+                guard let userId = user.id, let chatId = newChat.id else {
+                    throw Abort(.notFound)
+                }
+                let newParticipant = Participant(role: .admin, user: userId, chat: chatId)
+                print(newParticipant)
+                try await newParticipant.save(on: transaction)
+            }
+            return .ok
+        }
+        
+        // MARK: - GET "/chats": Returns all authorized chats based on the user token session.
+        chatRoute.get { request async throws -> [Chat] in
             guard let currentUserId = try request.auth.require(User.self).id else {
                 throw Abort(.forbidden)
             }
-            let database = request.db
-            var chatGetResponses: [Chat.GetResponse] = []
-            for chat in try await getChats(for: currentUserId, on: database) {
-                guard let chatId = chat.id else { continue }
-                let getResponse = try await Chat.GetResponse(
-                    chat: chat,
-                    participants: getParticipants(for: chatId, on: request.db),
-                    messages: getMessages(for: chatId, on: request.db)
-                )
-                chatGetResponses.append(getResponse)
-            }
-            return chatGetResponses
+            let chats = try await Chat.query(on: request.db)
+                .join(Participant.self, on: \Participant.$chat.$id == \Chat.$id)
+                .filter(Participant.self, \Participant.$user.$id, .equal, currentUserId)
+                .with(\.$messages) { message in
+                    message
+                        .with(\.$chat)
+                        .with(\.$sender)
+                }
+                .with(\.$participants) { participant in
+                    participant
+                        .with(\.$chat)
+                        .with(\.$user)
+                }
+                .all()
+            return chats
         }
+        
         // MARK: - Get "/chat/:chatId": Returns a ChatGetResponse from a given chatId
-        let specificChat = chat.grouped(":chatId")
+        let specificChat = chatRoute.grouped(":chatId")
         specificChat.get { request async throws -> Chat.GetResponse in
             guard let currentUserId = try request.auth.require(User.self).id else {
                 throw Abort(.unauthorized)
@@ -58,12 +81,13 @@ struct ChatRouteCollection: RouteCollection {
                 messages: getMessages(for: chatId, on: database)
             )
         }
+        
         // MARK: - POST "/chat/:chatId/messages": Creates a new message for a given chat.
         let messages = specificChat.grouped("messages")
-        messages.post { request async throws -> Message in
+        messages.post { request async throws -> HTTPStatus in
             try Message.Create.validate(content: request)
             let create = try request.content.decode(Message.Create.self)
-            // TODO: Check message content (`create.text`) for configured blocking settings, etc.
+            // TODO: Check message content (`create.text`) for moderation or embedded content, etc.
             guard
                 let chatIdString = request.parameters.get("chatId"),
                 let chatId = UUID(uuidString: chatIdString) else {
@@ -78,11 +102,12 @@ struct ChatRouteCollection: RouteCollection {
             else {
                 throw Abort(.badRequest)
             }
-            return Message(
-                text: create.text,
-                chat: chat,
-                sender: sender
-            )
+            guard let chatId = chat.id, let senderId = sender.id else {
+                throw Abort(.notFound)
+            }
+            let message = Message(text: create.text, chat: chatId, sender: senderId)
+            try await message.save(on: request.db)
+            return .ok
         }
     }
 }

@@ -12,7 +12,7 @@ struct MeRouteCollection: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         // "/me" requires the request header to contain a bearer token
         let me = routes
-            .grouped(Token.authenticator(), Token.guardMiddleware()) // Auth with token
+            .grouped(SessionToken.authenticator(), SessionToken.guardMiddleware()) // Auth and guard with session token
             .grouped("me")
         // MARK: - GET: /me
         me.get() { request async throws -> User in

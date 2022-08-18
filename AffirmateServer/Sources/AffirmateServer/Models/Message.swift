@@ -7,24 +7,26 @@
 
 import Fluent
 import Vapor
+import APNS
 
 final class Message: Model, Content {
     
     static let schema = "message"
     static let idKey = "message_id"
+    static let senderId = "sender_id"
     
     @ID(key: FieldKey.id) var id: UUID?
     @Field(key: "text") var text: String
-    @Parent(key: "chat_id") var chat: Chat
-    @Parent(key: "sender_id") var sender: User
+    @Parent(key: Chat.idKey.fieldKey) var chat: Chat
+    @Parent(key: Message.senderId.fieldKey) var sender: User
     
     init() { }
     
-    init(id: UUID? = nil, text: String, chat: Chat, sender: User) {
+    init(id: UUID? = nil, text: String, chat: Chat.IDValue, sender: User.IDValue) {
         self.id = id
         self.text = text
-        self.chat = chat
-        self.sender = sender
+        self.$chat.id = chat
+        self.$sender.id = sender
     }
 }
 
@@ -55,5 +57,37 @@ extension Message {
         static func validations(_ validations: inout Validations) {
             validations.add("text", as: String.self, is: !.empty)
         }
+    }
+}
+
+extension Message {
+    struct Notification: APNSwiftNotification {
+        let message: Message
+        var aps: APNSwiftPayload {
+            APNSwiftPayload(
+                alert: alert,
+                badge: 1,
+                sound: .normal("ReceivedMessage.caf"),
+                category: "ReceivedMessage",
+                interruptionLevel: "active",
+                relevanceScore: 1
+            )
+        }
+        var alert: APNSwiftAlert {
+            APNSwiftAlert(
+                title: "\(message.sender.firstName) sent you a message!",
+                subtitle: message.chat.name,
+                body: message.text
+            )
+        }
+    }
+}
+
+extension APNSwiftPayload {
+    enum InturruptionLevel {
+        static let passive = "passive"
+        static let active = "active"
+        static let timeSensitive = "time-sensitive"
+        static let critical = "critical"
     }
 }

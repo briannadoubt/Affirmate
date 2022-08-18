@@ -7,20 +7,12 @@
 
 import Foundation
 
-struct User: Decodable {
+struct User: Object {
     var id: UUID?
-    var firstName: String
-    var lastName: String
-    var username: String
+    var firstName: String?
+    var lastName: String?
+    var username: String?
     var email: String
-    
-    enum CodingKeys: String, CodingKey {
-        case id
-        case firstName = "first_name"
-        case lastName = "last_name"
-        case username
-        case email
-    }
     
     init(from decoder: Decoder) throws {
         id = try decoder.container(keyedBy: CodingKeys.self).decode(UUID?.self, forKey: .id)

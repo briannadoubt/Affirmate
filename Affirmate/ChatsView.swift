@@ -7,33 +7,39 @@
 
 import SwiftUI
 
-final class ChatsObserver: ObservableObject {
-    @Published var chats: [Chat.GetResponse] = []
-    func getChats() async throws {
-        
-    }
-}
-
 struct ChatsView: View {
     
-    @StateObject var observer = ChatsObserver()
+    @StateObject var chatsObserver = ChatsObserver()
+    
+    @SceneStorage("chat.isShowingNewChat") var isShowingNewChat = false
+    
+    func getChats() async {
+        do {
+            try await chatsObserver.getChats()
+        } catch {
+            print("TODO: Show this error in the UI:", error.localizedDescription)
+        }
+    }
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(observer.chats, id: \.chat.id) { chat in
+                ForEach(chatsObserver.chats) { chat in
                     ChatNavigationLink(chat: chat)
                 }
+            }
+            .task {
+                await getChats()
             }
             .navigationTitle("Chat")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        withAnimation {
-                            
-                        }
-                    } label: {
-                        Image(systemName: "plus")
+                    Button(action: { isShowingNewChat.toggle() }) {
+                        Label("New Chat", systemImage: "plus")
+                    }
+                    .popover(isPresented: $isShowingNewChat) {
+                        NewChatView()
+                            .environmentObject(chatsObserver)
                     }
                 }
             }
@@ -43,6 +49,6 @@ struct ChatsView: View {
 
 struct ChatsView_Previews: PreviewProvider {
     static var previews: some View {
-        ChatsView(observer: ChatsObserver())
+        ChatsView()
     }
 }

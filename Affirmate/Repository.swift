@@ -7,11 +7,27 @@
 
 import Foundation
 
+protocol Object: Codable, Equatable, Identifiable, Hashable { }
+
+protocol GetResponse: Decodable, Hashable { }
+
+protocol CreateObject: Encodable, Hashable { }
+
+protocol UpdateObject: Encodable, Identifiable { }
+
 protocol Repository {
-    associatedtype Object
-    @discardableResult func get() async throws -> [Object]
-    @discardableResult func get(id: UUID) async throws -> Object
-    @discardableResult func create(_ object: Object) async throws -> Object
-    @discardableResult func update(_ object: Object) async throws -> Object
-    func delete(id: UUID) async throws
+    associatedtype Response = GetResponse
+    associatedtype Create = CreateObject
+    associatedtype Update = UpdateObject
+    func get() async throws -> [Response]
+    func get(_ id: UUID) async throws -> Response
+    func create(_ object: Create) async throws
+    func update(_ object: Update) async throws
+    func delete(_ id: UUID) async throws
+}
+
+extension Repository {
+    var http: HTTPActor {
+        HTTPActor()
+    }
 }

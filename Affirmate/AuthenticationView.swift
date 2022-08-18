@@ -138,8 +138,12 @@ struct AuthenticationView: View {
                     }
                 }
             }
-            .background {
-                rainbowImage
+            .onAppear {
+                do {
+                    try HTTPActor.Interceptor.removeTokens()
+                } catch {
+                    print("TODO: Display error on screen:", error.localizedDescription)
+                }
             }
             .navigationTitle("Authentication")
         }

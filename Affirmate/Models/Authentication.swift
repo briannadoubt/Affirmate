@@ -12,8 +12,9 @@ import Alamofire
 final class Authentication: ObservableObject {
     
     @Published var state: Authentication.State = .initial
-    
     @Published var currentUser: User?
+    
+    let http = HTTPActor()
     
     @MainActor private func setState(to newState: Authentication.State) {
         withAnimation {
@@ -22,7 +23,7 @@ final class Authentication: ObservableObject {
     }
     
     func setCurrentAuthenticationState() async {
-        await setState(to: getKeychainToken() == nil ? .loggedOut : .loggedIn)
+        await setState(to: http.interceptor.jwtToken == nil ? .loggedOut : .loggedIn)
     }
     
     @MainActor func setCurrentUser(to user: User?) {
@@ -31,31 +32,8 @@ final class Authentication: ObservableObject {
         }
     }
     
-    func getKeychainToken() -> String? {
-        KeychainWrapper.standard.string(forKey: Constants.tokenKey)
-    }
-    
-    func login(username: String, password: String) async throws {
-        let request = AF.request(Request.login(username: username, password: password), interceptor: Request.TokenInterceptor())
-        let dataTask = request.serializingDecodable(Token.Response.self)
-        let response = await dataTask.response
-        if let error = response.error {
-            throw error
-        }
-        let tokenResponse = try await dataTask.result.get()
-        if !KeychainWrapper.standard.set(
-            tokenResponse.token,
-            forKey: Constants.tokenKey,
-            withAccessibility: .afterFirstUnlock,
-            isSynchronizable: true
-        ) {
-            throw AuthenticationError.failedToSaveTokenToKeychain
-        }
-        await setState(to: .loggedIn)
-    }
-    
     func signUp(userCreate: User.Create) async throws {
-        let request = AF.request(Request.new(user: userCreate), interceptor: Request.TokenInterceptor())
+        let request = AF.request(Request.new(user: userCreate))
         let dataTask = request.serializingDecodable(User.self)
         let response = await dataTask.response
         if let error = response.error {
@@ -65,10 +43,19 @@ final class Authentication: ObservableObject {
         await setCurrentUser(to: userResponse)
     }
     
+    func login(username: String, password: String) async throws {
+        let tokenResponse = try await http.requestDecodable(Request.login(username: username, password: password), to: JWTToken.Response.self)
+        try HTTPActor.Interceptor.set(tokenResponse)
+        await setState(to: .loggedIn)
+    }
+    
+    static func refreshToken(_ oldToken: String) async throws -> JWTToken.Response {
+        let newToken = try await HTTPActor().requestDecodable(Request.refresh(token: oldToken), to: JWTToken.Response.self)
+        return newToken
+    }
+    
     func signOut() async throws {
-        if !KeychainWrapper.standard.removeObject(forKey: Constants.tokenKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true) {
-            throw AuthenticationError.failedToGetTokenFromKeychain
-        }
+        try HTTPActor.Interceptor.removeTokens()
         await setCurrentUser(to: nil)
         await setCurrentAuthenticationState()
     }
@@ -76,21 +63,24 @@ final class Authentication: ObservableObject {
     enum Request: URLRequestConvertible {
         case new(user: User.Create)
         case login(username: String, password: String)
+        case refresh(token: String)
 
-        var baseURL: URL { Constants.authURL! }
+        var url: URL? { Constants.baseURL?.appending(component: "auth") }
         
-        var url: URLConvertible {
+        var uri: URLConvertible? {
             switch self {
             case .new:
-                return baseURL.appending(path: "new")
+                return url?.appending(path: "new")
             case .login:
-                return baseURL.appending(path: "login")
+                return url?.appending(path: "login")
+            case .refresh:
+                return url?.appending(path: "validate")
             }
         }
 
         var method: HTTPMethod {
             switch self {
-            case .new:
+            case .new, .refresh:
                 return .post
             case .login:
                 return .get
@@ -109,30 +99,24 @@ final class Authentication: ObservableObject {
                 break
             case let .login(username, password):
                 headers.add(.authorization(username: username, password: password))
+            case .refresh(let token):
+                headers.add(.authorization(token))
             }
             return headers
         }
 
         func asURLRequest() throws -> URLRequest {
-            var request = try URLRequest(url: url, method: method, headers: headers)
+            guard let requestURL = uri else {
+                throw ChatError.failedToBuildURL
+            }
+            var request = try URLRequest(url: requestURL, method: method, headers: headers)
             switch self {
             case .new(let user):
                 request.httpBody = try JSONEncoder().encode(user)
-            case .login:
+            case .login, .refresh:
                 break
             }
             return request
-        }
-        
-        struct TokenInterceptor: RequestInterceptor {
-            var token: Token.Response?
-            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
-                var request = urlRequest
-                if let tokenResponse = token {
-                    request.headers.add(.authorization(bearerToken: tokenResponse.token))
-                }
-                return completion(.success(request))
-            }
         }
     }
     
@@ -151,4 +135,5 @@ enum AuthenticationError: LocalizedError {
     case failedToSaveTokenToKeychain
     case failedToGetTokenFromKeychain
     case failedToDecodeUser
+    case failedToRemoveTokenFromKeychain
 }
