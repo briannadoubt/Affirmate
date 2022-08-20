@@ -126,7 +126,9 @@ extension User {
 
 extension User {
     var getResponse: GetResponse {
-        GetResponse(id: id, firstName: firstName, lastName: lastName, username: username, email: email)
+        get throws {
+            GetResponse(id: try requireID(), firstName: firstName, lastName: lastName, username: username, email: email)
+        }
     }
     
     struct LoginResponse: Content {
@@ -135,29 +137,12 @@ extension User {
     }
     
     /// The get response for a user
-    struct GetResponse: Content, Equatable, Codable, UserRepresentation {
-        
-        var id: UUID?
+    struct GetResponse: Content, Equatable, Codable {
+        var id: UUID
         var firstName: String
         var lastName: String
         var username: String
         var email: String
-        
-        enum CodingKeys: String, CodingKey {
-            case id
-            case firstName = "first_name"
-            case lastName = "last_name"
-            case username
-            case email
-        }
-        
-        init(id: UUID? = nil, firstName: String, lastName: String, username: String, email: String) {
-            self.id = id
-            self.firstName = firstName
-            self.lastName = lastName
-            self.username = username
-            self.email = email
-        }
     }
 }
 

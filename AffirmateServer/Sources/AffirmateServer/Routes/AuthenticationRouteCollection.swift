@@ -31,7 +31,7 @@ struct AuthenticationRouteCollection: RouteCollection {
                     passwordHash: passwordHash
                 )
                 _ = try await user.create(on: request.db)
-                let getResponse = user.getResponse
+                let getResponse = try user.getResponse
                 print(getResponse)
                 return getResponse
             } catch let abort as Abort {
@@ -64,7 +64,7 @@ struct AuthenticationRouteCollection: RouteCollection {
                     jwtToken: jwtToken,
                     sesionToken: sessionToken.value
                 ),
-                user: user.getResponse
+                user: try user.getResponse
             )
         }
         

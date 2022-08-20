@@ -20,7 +20,7 @@ final class Chat: Model, Content {
     
     init() { }
     
-    init(id: UUID? = nil, name: String?) {
+    init(id: UUID? = nil, name: String? = nil) {
         self.id = id
         self.name = name
     }
@@ -55,9 +55,34 @@ extension Chat {
 }
 
 extension Chat {
+    var getResponse: GetResponse {
+        get throws {
+            try GetResponse(id: requireID(), participants: participants.getResponse, messages: messages.getResponse)
+        }
+    }
+    
     struct GetResponse: Content {
-        var chat: Chat
-        var participants: [Participant]
-        var messages: [Message]
+        var id: UUID
+        var participants: [Participant.GetResponse]
+        var messages: [Message.GetResponse]
+    }
+    
+    var participantResponse: ParticipantResponse? {
+        guard $id.exists, let id else {
+            return nil
+        }
+        return ParticipantResponse(id: id)
+    }
+    
+    struct ParticipantResponse: Content {
+        var id: UUID?
+    }
+}
+
+extension Collection where Element == Chat {
+    var getResponse: [Chat.GetResponse] {
+        get throws {
+            try map { try $0.getResponse }
+        }
     }
 }

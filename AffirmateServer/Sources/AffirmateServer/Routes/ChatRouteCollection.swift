@@ -39,13 +39,30 @@ struct ChatRouteCollection: RouteCollection {
                 .filter(Participant.self, \Participant.$user.$id, .equal, currentUserId)
                 .with(\.$messages) { message in
                     message
-                        .with(\.$chat)
+                        .with(\.$sender)
                 }
                 .with(\.$participants) { participant in
                     participant
-                        .with(\.$chat)
+                        .with(\.$user)
                 }
                 .all()
+//            var getResponses: [Chat.GetResponse] = []
+//            for chat in chats {
+//                var participants: [Participant.GetResponse] = []
+//                for participant in chat.participants {
+//                    participants.append(try participant.getResponse)
+//                }
+//                var messages: [Message.GetResponse] = []
+//                for message in chat.messages {
+//                    messages.append(try message.getResponse)
+//                }
+//                let response = Chat.GetResponse(
+//                    id: try chat.requireID(),
+//                    participants: participants,
+//                    messages: messages
+//                )
+//                getResponses.append(response)
+//            }
             return chats
         }
         
@@ -72,9 +89,9 @@ struct ChatRouteCollection: RouteCollection {
                 throw Abort(.forbidden)
             }
             return try await Chat.GetResponse(
-                chat: chat,
-                participants: chatParticipants,
-                messages: getMessages(for: chatId, on: database)
+                id: try chat.requireID(),
+                participants: chatParticipants.getResponse,
+                messages: getMessages(for: chatId, on: database).getResponse
             )
         }
         
@@ -84,25 +101,39 @@ struct ChatRouteCollection: RouteCollection {
             try Message.Create.validate(content: request)
             let create = try request.content.decode(Message.Create.self)
             // TODO: Check message content (`create.text`) for moderation or embedded content, etc.
+            let currentUser = try request.auth.require(User.self)
             guard
                 let chatIdString = request.parameters.get("chatId"),
-                let chatId = UUID(uuidString: chatIdString) else {
-                throw Abort(.badRequest)
-            }
-            guard let currentUserId = try request.auth.require(User.self).id else {
-                throw Abort(.unauthorized)
-            }
-            guard
-                let chat = try await Chat.find(chatId, on: request.db),
-                let sender = try await User.find(currentUserId, on: request.db)
+                let chatId = UUID(uuidString: chatIdString),
+                let chat = try await Chat.find(chatId, on: request.db)
             else {
                 throw Abort(.badRequest)
             }
-            guard let chatId = chat.id, let senderId = sender.id else {
-                throw Abort(.notFound)
+            let message = try Message(text: create.text, chat: chat.requireID(), sender: currentUser.requireID())
+            try await chat.$messages.create(message, on: request.db)
+            return .ok
+        }
+        
+        // MARK: - POST "/chat/:chatId/participants": Invite a new participant to the chat
+        let participants = specificChat.grouped("participants")
+        participants.post { request async throws -> HTTPStatus in
+            try Participant.Create.validate(content: request)
+            let create = try request.content.decode(Participant.Create.self)
+            let currentUser = try request.auth.require(User.self)
+            guard
+                let chatIdString = request.parameters.get("chatId"),
+                let chatId = UUID(uuidString: chatIdString),
+                let chat = try await Chat.find(chatId, on: request.db)
+            else {
+                throw Abort(.badRequest)
             }
-            let message = Message(text: create.text, chat: chatId, sender: senderId)
-            try await message.save(on: request.db)
+            let participant = try Participant(role: create.role, user: currentUser.requireID(), chat: chat.requireID())
+            try await chat.$participants.load(on: request.db)
+            
+            guard try !chat.participants.contains(where: { try $0.user.requireID() == participant.user.requireID() }) else {
+                throw Abort(.methodNotAllowed, reason: "This person is already in the chat", suggestedFixes: ["Send a new person a chat request, or stop trying!"])
+            }
+            try await chat.$participants.create(participant, on: request.db)
             return .ok
         }
     }

@@ -34,6 +34,18 @@ final class Participant: Model, Content {
 }
 
 extension Participant {
+    struct Create: Content, Validatable {
+        var role: Role
+        var userId: UUID
+        
+        static func validations(_ validations: inout Validations) {
+            validations.add("role", as: String.self, is: !.empty)
+            validations.add("user_id", as: UUID.self)
+        }
+    }
+}
+
+extension Participant {
     /// Handle asyncronous database migration; creating and destroying the "ChatParticipant" table.
     struct Migration: AsyncMigration {
         /// The name of the migrator
@@ -50,6 +62,27 @@ extension Participant {
         /// Destroys the `chat_participants` table
         func revert(on database: Database) async throws {
             try await database.schema(Participant.schema).delete()
+        }
+    }
+}
+
+extension Participant {
+    var getResponse: GetResponse {
+        get throws {
+            try GetResponse(role: role, user: user.getResponse, chat: chat.participantResponse)
+        }
+    }
+    struct GetResponse: Content {
+        var role: Role
+        var user: User.GetResponse
+        var chat: Chat.ParticipantResponse?
+    }
+}
+
+extension Collection where Element == Participant {
+    var getResponse: [Participant.GetResponse] {
+        get throws {
+            try map { try $0.getResponse }
         }
     }
 }

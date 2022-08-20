@@ -13,11 +13,6 @@ public struct ChatView: View {
     @EnvironmentObject var authentication: Authentication
     @EnvironmentObject var chatObserver: ChatObserver
     
-    init(chat: Chat) {
-        self.chat = chat
-    }
-    
-    let chat: Chat
     let navigationTitle: String = "Chat"
     
     @SceneStorage("newMessageText") var newMessageText = ""
@@ -184,6 +179,7 @@ public struct ChatView: View {
 
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
-        ChatView(chat: Chat(name: "Meow"))
+        ChatView()
+            .environmentObject(ChatObserver(chat: Chat(name: "Meow")))
     }
 }

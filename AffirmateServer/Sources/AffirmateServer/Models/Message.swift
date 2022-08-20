@@ -91,3 +91,24 @@ extension APNSwiftPayload {
         static let critical = "critical"
     }
 }
+
+extension Message {
+    var getResponse: GetResponse {
+        get throws {
+            try GetResponse(text: text, chat: chat.getResponse, sender: sender.getResponse)
+        }
+    }
+    struct GetResponse: Content {
+        var text: String
+        var chat: Chat.GetResponse
+        var sender: User.GetResponse
+    }
+}
+
+extension Collection where Element == Message {
+    var getResponse: [Message.GetResponse] {
+        get throws {
+            try map { try $0.getResponse }
+        }
+    }
+}

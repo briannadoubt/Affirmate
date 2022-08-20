@@ -14,13 +14,13 @@ struct User: Object {
     var username: String
     var email: String
     
-    enum CodingKeys: String, CodingKey {
-        case id
-        case firstName = "first_name"
-        case lastName = "last_name"
-        case username
-        case email
-    }
+//    enum CodingKeys: String, CodingKey {
+//        case id
+//        case firstName = "first_name"
+//        case lastName = "last_name"
+//        case username
+//        case email
+//    }
     
     init(id: UUID? = nil, firstName: String, lastName: String, username: String, email: String) {
         self.id = id

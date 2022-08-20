@@ -18,18 +18,16 @@ enum ChatError: LocalizedError {
 struct ChatNavigationLink: View {
     
     @StateObject var chatObserver: ChatObserver
-    let chat: Chat
     
     @State var lastMessageText: String?
     
     init(chat: Chat) {
-        self.chat = chat
         _chatObserver = StateObject(wrappedValue: ChatObserver(chat: chat))
     }
     
     var body: some View {
         NavigationLink {
-            ChatView(chat: chat)
+            ChatView()
                 .environmentObject(chatObserver)
         } label: {
             VStack {
