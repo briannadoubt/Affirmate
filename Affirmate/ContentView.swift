@@ -27,6 +27,16 @@ struct ContentView: View {
             AffirmateTabView()
                 .environmentObject(authentication)
                 .task {
+                    await AffirmateApp.requestNotificationPermissions()
+                    if let token = AppDelegate.deviceToken {
+                        do {
+                            try await authentication.updateDeviceToken(token)
+                        } catch {
+                            print("TODO: Show this error in the UI:", error)
+                        }
+                    }
+                }
+                .task {
                     do {
                         try await authentication.getCurrentUser()
                     } catch {

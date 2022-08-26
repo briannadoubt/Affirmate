@@ -7,17 +7,7 @@
 		<key>Affirmate.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
-		</dict>
-		<key>AffirmateTests.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
 			<integer>1</integer>
-		</dict>
-		<key>AffirmateUITests.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>2</integer>
 		</dict>
 		<key>FizzBuzz (Playground) 1.xcscheme</key>
 		<dict>

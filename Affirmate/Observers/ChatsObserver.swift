@@ -14,7 +14,8 @@ final class ChatsObserver: ObservableObject {
     let actor = ChatsActor()
     
     func getChats() async throws {
-        await updateChats(with: try await actor.get())
+        let chats = try await actor.get()
+        await updateChats(with: chats)
     }
     
     func newChat(_ createChat: Chat.Create) async throws {
@@ -23,11 +24,7 @@ final class ChatsObserver: ObservableObject {
 }
 
 private extension ChatsObserver {
-    
     @MainActor func updateChats(with newChats: [Chat]) {
-//        guard let updatedChatResponses = chats.applying(chats.difference(from: newChats).inferringMoves()) else {
-//            return
-//        }
         withAnimation {
             self.chats = newChats
         }

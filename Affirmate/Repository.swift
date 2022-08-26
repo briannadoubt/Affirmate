@@ -11,7 +11,7 @@ protocol Object: Codable, Equatable, Identifiable, Hashable { }
 
 protocol GetResponse: Decodable, Hashable { }
 
-protocol CreateObject: Encodable, Hashable { }
+protocol CreateObject: Codable, Hashable { }
 
 protocol UpdateObject: Encodable, Identifiable { }
 

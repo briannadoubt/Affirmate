@@ -13,43 +13,28 @@ extension String {
     var validationKey: ValidationKey { ValidationKey(stringLiteral: self) }
 }
 
-protocol UserRepresentation {
-    var id: UUID? { get set }
-    var firstName: String { get set }
-    var lastName: String { get set }
-    var username: String { get set }
-    var email: String { get set }
-}
-
-final class User: Model, Content, Codable, UserRepresentation {
+final class User: Model, Content, Codable {
     
     static let schema = "users"
     
-    enum Keys {
-        static let id = "id"
-        static let firstName = "first_name"
-        static let lastName = "last_name"
-        static let username = "username"
-        static let email = "email"
-        static let passwordHash = "password_hash"
-    }
-    
     @ID(key: FieldKey.id) var id: UUID?
-    @Field(key: Keys.firstName.fieldKey) var firstName: String
-    @Field(key: Keys.lastName.fieldKey) var lastName: String
-    @Field(key: Keys.username.fieldKey) var username: String
-    @Field(key: Keys.email.fieldKey) var email: String
-    @Field(key: Keys.passwordHash.fieldKey) var passwordHash: String
+    @Field(key: "first_name") var firstName: String
+    @Field(key: "last_name") var lastName: String
+    @Field(key: "username") var username: String
+    @Field(key: "email") var email: String
+    @Field(key: "password_hash") var passwordHash: String
+    @OptionalField(key: "apns_id") var apnsId: Data?
     
     init() { }
     
-    init(id: UUID? = nil, firstName: String, lastName: String, username: String, email: String, passwordHash: String) {
+    init(id: UUID? = nil, firstName: String, lastName: String, username: String, email: String, passwordHash: String, apnsId: Data? = nil) {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
         self.username = username
         self.email = email
         self.passwordHash = passwordHash
+        self.apnsId = apnsId
     }
 }
 
@@ -62,13 +47,14 @@ extension User {
         func prepare(on database: Database) async throws {
             try await database.schema(User.schema)
                 .id()
-                .field(User.Keys.firstName.fieldKey, .string)
-                .field(User.Keys.lastName.fieldKey, .string)
-                .field(User.Keys.email.fieldKey, .string, .required)
-                .field(User.Keys.username.fieldKey, .string)
-                .field(User.Keys.passwordHash.fieldKey, .string, .required)
-                .unique(on: User.Keys.email.fieldKey)
-                .unique(on: User.Keys.username.fieldKey)
+                .field("first_name", .string)
+                .field("last_name", .string)
+                .field("email", .string, .required)
+                .field("username", .string)
+                .field("password_hash", .string, .required)
+                .field("apns_id", .data)
+                .unique(on: "email")
+                .unique(on: "username")
                 .create()
         }
         /// Destroys the `user` table
@@ -106,20 +92,11 @@ extension User {
         }
         
         static func validations(_ validations: inout Validations) {
-            validations.add("first_name", as: String.self, is: !.empty)
-            validations.add("last_name", as: String.self, is: !.empty)
+            validations.add("firstName", as: String.self, is: !.empty)
+            validations.add("lastName", as: String.self, is: !.empty)
             validations.add("username", as: String.self, is: !.empty && .alphanumeric && .count(3...64))
             validations.add("email", as: String.self, is: !.empty)
             validations.add("password", as: String.self, is: .count(8...))
-        }
-        
-        enum CodingKeys: String, CodingKey {
-            case firstName = "first_name"
-            case lastName = "last_name"
-            case username
-            case email
-            case password
-            case confirmPassword = "confirm_password"
         }
     }
 }

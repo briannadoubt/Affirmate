@@ -52,8 +52,9 @@ struct MessageView_Previews: PreviewProvider {
             currentUserId: UUID(),
             message: Message(
                 text: "Meow",
-                chat: Chat(name: "Meow meow!"),
+                chat: Chat(id: UUID(), name: "Meow meow!"),
                 sender: User(
+                    id: UUID(),
                     firstName: "meow",
                     lastName: "face",
                     username: "meowface",

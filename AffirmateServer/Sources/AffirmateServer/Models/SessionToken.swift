@@ -12,14 +12,8 @@ final class SessionToken: Model, Content {
     static let schema = "session_tokens"
 
     @ID(key: .id) var id: UUID?
-    @Field(key: Keys.value.fieldKey) var value: String
-    @Parent(key: Keys.userId.fieldKey) var user: User
-
-    enum Keys {
-        static let id = "id"
-        static let value = "value"
-        static let userId = "user_id"
-    }
+    @Field(key: "value") var value: String
+    @Parent(key: "user_id") var user: User
     
     init() { }
 
@@ -37,9 +31,9 @@ extension SessionToken {
         func prepare(on database: Database) async throws {
             try await database.schema(SessionToken.schema)
                 .id()
-                .field(Keys.value.fieldKey, .string, .required)
-                .field(Keys.userId.fieldKey, .uuid, .required, .references(User.schema, User.Keys.id.fieldKey))
-                .unique(on: Keys.value.fieldKey)
+                .field("value", .string, .required)
+                .field("user_id", .uuid, .required, .references(User.schema, FieldKey.id))
+                .unique(on: "value")
                 .create()
         }
 

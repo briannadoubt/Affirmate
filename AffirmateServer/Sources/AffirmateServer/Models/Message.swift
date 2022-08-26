@@ -12,13 +12,11 @@ import APNS
 final class Message: Model, Content {
     
     static let schema = "message"
-    static let idKey = "message_id"
-    static let senderId = "sender_id"
     
     @ID(key: FieldKey.id) var id: UUID?
     @Field(key: "text") var text: String
-    @Parent(key: Chat.idKey.fieldKey) var chat: Chat
-    @Parent(key: Message.senderId.fieldKey) var sender: User
+    @Parent(key: "chat_id") var chat: Chat
+    @Parent(key: "sender_id") var sender: User
     
     init() { }
     
@@ -40,7 +38,7 @@ extension Message {
             try await database.schema(Message.schema)
                 .id()
                 .field("text", .string)
-                .field("chat_id", .uuid, .required, .references(Chat.schema, "id"))
+                .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
                 .field("sender_id", .uuid, .required, .references(User.schema, .id))
                 .create()
         }
@@ -61,6 +59,9 @@ extension Message {
 }
 
 extension Message {
+    var notification: Notification {
+        Notification(message: self)
+    }
     struct Notification: APNSwiftNotification {
         let message: Message
         var aps: APNSwiftPayload {
@@ -75,7 +76,7 @@ extension Message {
         }
         var alert: APNSwiftAlert {
             APNSwiftAlert(
-                title: "\(message.sender.firstName) sent you a message!",
+                title: "\(message.sender.username) sent you a message!",
                 subtitle: message.chat.name,
                 body: message.text
             )

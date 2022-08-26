@@ -8,21 +8,13 @@
 import Foundation
 
 struct User: Object {
-    var id: UUID?
+    var id: UUID
     var firstName: String
     var lastName: String
     var username: String
     var email: String
     
-//    enum CodingKeys: String, CodingKey {
-//        case id
-//        case firstName = "first_name"
-//        case lastName = "last_name"
-//        case username
-//        case email
-//    }
-    
-    init(id: UUID? = nil, firstName: String, lastName: String, username: String, email: String) {
+    init(id: UUID, firstName: String, lastName: String, username: String, email: String) {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
@@ -43,14 +35,5 @@ struct User: Object {
         var email: String
         var password: String
         var confirmPassword: String
-        
-        enum CodingKeys: String, CodingKey {
-            case firstName = "first_name"
-            case lastName = "last_name"
-            case username
-            case email
-            case password
-            case confirmPassword = "confirm_password"
-        }
     }
 }

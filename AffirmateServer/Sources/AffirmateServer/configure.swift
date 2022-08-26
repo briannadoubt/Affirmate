@@ -2,9 +2,18 @@ import Fluent
 import FluentPostgresDriver
 import Leaf
 import Vapor
+import APNS
+import APNSwift
+import JWT
+
+extension String {
+    var jwkIdentifier: JWKIdentifier {
+        .init(string: self)
+    }
+}
 
 // configures your application
-public func configure(_ app: Application) {
+public func configure(_ app: Application) throws {
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
@@ -32,15 +41,47 @@ public func configure(_ app: Application) {
     // Configure using Leaf as an HTML rendering engine for web browser clients.
     app.views.use(.leaf)
     
-    // Add HMAC with SHA-256 signer.
-    app.jwt.signers.use(.hs256(key: "secret"))
+    let iOSBundleIdentifier = "org.affirmate.Affirmate"
     
-    // Configure Apple app identifier.
-    app.jwt.apple.applicationIdentifier = "..."
+    if
+        let apnsKey = Environment.get("APNS_KEY")?.replacingOccurrences(of: "\\n", with: "\n"),
+        let keyIdentifier = Environment.get("APNS_KEY_ID"),
+        let teamIdentifier = Environment.get("APNS_TEAM_ID")
+    {
+        let key: ECDSAKey =  try .private(pem: apnsKey)
+        
+        let apnsAuthentication: APNSwiftConfiguration.AuthenticationMethod = .jwt(
+            key: key,
+            keyIdentifier: keyIdentifier.jwkIdentifier,
+            teamIdentifier: teamIdentifier
+        )
+        
+        switch app.environment {
+        case .production:
+            app.apns.configuration = APNSwiftConfiguration(
+                authenticationMethod: apnsAuthentication,
+                topic: iOSBundleIdentifier,
+//                environment: .production
+                environment: .sandbox
+            )
+        default:
+            app.apns.configuration = APNSwiftConfiguration(
+                authenticationMethod: apnsAuthentication,
+                topic: iOSBundleIdentifier,
+                environment: .sandbox
+            )
+        }
+        
+        // Add an ECDSA key to the JWT insfrustructure with an ES-256 signer.
+        app.jwt.signers.use(.es256(key: key))
+        
+        // Configure Apple app identifier.
+        app.jwt.apple.applicationIdentifier = iOSBundleIdentifier
+    }
     
     // Configure Google app identifier and domain name.
-    app.jwt.google.applicationIdentifier = "..."
-    app.jwt.google.gSuiteDomainName = "..."
+//    app.jwt.google.applicationIdentifier = "org.affirmate.Affirmate"
+//    app.jwt.google.gSuiteDomainName = "..."
     
     // MARK: Clear Database
     if app.environment == .testing {
@@ -49,10 +90,18 @@ public func configure(_ app: Application) {
     if !app.environment.isRelease {
         try? app.autoMigrate().wait()
     }
+    
     do {
         // register routes
-        try routes(app)
+        try restRoutes(app)
     } catch {
         print(error.localizedDescription)
     }
+    
+    let chatWebSocketManager = ChatWebSocketManager(eventLoop: app.eventLoopGroup.next())
+    app
+        .grouped(SessionToken.authenticator(), SessionToken.guardMiddleware())
+        .webSocket("chats", ":chatId") { request, webSocket async in
+            await chatWebSocketManager.connect(request, webSocket)
+        }
 }

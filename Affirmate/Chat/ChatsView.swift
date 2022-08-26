@@ -7,11 +7,51 @@
 
 import SwiftUI
 
+struct ChatsListView: View {
+    @Binding var selectedChat: Chat?
+    @EnvironmentObject var chatsObserver: ChatsObserver
+    @EnvironmentObject var authentication: Authentication
+    @SceneStorage("chat.isShowingNewChat") var isShowingNewChat = false
+    var getChats: () async -> ()
+    var body: some View {
+        List(selection: $selectedChat) {
+            ForEach(chatsObserver.chats) { chat in
+                VStack {
+                    if let lastMessage = chat.messages?.last {
+                        Text((lastMessage.sender.username) + ": ").bold()
+                        Text(lastMessage.text)
+                    } else {
+                        Text("No messages yet...")
+                    }
+                }
+                .tag(chat)
+            }
+        }
+        .refreshable {
+            await getChats()
+        }
+        .task {
+            await getChats()
+        }
+        .navigationTitle("Chat")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: { isShowingNewChat.toggle() }) {
+                    Label("New Chat", systemImage: "plus")
+                }
+                .popover(isPresented: $isShowingNewChat) {
+                    NewChatView()
+                        .environmentObject(chatsObserver)
+                }
+            }
+        }
+    }
+}
+
 struct ChatsView: View {
     
     @StateObject var chatsObserver = ChatsObserver()
-    
-    @SceneStorage("chat.isShowingNewChat") var isShowingNewChat = false
+    @EnvironmentObject var authentication: Authentication
     
     func getChats() async {
         do {
@@ -21,29 +61,27 @@ struct ChatsView: View {
         }
     }
     
+    @State var navigationSplitViewVisibility: NavigationSplitViewVisibility = .doubleColumn
+    
+    @State var selectedChat: Chat?
+    
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(chatsObserver.chats) { chat in
-                    ChatNavigationLink(chat: chat)
-                }
-            }
-            .task {
-                await getChats()
-            }
-            .navigationTitle("Chat")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: { isShowingNewChat.toggle() }) {
-                        Label("New Chat", systemImage: "plus")
-                    }
-                    .popover(isPresented: $isShowingNewChat) {
-                        NewChatView()
-                            .environmentObject(chatsObserver)
-                    }
-                }
+        NavigationSplitView(
+            columnVisibility: $navigationSplitViewVisibility
+        ) {
+            ChatsListView(selectedChat: $selectedChat, getChats: getChats)
+                .environmentObject(authentication)
+                .environmentObject(chatsObserver)
+                .navigationSplitViewColumnWidth(ideal: 320)
+        } detail: {
+            if let selectedChat {
+                ChatView()
+                    .environmentObject(ChatObserver(chat: selectedChat))
+            } else {
+                Text("👈 Select a chat on the left")
             }
         }
+        .navigationSplitViewStyle(.balanced)
     }
 }
 

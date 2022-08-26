@@ -32,7 +32,15 @@ services:
     build:
       context: .
     environment:
-      <<: *shared_environment
+      APNS_KEY: ${APNS_KEY:-secret}
+      APNS_KEY_ID: ${APNS_KEY_ID:-APNS_KEY_ID}
+      APNS_TEAM_ID: ${APNS_TEAM_ID:-APNS_TEAM_ID}
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+      DATABASE_HOST: db
+      DATABASE_NAME: vapor_database
+      DATABASE_USERNAME: vapor_username
+      DATABASE_PASSWORD: vapor_password
+      
     depends_on:
       - db
     ports:

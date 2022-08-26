@@ -28,6 +28,28 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0389BC98286FAB2A00CBDC3B"
+               BuildableName = "AffirmateTests.xctest"
+               BlueprintName = "AffirmateTests"
+               ReferencedContainer = "container:Affirmate.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0389BCA2286FAB2B00CBDC3B"
+               BuildableName = "AffirmateUITests.xctest"
+               BlueprintName = "AffirmateUITests"
+               ReferencedContainer = "container:Affirmate.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

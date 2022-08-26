@@ -7,15 +7,20 @@
 
 import Fluent
 import Vapor
+import NIOFoundationCompat
+
+enum ChatAction: String, CaseIterable {
+    case sendMessage = "send_message"
+}
 
 struct ChatRouteCollection: RouteCollection {
     
     func boot(routes: RoutesBuilder) throws {
         let tokenProtected = routes.grouped(SessionToken.authenticator(), SessionToken.guardMiddleware()) // Auth and guard with session token
-        let chatRoute = tokenProtected.grouped("chats")
+        let chats = tokenProtected.grouped("chats")
         
         // MARK: - POST "/chats": Creates a new blank chat and adds the current user as a participant
-        chatRoute.post { request async throws -> HTTPStatus in
+        chats.post { request async throws -> HTTPStatus in
             try await request.db.transaction { transaction in
                 let chatCreate = try request.content.decode(Chat.Create.self)
                 let newChat = Chat(name: chatCreate.name)
@@ -32,68 +37,33 @@ struct ChatRouteCollection: RouteCollection {
         }
         
         // MARK: - GET "/chats": Returns all authorized chats based on the user token session.
-        chatRoute.get { request async throws -> [Chat] in
-            let currentUserId = try request.auth.require(User.self).requireID()
-            let chats = try await Chat.query(on: request.db)
-                .join(Participant.self, on: \Participant.$chat.$id == \Chat.$id)
-                .filter(Participant.self, \Participant.$user.$id, .equal, currentUserId)
-                .with(\.$messages) { message in
-                    message
-                        .with(\.$sender)
+        chats.get { request async throws -> [Chat] in
+            try await request.db.transaction { database -> [Chat] in
+                let currentUserId = try request.auth.require(User.self).requireID()
+                let chats = try await Chat.query(on: database)
+                    .join(Participant.self, on: \Participant.$chat.$id == \Chat.$id)
+                    .filter(Participant.self, \.$user.$id, .equal, currentUserId)
+                    .with(\.$participants) { participant in
+                        participant.with(\.$user)
+                    }
+                    .with(\.$messages) { message in
+                        message.with(\.$sender)
+                    }
+                    .all()
+                for chat in chats {
+                    for participant in chat.participants {
+                        participant.user.passwordHash = "HIDDEN"
+                    }
                 }
-                .with(\.$participants) { participant in
-                    participant
-                        .with(\.$user)
-                }
-                .all()
-//            var getResponses: [Chat.GetResponse] = []
-//            for chat in chats {
-//                var participants: [Participant.GetResponse] = []
-//                for participant in chat.participants {
-//                    participants.append(try participant.getResponse)
-//                }
-//                var messages: [Message.GetResponse] = []
-//                for message in chat.messages {
-//                    messages.append(try message.getResponse)
-//                }
-//                let response = Chat.GetResponse(
-//                    id: try chat.requireID(),
-//                    participants: participants,
-//                    messages: messages
-//                )
-//                getResponses.append(response)
-//            }
-            return chats
+                return chats
+            }
         }
         
-        // MARK: - Get "/chat/:chatId": Returns a ChatGetResponse from a given chatId
-        let specificChat = chatRoute.grouped(":chatId")
-        specificChat.get { request async throws -> Chat.GetResponse in
-            guard let currentUserId = try request.auth.require(User.self).id else {
-                throw Abort(.unauthorized)
-            }
-            guard
-                let chatIdString = request.parameters.get("chatId"),
-                let chatId = UUID(uuidString: chatIdString) else {
-                throw Abort(.badRequest)
-            }
-            let database = request.db
-            let chatParticipants = try await getParticipants(for: chatId, on: database)
-            guard
-                let chat = try await Chat.find(chatId, on: database),
-                !chatParticipants.isEmpty
-            else {
-                throw Abort(.notFound)
-            }
-            guard chatParticipants.contains(where: { $0.$user.id == currentUserId }) else {
-                throw Abort(.forbidden)
-            }
-            return try await Chat.GetResponse(
-                id: try chat.requireID(),
-                participants: chatParticipants.getResponse,
-                messages: getMessages(for: chatId, on: database).getResponse
-            )
-        }
+        // MARK: - WebSocket "/chats/:chatId": Accepts a websocket connection for realtime chat updates
+        let specificChat = chats.grouped(":chatId")
+//        specificChat.webSocket { request, webSocket in
+//            chatConnectionsManager.connect(request, webSocket)
+//        }
         
         // MARK: - POST "/chat/:chatId/messages": Creates a new message for a given chat.
         let messages = specificChat.grouped("messages")
@@ -111,6 +81,22 @@ struct ChatRouteCollection: RouteCollection {
             }
             let message = try Message(text: create.text, chat: chat.requireID(), sender: currentUser.requireID())
             try await chat.$messages.create(message, on: request.db)
+            try await chat.$participants.load(on: request.db)
+            for participant in chat.participants {
+                try await participant.$user.load(on: request.db)
+            }
+            for apnsId in chat.participants.compactMap({ $0.user.apnsId }) {
+                let deviceTokenString = apnsId.map { String(format: "%02.2hhx", $0) }.joined()
+                try await request.apns.send(
+                    message.notification,
+                    pushType: .alert,
+                    to: deviceTokenString,
+                    with: JSONEncoder(),
+                    expiration: nil,
+                    priority: 10,
+                    collapseIdentifier: try chat.requireID().uuidString
+                )
+            }
             return .ok
         }
         
@@ -140,12 +126,6 @@ struct ChatRouteCollection: RouteCollection {
 }
 
 extension ChatRouteCollection {
-    private func getChats(for currentUserId: UUID, on database: Database) async throws -> [Chat] {
-        try await Chat.query(on: database)
-            .join(Participant.self, on: \Participant.$chat.$id == \Chat.$id)
-            .filter(Participant.self, \.$user.$id, .equal, currentUserId)
-            .all()
-    }
     private func getParticipants(for chatId: UUID, on database: Database) async throws -> [Participant] {
         try await Participant.query(on: database)
             .filter(Participant.self, \.$chat.$id, .equal, chatId)

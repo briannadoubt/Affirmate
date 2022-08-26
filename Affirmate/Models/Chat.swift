@@ -8,7 +8,7 @@
 import Foundation
 
 struct Chat: Object, UpdateObject {
-    var id: UUID?
+    var id: UUID
     var name: String?
     var participants: [Participant]?
     var messages: [Message]?

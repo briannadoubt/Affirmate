@@ -21,4 +21,10 @@ struct Participant: Object {
         case admin
         case participant
     }
+    
+    struct Create: Codable {
+        var role: Role
+        var user: UUID
+        var chat: UUID
+    }
 }

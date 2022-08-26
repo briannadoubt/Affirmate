@@ -13,30 +13,29 @@ public struct ChatView: View {
     @EnvironmentObject var authentication: Authentication
     @EnvironmentObject var chatObserver: ChatObserver
     
-    let navigationTitle: String = "Chat"
-    
-    @SceneStorage("newMessageText") var newMessageText = ""
+    @SceneStorage("chat_newMessageText") var newMessageText = ""
+    @SceneStorage("chat_showingNewParticipants") var showingNewParticipants = false
     @FocusState fileprivate var focused
+    
+    @State var presentedParticipant: Participant?
     
     #if os(iOS)
     @StateObject fileprivate var keyboard = KeyboardHeightObserver()
     #endif
     
     fileprivate func send() {
-        Task {
-            // Don't send if only whitespaces, or if message was empty
-            guard !newMessageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-                return
-            }
-            do {
-                try await chatObserver.sendMessage(newMessageText)
-            } catch {
-                print(error)
-            }
-            withAnimation {
-                focused = true
-                newMessageText = ""
-            }
+        // Don't send if only whitespaces, or if message was empty
+        guard !newMessageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return
+        }
+        do {
+            try chatObserver.sendMessage(newMessageText)
+        } catch {
+            print(error)
+        }
+        withAnimation {
+            focused = true
+            newMessageText = ""
         }
     }
     
@@ -47,15 +46,13 @@ public struct ChatView: View {
     }
     
     fileprivate func scrollToLastMessage(scrollProxy: ScrollViewProxy) {
-        if let message = chatObserver.chat.messages?.last {
+        if let message = chatObserver.messages.last {
             scrollToMessage(message.id, scrollProxy: scrollProxy)
         }
     }
     
     fileprivate func shouldHaveTail(_ message: Message) -> Bool {
-        guard let messages = chatObserver.chat.messages else {
-            return false
-        }
+        let messages = chatObserver.messages
         if let index = messages.firstIndex(of: message) {
             let nextMessageIndex = messages.index(after: index)
             if nextMessageIndex >= messages.count {
@@ -78,7 +75,7 @@ public struct ChatView: View {
                     pinnedViews: [.sectionHeaders, .sectionFooters]
                 ) {
                     if let currentUserId = authentication.currentUser?.id {
-                        ForEach(chatObserver.chat.messages ?? []) { message in
+                        ForEach(chatObserver.messages) { message in
                             MessageView(
                                 currentUserId: currentUserId,
                                 withTail: shouldHaveTail(message),
@@ -136,50 +133,55 @@ public struct ChatView: View {
                     scrollToLastMessage(scrollProxy: scrollView)
                 }
 #endif
-                .onChange(of: chatObserver.chat.messages?.count) { newCount in
+                .onChange(of: chatObserver.messages.count) { newCount in
                     scrollToLastMessage(scrollProxy: scrollView)
                 }
                 .padding()
                 .background(.bar)
                 .ignoresSafeArea(.keyboard, edges: .bottom)
             }
+            .toolbarTitleMenu {
+                ForEach(chatObserver.participants) { participant in
+                    HStack {
+                        Circle().frame(width: 44, height: 44)
+                        Text("@" + participant.user.username)
+                    }
+                }
+                Button {
+                    showingNewParticipants = true
+                } label: {
+                    Label("New Participant", systemImage: "plus.message")
+                }
+            }
+            .sheet(isPresented: $showingNewParticipants) {
+                NewParticipantsView()
+                    .environmentObject(chatObserver)
+            }
         }
-        .navigationTitle("Chat")
-//        .toolbar {
-//            ToolbarItem(placement: .principal) {
-//                if let participant = participants.first, let uid = participant.id {
-//                    Menu {
-//                        Button {
-//                            presentedUid = uid
-//                        } label: {
-//                            Label("View Profile", systemImage: "person.circle.fill")
-//                        }
-//                    } label: {
-//                        VStack(spacing: 0) {
-//                            ProfileImage<U>(uid: uid)
-//                                .frame(width: 20, height: 20)
-//                            Text(usernames)
-//                                .font(.caption2.bold())
-//                                .foregroundColor(.primary)
-//                        }
-//                    }
-//                    .menuStyle(.borderlessButton)
-//                }
-//            }
-//        }
-//        .sheet(item: $presentedUid) {
-//            presentedUid = nil
-//        } content: { uid in
-//            if let uid = uid {
-//                profileView(uid)
-//            }
-//        }
+        .navigationTitle(chatObserver.name)
+        .task {
+            do {
+                try chatObserver.connect()
+            } catch {
+                print("TODO: Show this error in the UI:", "Connection Error:", error)
+            }
+        }
+        .toolbar {
+            ToolbarTitleMenu()
+        }
+        .sheet(item: $presentedParticipant) {
+            presentedParticipant = nil
+        } content: { participant in
+            if let presentedParticipant {
+                ProfileView(user: presentedParticipant.user)
+            }
+        }
     }
 }
 
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
         ChatView()
-            .environmentObject(ChatObserver(chat: Chat(name: "Meow")))
+            .environmentObject(ChatObserver(chat: Chat(id: UUID(), name: "Meow")))
     }
 }

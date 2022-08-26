@@ -15,7 +15,6 @@ actor HTTPActor {
     func request(_ requestConvertible: any URLRequestConvertible) async throws {
         switch await AF
             .request(requestConvertible, interceptor: interceptor)
-            .validate()
             .serializingData()
             .result {
         case .failure(let error):
@@ -26,23 +25,17 @@ actor HTTPActor {
     }
     
     func requestDecodable<Value: Decodable>(_ requestConvertible: any URLRequestConvertible, to type: Value.Type) async throws -> Value {
-        switch await AF.request(requestConvertible, interceptor: interceptor).validate().serializingString().result {
-        case .failure(let error):
-            throw error
-        case .success(let string):
-            print(string)
-        }
-        let result = await AF
+        print(Value.self)
+        let response = await AF
             .request(requestConvertible, interceptor: interceptor)
-            .validate()
             .serializingDecodable(type.self)
-            .result
-        switch result {
+            .response
+        print(response)
+        switch response.result {
         case .success(let value):
-            print(value)
+            print("Decoded", Value.self, "successfully:", value)
             return value
         case .failure(let error):
-            print(error)
             throw error
         }
     }

@@ -13,6 +13,7 @@ enum ChatError: LocalizedError {
     case failedToRetrieveTokenFromKeychain
     case serverError(ServerError)
     case chatIdNotFound
+    case clientIdHasNotBeenSet
 }
 
 struct ChatNavigationLink: View {
@@ -26,13 +27,14 @@ struct ChatNavigationLink: View {
     }
     
     var body: some View {
+        
         NavigationLink {
             ChatView()
                 .environmentObject(chatObserver)
         } label: {
             VStack {
-                if let lastMessage = chatObserver.chat.messages?.last {
-                    Text((lastMessage.sender.username ?? "") + ": ").bold()
+                if let lastMessage = chatObserver.messages.last {
+                    Text((lastMessage.sender.username) + ": ").bold()
                     Text(lastMessage.text)
                 } else {
                     Text("No messages yet...")

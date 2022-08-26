@@ -67,10 +67,19 @@ final class Authentication: ObservableObject {
         await setCurrentAuthenticationState()
     }
     
+    func updateDeviceToken(_ token: Data?) async throws {
+        try await http.request(Request.updateDeviceToken(token))
+    }
+    
+    struct APNSDeviceToken: Codable {
+        var token: Data?
+    }
+    
     enum Request: URLRequestConvertible {
         case new(user: User.Create)
         case login(username: String, password: String)
         case refresh(token: String)
+        case updateDeviceToken(Data?)
 
         var url: URL? { Constants.baseURL?.appending(component: "auth") }
         
@@ -82,6 +91,8 @@ final class Authentication: ObservableObject {
                 return url?.appending(path: "login")
             case .refresh:
                 return url?.appending(path: "validate")
+            case .updateDeviceToken:
+                return url?.appending(path: "deviceToken")
             }
         }
 
@@ -91,6 +102,8 @@ final class Authentication: ObservableObject {
                 return .post
             case .login:
                 return .get
+            case .updateDeviceToken:
+                return .put
             }
         }
         
@@ -102,7 +115,7 @@ final class Authentication: ObservableObject {
             headers.add(.contentType("application/json"))
             headers.add(.accept("application/json"))
             switch self {
-            case .new:
+            case .new, .updateDeviceToken:
                 break
             case let .login(username, password):
                 headers.add(.authorization(username: username, password: password))
@@ -120,6 +133,8 @@ final class Authentication: ObservableObject {
             switch self {
             case .new(let user):
                 request.httpBody = try JSONEncoder().encode(user)
+            case .updateDeviceToken(let token):
+                request.httpBody = try JSONEncoder().encode(APNSDeviceToken(token: token))
             case .login, .refresh:
                 break
             }

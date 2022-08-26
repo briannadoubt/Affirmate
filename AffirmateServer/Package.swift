@@ -31,7 +31,7 @@ let package = Package(
                 .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
             ]
         ),
-        .executableTarget(name: "Run", dependencies: [.target(name: "AffirmateServer")]),
+        .executableTarget(name: "Server", dependencies: [.target(name: "AffirmateServer")]),
         .testTarget(name: "AffirmateServerTests", dependencies: [
             .target(name: "AffirmateServer"),
             .product(name: "XCTVapor", package: "vapor"),

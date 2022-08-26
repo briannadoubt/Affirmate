@@ -18,6 +18,8 @@ struct Message: Object {
     struct Create: CreateObject {
         var text: String
     }
+    
+    static var notificationName = Notification.Name("NewMessage")
 }
 
 //extension Message {
