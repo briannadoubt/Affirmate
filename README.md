@@ -14,4 +14,7 @@ In order to build and run the server locally you will need to pass in a variety 
 
 See the following screenshot for an example of all the required keys and arguments:
 
-<img width="440" alt="Screenshot 2022-08-26 at 2 39 58 PM" src="https://user-images.githubusercontent.com/5713359/186994861-bea4c1af-7d36-435f-be0f-1bdc808a0a88.png">
+<img width="440" alt="Required Server Arguments and Environment Variables" src="https://user-images.githubusercontent.com/5713359/186994861-bea4c1af-7d36-435f-be0f-1bdc808a0a88.png">
+
+## Authentication Architecture Flow
+<img width="440" alt="Authentication Architecture Flow" src="https://user-images.githubusercontent.com/5713359/187051690-515e22ae-0728-4b4f-81cb-4771d5100b5d.png">
