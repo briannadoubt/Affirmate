@@ -21,7 +21,7 @@ final class JWTToken: Content, Authenticatable {
         self.expiration = ExpirationClaim(value: Date().addingTimeInterval(Self.expirationTime))
     }
 
-    init(user: User) throws {
+    init(user: AffirmateUser) throws {
         self.userId = try user.requireID()
         self.expiration = ExpirationClaim(value: Date().addingTimeInterval(Self.expirationTime))
     }

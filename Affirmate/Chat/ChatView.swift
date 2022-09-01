@@ -69,6 +69,11 @@ public struct ChatView: View {
     }
     
     public var body: some View {
+        let newParticipantButton = Button {
+            showingNewParticipants = true
+        } label: {
+            Label("New Participant", systemImage: "plus.message")
+        }
         ScrollViewReader { scrollView in
             ReversedScrollView(.vertical, showsIndicator: true) {
                 LazyVStack(
@@ -149,11 +154,7 @@ public struct ChatView: View {
                         Text("@" + participant.username)
                     }
                 }
-                Button {
-                    showingNewParticipants = true
-                } label: {
-                    Label("New Participant", systemImage: "plus.message")
-                }
+                newParticipantButton
             }
             .sheet(isPresented: $showingNewParticipants) {
                 NewParticipantsView()
@@ -161,6 +162,7 @@ public struct ChatView: View {
             }
         }
         .navigationTitle(chatObserver.name)
+        .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
         .task {
             do {
                 try chatObserver.connect()
@@ -179,6 +181,9 @@ public struct ChatView: View {
                 } label: {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
+            }
+            ToolbarItem(placement: .secondaryAction) {
+                newParticipantButton
             }
         }
         .alert(isPresented: $presentedCopiedUrl) {

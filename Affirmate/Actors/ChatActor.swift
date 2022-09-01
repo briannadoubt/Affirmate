@@ -44,16 +44,16 @@ extension ChatsActor {
         case chat(chatId: UUID, sessionToken: String?)
         case newMessage(chatId: UUID, message: Message.Create)
         
-        var url: URL? { Constants.baseURL?.appending(component: "chats") }
+        var url: URL { Constants.baseURL.appending(component: "chats") }
         
         var uri: URLConvertible? {
             switch self {
             case .chats, .newChat:
                 return url
             case .chat(let chatId, _):
-                return Constants.baseSocketURL?.appending(component: "chats").appending(component: chatId.uuidString)
+                return url.appending(component: chatId.uuidString)
             case let .newMessage(chatId, _):
-                return url?.appending(component: chatId.uuidString).appending(component: "messages")
+                return url.appending(component: chatId.uuidString).appending(component: "messages")
             }
         }
         

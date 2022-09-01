@@ -6,14 +6,18 @@
 //
 
 import SwiftUI
+import AffirmateServer
 
 struct ContentView: View {
+    @StateObject var server = AffirmateServer(port: 8080)
     var body: some View {
         VStack {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundColor(.accentColor)
-            Text("Hello, world!")
+            Button("Start Server") {
+                
+            }
         }
         .padding()
     }

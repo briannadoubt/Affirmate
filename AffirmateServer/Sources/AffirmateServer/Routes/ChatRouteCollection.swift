@@ -25,7 +25,7 @@ struct ChatRouteCollection: RouteCollection {
                 let chatCreate = try request.content.decode(Chat.Create.self)
                 let newChat = Chat(name: chatCreate.name)
                 try await newChat.save(on: transaction)
-                let user = try request.auth.require(User.self)
+                let user = try request.auth.require(AffirmateUser.self)
                 guard let userId = user.id, let chatId = newChat.id else {
                     throw Abort(.notFound)
                 }
@@ -39,7 +39,7 @@ struct ChatRouteCollection: RouteCollection {
         // MARK: - GET "/chats": Returns all authorized chats based on the user token session.
         chats.get { request async throws -> [Chat] in
             try await request.db.transaction { database -> [Chat] in
-                let currentUser = try request.auth.require(User.self)
+                let currentUser = try request.auth.require(AffirmateUser.self)
                 try await currentUser.$chats.load(on: database)
                 let chats = currentUser.chats
                 for chat in chats {
@@ -71,7 +71,7 @@ struct ChatRouteCollection: RouteCollection {
 //            try Message.Create.validate(content: request)
 //            let create = try request.content.decode(Message.Create.self)
 //            // TODO: Check message content (`create.text`) for moderation or embedded content, etc.
-//            let currentUser = try request.auth.require(User.self)
+//            let currentUser = try request.auth.require(AffirmateUser.self)
 //            guard
 //                let chatIdString = request.parameters.get("chatId"),
 //                let chatId = UUID(uuidString: chatIdString),
@@ -104,12 +104,12 @@ struct ChatRouteCollection: RouteCollection {
 //            try Participant.Create.validate(content: request)
 //            let create = try request.content.decode(Participant.Create.self)
 //            try await request.db.transaction { database in
-//                let currentUser = try request.auth.require(User.self)
+//                let currentUser = try request.auth.require(AffirmateUser.self)
 //                guard
 //                    let chatIdString = request.parameters.get("chatId"),
 //                    let chatId = UUID(uuidString: chatIdString),
 //                    let chat = try await Chat.find(chatId, on: database),
-//                    let invitedUser = User.find(create.user, on: database)
+//                    let invitedUser = AffirmateUser.find(create.user, on: database)
 //                else {
 //                    throw Abort(.badRequest)
 //                }

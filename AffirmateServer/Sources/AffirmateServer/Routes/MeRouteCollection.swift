@@ -20,14 +20,14 @@ struct MeRouteCollection: RouteCollection {
             .grouped("me")
         
         // MARK: - GET: /me
-        me.get() { request async throws -> User.GetResponse in
-            try request.auth.require(User.self).getResponse
+        me.get() { request async throws -> AffirmateUser.GetResponse in
+            try request.auth.require(AffirmateUser.self).getResponse
         }
         
         // MARK: - PUT: /me/deviceToken
         me.put("deviceToken") { request async throws -> HTTPStatus in
             let deviceToken = try request.content.decode(APNSDeviceToken.self)
-            let currentUser = try request.auth.require(User.self)
+            let currentUser = try request.auth.require(AffirmateUser.self)
             currentUser.apnsId = deviceToken.token
             try await currentUser.update(on: request.db)
             return .ok
@@ -36,7 +36,7 @@ struct MeRouteCollection: RouteCollection {
         // MARK: - DELETE: /me
         me.delete { request async throws -> HTTPStatus in
             let userId: UUID? = request.parameters.get("userId")
-            guard let user = try await User.find(userId, on: request.db) else {
+            guard let user = try await AffirmateUser.find(userId, on: request.db) else {
                 throw Abort(.notFound)
             }
             try await user.delete(on: request.db)

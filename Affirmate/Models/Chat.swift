@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct Chat: Object, UpdateObject {
+struct Chat: Object {
     var id: UUID
     var name: String?
-    var participants: [Participant]?
     var messages: [Message]?
+    var users: [User]?
     
-    struct Create: CreateObject {
+    struct Create: Codable {
         var name: String?
     }
 }

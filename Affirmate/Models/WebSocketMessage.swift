@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct WebSocketMessage<T: Codable>: Codable {
+    let client: UUID
+    let data: T
+}

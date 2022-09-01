@@ -14,12 +14,12 @@ final class Participant: Model, Content {
     
     @ID(key: FieldKey.id) var id: UUID?
     @Field(key: "role") var role: Role
-    @Parent(key: "user_id") var user: User
+    @Parent(key: "user_id") var user: AffirmateUser
     @Parent(key: "chat_id") var chat: Chat
     
     init() { }
     
-    init(id: UUID? = nil, role: Participant.Role = .participant, user: User.IDValue, chat: User.IDValue) {
+    init(id: UUID? = nil, role: Participant.Role = .participant, user: AffirmateUser.IDValue, chat: AffirmateUser.IDValue) {
         self.id = id
         self.role = role
         self.$user.id = user
@@ -53,7 +53,7 @@ extension Participant {
             try await database.schema(Participant.schema)
                 .id()
                 .field("role", .string, .required)
-                .field("user_id", .uuid, .required, .references(User.schema, .id))
+                .field("user_id", .uuid, .required, .references(AffirmateUser.schema, .id))
                 .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
                 .unique(on: "user_id", "chat_id")
                 .create()
@@ -73,7 +73,7 @@ extension Participant {
     }
     struct GetResponse: Content {
         var role: Role
-        var user: User.GetResponse
+        var user: AffirmateUser.GetResponse
         var chat: Chat.ParticipantResponse?
     }
 }

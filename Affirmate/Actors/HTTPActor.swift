@@ -25,19 +25,23 @@ actor HTTPActor {
     }
     
     func requestDecodable<Value: Decodable>(_ requestConvertible: any URLRequestConvertible, to type: Value.Type) async throws -> Value {
-        print(Value.self)
+        print(type.self)
         let response = await AF
             .request(requestConvertible, interceptor: interceptor)
             .serializingDecodable(type.self)
             .response
         print(response)
-        switch response.result {
-        case .success(let value):
-            print("Decoded", Value.self, "successfully:", value)
-            return value
-        case .failure(let error):
-            throw error
-        }
+        return try response.result.get()
+    }
+    
+    func requestOptionalDecodable<Value: Decodable>(_ requestConvertible: any URLRequestConvertible, to type: Value.Type) async -> Value? {
+        print(type.self)
+        let response = await AF
+            .request(requestConvertible, interceptor: interceptor)
+            .serializingDecodable(type.self)
+            .response
+        print(response)
+        return try? response.result.get()
     }
 }
 

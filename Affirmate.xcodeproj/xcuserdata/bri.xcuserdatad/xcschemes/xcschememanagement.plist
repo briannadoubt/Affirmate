@@ -7,6 +7,11 @@
 		<key>Affirmate.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+		<key>AffirmateServerGUI.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
 		<key>FizzBuzz (Playground) 1.xcscheme</key>
@@ -65,6 +70,21 @@
 			<true/>
 		</dict>
 		<key>0389BCA2286FAB2B00CBDC3B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>03D0679328BD3F44002C5214</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>03D067A328BD3F46002C5214</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>03D067AD28BD3F46002C5214</key>
 		<dict>
 			<key>primary</key>
 			<true/>

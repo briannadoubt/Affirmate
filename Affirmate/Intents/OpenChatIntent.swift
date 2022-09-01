@@ -5,4 +5,12 @@
 //  Created by Bri on 8/27/22.
 //
 
-import Foundation
+import AppIntents
+
+//struct OpenChat: AppIntent {
+//    static var title: LocalizedStringResource = "Open Chat"
+//    
+//    @MainActor func perform() async throws -> some IntentResult {
+//        
+//    }
+//}

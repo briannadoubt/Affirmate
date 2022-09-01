@@ -1,5 +1,5 @@
 //
-//  User.swift
+//  AffirmateUser.swift
 //  AffirmateServer
 //
 //  Created by Bri on 7/3/22.
@@ -35,5 +35,10 @@ struct User: Object {
         var email: String
         var password: String
         var confirmPassword: String
+    }
+    
+    struct Public: Object {
+        var id: UUID
+        var username: String
     }
 }

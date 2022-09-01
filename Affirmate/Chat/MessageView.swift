@@ -52,7 +52,7 @@ struct MessageView_Previews: PreviewProvider {
             currentUserId: UUID(),
             message: Message(
                 text: "Meow",
-                chat: Chat(id: UUID(), name: "Meow meow!"),
+                chat: Relation(id: UUID()),
                 sender: User(
                     id: UUID(),
                     firstName: "meow",

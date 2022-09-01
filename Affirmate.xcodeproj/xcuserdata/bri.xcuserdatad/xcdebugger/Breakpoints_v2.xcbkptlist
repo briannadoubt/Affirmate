@@ -418,69 +418,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "58E729C9-6AE0-4A8C-B2E2-2E67DA5F3119"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/AuthenticationView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "53"
-            endingLineNumber = "53"
-            landmarkName = "login()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "58E729C9-6AE0-4A8C-B2E2-2E67DA5F3119 - 6b5678f3412f0a8"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Affirmate.AuthenticationView.login() -&gt; ()"
-                  moduleName = "Affirmate"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/Affirmate/AuthenticationView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "53"
-                  endingLineNumber = "53"
-                  offsetFromSymbolStart = "64">
-               </Location>
-               <Location
-                  uuid = "58E729C9-6AE0-4A8C-B2E2-2E67DA5F3119 - 875ed4c9c4737049"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in Affirmate.AuthenticationView.login() -&gt; ()"
-                  moduleName = "Affirmate"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/Affirmate/AuthenticationView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "53"
-                  endingLineNumber = "53"
-                  offsetFromSymbolStart = "40">
-               </Location>
-               <Location
-                  uuid = "58E729C9-6AE0-4A8C-B2E2-2E67DA5F3119 - 5f39746439d4eead"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Affirmate.AuthenticationView.login() -&gt; ()"
-                  moduleName = "Affirmate"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/Affirmate/AuthenticationView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "53"
-                  endingLineNumber = "53"
-                  offsetFromSymbolStart = "36">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "30A3A72B-E570-4AC0-8A42-27C86DDD3F28"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -507,147 +444,6 @@
             startingLineNumber = "46"
             endingLineNumber = "46"
             landmarkName = "requestDecodable(_:to:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1F36D501-306B-436C-ACF7-15028DC78A35"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
-            landmarkName = "boot(routes:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "1F36D501-306B-436C-ACF7-15028DC78A35 - b4857883fed1ba25"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 (Vapor.Request) async throws -&gt; NIOHTTP1.HTTPResponseStatus in AffirmateServer.ChatRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
-                  moduleName = "Server"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "24"
-                  endingLineNumber = "24"
-                  offsetFromSymbolStart = "76">
-               </Location>
-               <Location
-                  uuid = "1F36D501-306B-436C-ACF7-15028DC78A35 - c94028d45c998261"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #1 (Vapor.Request) async throws -&gt; NIOHTTP1.HTTPResponseStatus in AffirmateServer.ChatRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
-                  moduleName = "Server"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "24"
-                  endingLineNumber = "24"
-                  offsetFromSymbolStart = "40">
-               </Location>
-               <Location
-                  uuid = "1F36D501-306B-436C-ACF7-15028DC78A35 - 1bdbafaf27fc7c3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 (Vapor.Request) async throws -&gt; NIOHTTP1.HTTPResponseStatus in AffirmateServer.ChatRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
-                  moduleName = "Server"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "24"
-                  endingLineNumber = "24"
-                  offsetFromSymbolStart = "72">
-               </Location>
-               <Location
-                  uuid = "1F36D501-306B-436C-ACF7-15028DC78A35 - b7c01b0e703405d2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for closure #1 (Vapor.Request) async throws -&gt; NIOHTTP1.HTTPResponseStatus in AffirmateServer.ChatRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
-                  moduleName = "Server"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "24"
-                  endingLineNumber = "24"
-                  offsetFromSymbolStart = "40">
-               </Location>
-               <Location
-                  uuid = "1F36D501-306B-436C-ACF7-15028DC78A35 - b8adbada3bcfbfa4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Sendable (FluentKit.Database) async throws -&gt; () in closure #1 (Vapor.Request) async throws -&gt; NIOHTTP1.HTTPResponseStatus in AffirmateServer.ChatRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
-                  moduleName = "Server"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "24"
-                  endingLineNumber = "24"
-                  offsetFromSymbolStart = "0">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "09891931-0FE5-4A9C-9169-1EAA8F29DCC7"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
-            landmarkName = "boot(routes:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "27CCA260-B5E1-4F54-AD82-31DDB4D3AA30"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "106"
-            endingLineNumber = "106"
-            landmarkName = "boot(routes:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "AFCDB8FA-3DF2-467E-91C3-82E2A2B6CBA5"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
-            landmarkName = "boot(routes:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -718,257 +514,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "27ACFF37-0EEA-45C1-AE46-0B33144BE707"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "141"
-            endingLineNumber = "141"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "AD3937ED-45A7-492B-AC45-B48B6632F76B"
+            uuid = "E5886A95-F45F-4861-A837-716ADF156D99"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
+            filePath = "AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
-            landmarkName = "didReceive(event:client:)"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
+            landmarkName = "boot(routes:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9E07341B-500F-4F14-933E-6526AA923969"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "143"
-            endingLineNumber = "143"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "044FC352-53C9-4B28-A999-90AC74EB520B"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "149"
-            endingLineNumber = "149"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "05989751-0F0C-4E6C-B448-2B41D05EF16E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A2DE0332-707A-4E27-9A3B-A38E57BE508F"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "34E5A8D6-F3CC-4289-BC0A-808188206D85"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "160"
-            endingLineNumber = "160"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "36B03156-0C14-48A5-A473-FA274037597F"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "162"
-            endingLineNumber = "162"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "48C87D7C-12D5-4760-9350-A17B47BAD0E4"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "164"
-            endingLineNumber = "164"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "AB417A4B-1775-43AA-9745-45517D9C52EB"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "166"
-            endingLineNumber = "166"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1303F8CE-60DD-46AC-A68A-26AC7A71EAD4"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "174"
-            endingLineNumber = "174"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "FB233A7A-8E19-495F-9D17-E93AA9DDE501"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Observers/ChatObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
-            landmarkName = "didReceive(event:client:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D1A1886A-9BF4-492A-8F16-9F16472FC783"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Sources/AffirmateServer/WebSocket/WebSocketManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "22"
-            endingLineNumber = "22"
-            landmarkName = "connect(_:_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "07D5E40A-4199-4D0A-A4DF-B80728940BD9"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Sources/AffirmateServer/WebSocket/WebSocketManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "19"
-            endingLineNumber = "19"
-            landmarkName = "connect(_:_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "FD17A3F7-466B-4C59-8628-7AE079700266"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Sources/AffirmateServer/WebSocket/WebSocketManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "23"
-            endingLineNumber = "23"
-            landmarkName = "connect(_:_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "03292B63-54E8-4445-8018-F72748ADCDB6"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Sources/AffirmateServer/WebSocket/WebSocketManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "76"
-            endingLineNumber = "76"
-            landmarkName = "broadcast(_:)"
-            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "E5886A95-F45F-4861-A837-716ADF156D99 - 600d99c3fca203e0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable (FluentKit.Database) async throws -&gt; Swift.Array&lt;AffirmateServer.Chat&gt; in closure #2 (Vapor.Request) async throws -&gt; Swift.Array&lt;AffirmateServer.Chat&gt; in AffirmateServer.ChatRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
+                  moduleName = "Server"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "56"
+                  endingLineNumber = "56"
+                  offsetFromSymbolStart = "812">
+               </Location>
+               <Location
+                  uuid = "E5886A95-F45F-4861-A837-716ADF156D99 - 4fc9d14d0b8643fa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for closure #1 @Sendable (FluentKit.Database) async throws -&gt; Swift.Array&lt;AffirmateServer.Chat&gt; in closure #2 (Vapor.Request) async throws -&gt; Swift.Array&lt;AffirmateServer.Chat&gt; in AffirmateServer.ChatRouteCollection.boot(routes: Vapor.RoutesBuilder) throws -&gt; ()"
+                  moduleName = "Server"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Routes/ChatRouteCollection.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "56"
+                  endingLineNumber = "56"
+                  offsetFromSymbolStart = "1004">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

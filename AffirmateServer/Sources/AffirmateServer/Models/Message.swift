@@ -16,11 +16,11 @@ final class Message: Model, Content {
     @ID(key: FieldKey.id) var id: UUID?
     @Field(key: "text") var text: String
     @Parent(key: "chat_id") var chat: Chat
-    @Parent(key: "sender_id") var sender: User
+    @Parent(key: "sender_id") var sender: AffirmateUser
     
     init() { }
     
-    init(id: UUID? = nil, text: String, chat: Chat.IDValue, sender: User.IDValue) {
+    init(id: UUID? = nil, text: String, chat: Chat.IDValue, sender: AffirmateUser.IDValue) {
         self.id = id
         self.text = text
         self.$chat.id = chat
@@ -39,7 +39,7 @@ extension Message {
                 .id()
                 .field("text", .string)
                 .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
-                .field("sender_id", .uuid, .required, .references(User.schema, .id))
+                .field("sender_id", .uuid, .required, .references(AffirmateUser.schema, .id))
                 .create()
         }
         /// Destroys the `messages` table
@@ -97,6 +97,6 @@ extension Message {
     struct GetResponse: Content {
         var text: String
         var chat: Chat.GetResponse
-        var sender: User.GetResponse
+        var sender: AffirmateUser.GetResponse
     }
 }

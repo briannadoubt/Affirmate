@@ -11,7 +11,7 @@ struct AuthenticationView: View {
     
     @EnvironmentObject var authentication: Authentication
     
-    @SceneStorage("auth.viewState") var viewState: AuthenticationViewState = .signUp
+    @SceneStorage("auth.viewState") var viewState: Authentication.ViewState = .signUp
     
     #if DEVELOPMENT
     @SceneStorage("auth.first_name") var firstName: String = "Meow"
@@ -28,20 +28,6 @@ struct AuthenticationView: View {
     @State var password: String = ""
     @State var confirmPassword: String = ""
     #endif
-    
-    enum AuthenticationViewState: String, CaseIterable, Identifiable {
-        case login
-        case signUp
-        var id: String { rawValue }
-        var labelText: String {
-            switch self {
-            case .signUp:
-                return "Sign Up"
-            case .login:
-                return "Login"
-            }
-        }
-    }
     
     @MainActor func showError(_ error: Error) {
         print("TODO: Display this error in the UI:", error)
@@ -89,7 +75,7 @@ struct AuthenticationView: View {
             #endif
             Form {
                 Picker("Authentication Mode", selection: $viewState.animation(.spring())) {
-                    ForEach(AuthenticationViewState.allCases.reversed()) { viewState in
+                    ForEach(Authentication.ViewState.allCases.reversed()) { viewState in
                         Text(viewState.labelText)
                             .tag(viewState)
                     }

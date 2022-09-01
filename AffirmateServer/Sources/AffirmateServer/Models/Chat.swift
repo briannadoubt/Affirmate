@@ -16,7 +16,7 @@ final class Chat: Model, Content {
     @ID(key: FieldKey.id) var id: UUID?
     @Field(key: "name") var name: String?
     @Children(for: \.$chat) var messages: [Message]
-    @Siblings(through: Participant.self, from: \.$chat, to: \.$user) var users: [User]
+    @Siblings(through: Participant.self, from: \.$chat, to: \.$user) var users: [AffirmateUser]
 //    @Children(for: \.$chat) var openInvitations: [ChatInvitation]
     
     init() { }

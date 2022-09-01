@@ -14,17 +14,27 @@ struct Relation: Object {
 struct Participant: Object {
     var id: UUID?
     var role: Role
-    var user: User
+    var user: User.Public
     var chat: Relation
     
-    enum Role: String, CaseIterable, Codable, Hashable, Equatable {
+    enum Role: String, CaseIterable, Codable, Hashable, Equatable, Identifiable {
         case admin
         case participant
+        
+        var id: String { rawValue }
+        
+        var description: String {
+            switch self {
+            case .admin:
+                return "Admin"
+            case .participant:
+                return "Participant"
+            }
+        }
     }
     
-    struct Create: Codable {
+    struct Create: Codable, Hashable {
         var role: Role
         var user: UUID
-        var chat: UUID
     }
 }

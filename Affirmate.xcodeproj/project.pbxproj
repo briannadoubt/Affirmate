@@ -11,6 +11,7 @@
 		031FF1F328A08015008343CA /* ServerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031FF1F228A08015008343CA /* ServerError.swift */; };
 		03498A6428701EED0081A221 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03498A6328701EED0081A221 /* Repository.swift */; };
 		03498A6728702E270081A221 /* LocalizedContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03498A6628702E270081A221 /* LocalizedContent.swift */; };
+		034FFC8728BB3F89003724FF /* NewParticipantObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FFC8628BB3F89003724FF /* NewParticipantObserver.swift */; };
 		0358D0FA28B2C4BA005FA999 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0358D0F928B2C4BA005FA999 /* AppDelegate.swift */; };
 		035CE65A289F47D400B8C7A5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 035CE659289F47D400B8C7A5 /* Alamofire */; };
 		035DE94228B560080026FA55 /* ConfirmConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035DE94128B560080026FA55 /* ConfirmConnection.swift */; };
@@ -40,6 +41,16 @@
 		03AE007D28B95D1C000C2FE0 /* Connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE007C28B95D1C000C2FE0 /* Connect.swift */; };
 		03AE007F28B96AA8000C2FE0 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE007E28B96AA8000C2FE0 /* ProfileView.swift */; };
 		03AE008128B972B6000C2FE0 /* NewParticipantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008028B972B6000C2FE0 /* NewParticipantsView.swift */; };
+		03AE008328B9B9A8000C2FE0 /* WebSocketMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008228B9B9A8000C2FE0 /* WebSocketMessage.swift */; };
+		03AE008628B9B9C6000C2FE0 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008528B9B9C6000C2FE0 /* Data+Extensions.swift */; };
+		03AE008928BAEA47000C2FE0 /* OpenChatIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008828BAEA47000C2FE0 /* OpenChatIntent.swift */; };
+		03D0679728BD3F44002C5214 /* AffirmateServerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D0679628BD3F44002C5214 /* AffirmateServerApp.swift */; };
+		03D0679928BD3F44002C5214 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D0679828BD3F44002C5214 /* ContentView.swift */; };
+		03D0679B28BD3F46002C5214 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03D0679A28BD3F46002C5214 /* Assets.xcassets */; };
+		03D0679E28BD3F46002C5214 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03D0679D28BD3F46002C5214 /* Preview Assets.xcassets */; };
+		03D067A928BD3F46002C5214 /* AffirmateServerGUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D067A828BD3F46002C5214 /* AffirmateServerGUITests.swift */; };
+		03D067B328BD3F46002C5214 /* AffirmateServerGUIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D067B228BD3F46002C5214 /* AffirmateServerGUIUITests.swift */; };
+		03D067B528BD3F46002C5214 /* AffirmateServerGUIUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D067B428BD3F46002C5214 /* AffirmateServerGUIUITestsLaunchTests.swift */; };
 		03E1922928AEA2B600876C5D /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1922828AEA2B600876C5D /* ChatView.swift */; };
 		03E1922C28AEA30B00876C5D /* ReversedScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = 03E1922B28AEA30B00876C5D /* ReversedScrollView */; };
 		03E1922E28AEA3B000876C5D /* KeyboardHeightObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1922D28AEA3B000876C5D /* KeyboardHeightObserver.swift */; };
@@ -49,7 +60,7 @@
 		03E1923928AEA60E00876C5D /* MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923628AEA60E00876C5D /* MessageBubble.swift */; };
 		03E1923A28AEA60E00876C5D /* MessageBubbleTailPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923728AEA60E00876C5D /* MessageBubbleTailPosition.swift */; };
 		03E1923C28AEA88B00876C5D /* ChatSendButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923B28AEA88B00876C5D /* ChatSendButton.swift */; };
-		03E1923E28AEAB0300876C5D /* MeActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923D28AEAB0300876C5D /* MeActor.swift */; };
+		03E1923E28AEAB0300876C5D /* UserActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923D28AEAB0300876C5D /* UserActor.swift */; };
 		03FE3BBA2897214700208D5D /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BB92897214700208D5D /* HomeView.swift */; };
 		03FE3BBC289721A500208D5D /* ChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBB289721A500208D5D /* ChatsView.swift */; };
 		03FE3BBE2897220F00208D5D /* MeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBD2897220F00208D5D /* MeView.swift */; };
@@ -73,6 +84,20 @@
 			remoteGlobalIDString = 0389BC87286FAB2A00CBDC3B;
 			remoteInfo = Affirmate;
 		};
+		03D067A528BD3F46002C5214 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0389BC80286FAB2A00CBDC3B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 03D0679328BD3F44002C5214;
+			remoteInfo = AffirmateServerGUI;
+		};
+		03D067AF28BD3F46002C5214 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0389BC80286FAB2A00CBDC3B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 03D0679328BD3F44002C5214;
+			remoteInfo = AffirmateServerGUI;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +106,7 @@
 		03498A6328701EED0081A221 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		03498A65287027710081A221 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		03498A6628702E270081A221 /* LocalizedContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedContent.swift; sourceTree = "<group>"; };
+		034FFC8628BB3F89003724FF /* NewParticipantObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewParticipantObserver.swift; sourceTree = "<group>"; };
 		0358D0F928B2C4BA005FA999 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		035DE94128B560080026FA55 /* ConfirmConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmConnection.swift; sourceTree = "<group>"; };
 		0374074328AEDC33004DAA72 /* Representation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Representation.swift; sourceTree = "<group>"; };
@@ -107,12 +133,26 @@
 		0389BCA3286FAB2B00CBDC3B /* AffirmateUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0389BCA7286FAB2B00CBDC3B /* AffirmateUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateUITests.swift; sourceTree = "<group>"; };
 		0389BCA9286FAB2B00CBDC3B /* AffirmateUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		039303702899D8E700DA7085 /* AffirmateServer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AffirmateServer; sourceTree = "<group>"; };
 		03A2016F28A6D62200573848 /* HTTPActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPActor.swift; sourceTree = "<group>"; };
 		03A2017128A6D6A100573848 /* JWTToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTToken.swift; sourceTree = "<group>"; };
 		03AE007C28B95D1C000C2FE0 /* Connect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connect.swift; sourceTree = "<group>"; };
 		03AE007E28B96AA8000C2FE0 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		03AE008028B972B6000C2FE0 /* NewParticipantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewParticipantsView.swift; sourceTree = "<group>"; };
+		03AE008228B9B9A8000C2FE0 /* WebSocketMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketMessage.swift; sourceTree = "<group>"; };
+		03AE008528B9B9C6000C2FE0 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
+		03AE008828BAEA47000C2FE0 /* OpenChatIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenChatIntent.swift; sourceTree = "<group>"; };
+		03CB0DFE28C02BA700B1E26F /* AffirmateServer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AffirmateServer; sourceTree = "<group>"; };
+		03D0679428BD3F44002C5214 /* AffirmateServerGUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AffirmateServerGUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		03D0679628BD3F44002C5214 /* AffirmateServerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateServerApp.swift; sourceTree = "<group>"; };
+		03D0679828BD3F44002C5214 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		03D0679A28BD3F46002C5214 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		03D0679D28BD3F46002C5214 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		03D0679F28BD3F46002C5214 /* AffirmateServerGUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AffirmateServerGUI.entitlements; sourceTree = "<group>"; };
+		03D067A428BD3F46002C5214 /* AffirmateServerGUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateServerGUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		03D067A828BD3F46002C5214 /* AffirmateServerGUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateServerGUITests.swift; sourceTree = "<group>"; };
+		03D067AE28BD3F46002C5214 /* AffirmateServerGUIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateServerGUIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		03D067B228BD3F46002C5214 /* AffirmateServerGUIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateServerGUIUITests.swift; sourceTree = "<group>"; };
+		03D067B428BD3F46002C5214 /* AffirmateServerGUIUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateServerGUIUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		03E1922828AEA2B600876C5D /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		03E1922D28AEA3B000876C5D /* KeyboardHeightObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardHeightObserver.swift; sourceTree = "<group>"; };
 		03E1922F28AEA49000876C5D /* ChatObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatObserver.swift; sourceTree = "<group>"; };
@@ -121,7 +161,7 @@
 		03E1923628AEA60E00876C5D /* MessageBubble.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBubble.swift; sourceTree = "<group>"; };
 		03E1923728AEA60E00876C5D /* MessageBubbleTailPosition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBubbleTailPosition.swift; sourceTree = "<group>"; };
 		03E1923B28AEA88B00876C5D /* ChatSendButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatSendButton.swift; sourceTree = "<group>"; };
-		03E1923D28AEAB0300876C5D /* MeActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeActor.swift; sourceTree = "<group>"; };
+		03E1923D28AEAB0300876C5D /* UserActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActor.swift; sourceTree = "<group>"; };
 		03FE3BB92897214700208D5D /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		03FE3BBB289721A500208D5D /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
 		03FE3BBD2897220F00208D5D /* MeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeView.swift; sourceTree = "<group>"; };
@@ -155,23 +195,44 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		03D0679128BD3F44002C5214 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03D067A128BD3F46002C5214 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03D067AB28BD3F46002C5214 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0374074528AEDE99004DAA72 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				0376F5C728A102490040CB40 /* NewChatView.swift */,
 				03772C9C28975EB7001DAE4B /* ChatNavigationLink.swift */,
+				03E1923B28AEA88B00876C5D /* ChatSendButton.swift */,
+				03FE3BBB289721A500208D5D /* ChatsView.swift */,
 				03E1922828AEA2B600876C5D /* ChatView.swift */,
-				03AE008028B972B6000C2FE0 /* NewParticipantsView.swift */,
-				03AE007E28B96AA8000C2FE0 /* ProfileView.swift */,
 				03E1923628AEA60E00876C5D /* MessageBubble.swift */,
 				03E1923528AEA60D00876C5D /* MessageBubbleShape.swift */,
 				03E1923728AEA60E00876C5D /* MessageBubbleTailPosition.swift */,
-				03E1923B28AEA88B00876C5D /* ChatSendButton.swift */,
 				03E1923128AEA5AC00876C5D /* MessageView.swift */,
-				03FE3BBB289721A500208D5D /* ChatsView.swift */,
+				0376F5C728A102490040CB40 /* NewChatView.swift */,
+				03AE008028B972B6000C2FE0 /* NewParticipantsView.swift */,
+				03AE007E28B96AA8000C2FE0 /* ProfileView.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -180,6 +241,7 @@
 			isa = PBXGroup;
 			children = (
 				031FF1F228A08015008343CA /* ServerError.swift */,
+				03AE008228B9B9A8000C2FE0 /* WebSocketMessage.swift */,
 				03AE007C28B95D1C000C2FE0 /* Connect.swift */,
 				03772C89289757CA001DAE4B /* Chat.swift */,
 				03772C8A289757CA001DAE4B /* Message.swift */,
@@ -208,8 +270,12 @@
 				0389BC8A286FAB2A00CBDC3B /* Affirmate */,
 				0389BC9C286FAB2A00CBDC3B /* AffirmateTests */,
 				0389BCA6286FAB2B00CBDC3B /* AffirmateUITests */,
+				03D0679528BD3F44002C5214 /* AffirmateServerGUI */,
+				03D067A728BD3F46002C5214 /* AffirmateServerGUITests */,
+				03D067B128BD3F46002C5214 /* AffirmateServerGUIUITests */,
 				0389BCB6286FAC1400CBDC3B /* Packages */,
 				0389BC89286FAB2A00CBDC3B /* Products */,
+				03D067BF28BD4B4E002C5214 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -219,6 +285,9 @@
 				0389BC88286FAB2A00CBDC3B /* Affirmate.app */,
 				0389BC99286FAB2A00CBDC3B /* AffirmateTests.xctest */,
 				0389BCA3286FAB2B00CBDC3B /* AffirmateUITests.xctest */,
+				03D0679428BD3F44002C5214 /* AffirmateServerGUI.app */,
+				03D067A428BD3F46002C5214 /* AffirmateServerGUITests.xctest */,
+				03D067AE28BD3F46002C5214 /* AffirmateServerGUIUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -227,6 +296,8 @@
 			isa = PBXGroup;
 			children = (
 				03498A65287027710081A221 /* Info.plist */,
+				0389BC8F286FAB2A00CBDC3B /* Assets.xcassets */,
+				0389BC91286FAB2A00CBDC3B /* Affirmate.entitlements */,
 				0389BC8B286FAB2A00CBDC3B /* AffirmateApp.swift */,
 				0358D0F928B2C4BA005FA999 /* AppDelegate.swift */,
 				0389BC8D286FAB2A00CBDC3B /* ContentView.swift */,
@@ -237,13 +308,13 @@
 				03498A6628702E270081A221 /* LocalizedContent.swift */,
 				03FE3BBD2897220F00208D5D /* MeView.swift */,
 				03772C9A28975CAB001DAE4B /* Constants.swift */,
-				0374074528AEDE99004DAA72 /* Chat */,
-				03E1924028AEAC6200876C5D /* Observers */,
 				03E1923F28AEAC4E00876C5D /* Actors */,
+				0374074528AEDE99004DAA72 /* Chat */,
 				03772C9528975972001DAE4B /* Components */,
+				03AE008728BAEA3A000C2FE0 /* Intents */,
 				03772C88289757CA001DAE4B /* Models */,
-				0389BC8F286FAB2A00CBDC3B /* Assets.xcassets */,
-				0389BC91286FAB2A00CBDC3B /* Affirmate.entitlements */,
+				03E1924028AEAC6200876C5D /* Observers */,
+				03AE008428B9B9BA000C2FE0 /* Utilites */,
 				0389BC92286FAB2A00CBDC3B /* Preview Content */,
 			);
 			path = Affirmate;
@@ -277,16 +348,76 @@
 		0389BCB6286FAC1400CBDC3B /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				039303702899D8E700DA7085 /* AffirmateServer */,
+				03CB0DFE28C02BA700B1E26F /* AffirmateServer */,
 			);
 			name = Packages;
+			sourceTree = "<group>";
+		};
+		03AE008428B9B9BA000C2FE0 /* Utilites */ = {
+			isa = PBXGroup;
+			children = (
+				03AE008528B9B9C6000C2FE0 /* Data+Extensions.swift */,
+			);
+			path = Utilites;
+			sourceTree = "<group>";
+		};
+		03AE008728BAEA3A000C2FE0 /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				03AE008828BAEA47000C2FE0 /* OpenChatIntent.swift */,
+			);
+			path = Intents;
+			sourceTree = "<group>";
+		};
+		03D0679528BD3F44002C5214 /* AffirmateServerGUI */ = {
+			isa = PBXGroup;
+			children = (
+				03D0679628BD3F44002C5214 /* AffirmateServerApp.swift */,
+				03D0679828BD3F44002C5214 /* ContentView.swift */,
+				03D0679A28BD3F46002C5214 /* Assets.xcassets */,
+				03D0679F28BD3F46002C5214 /* AffirmateServerGUI.entitlements */,
+				03D0679C28BD3F46002C5214 /* Preview Content */,
+			);
+			path = AffirmateServerGUI;
+			sourceTree = "<group>";
+		};
+		03D0679C28BD3F46002C5214 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				03D0679D28BD3F46002C5214 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		03D067A728BD3F46002C5214 /* AffirmateServerGUITests */ = {
+			isa = PBXGroup;
+			children = (
+				03D067A828BD3F46002C5214 /* AffirmateServerGUITests.swift */,
+			);
+			path = AffirmateServerGUITests;
+			sourceTree = "<group>";
+		};
+		03D067B128BD3F46002C5214 /* AffirmateServerGUIUITests */ = {
+			isa = PBXGroup;
+			children = (
+				03D067B228BD3F46002C5214 /* AffirmateServerGUIUITests.swift */,
+				03D067B428BD3F46002C5214 /* AffirmateServerGUIUITestsLaunchTests.swift */,
+			);
+			path = AffirmateServerGUIUITests;
+			sourceTree = "<group>";
+		};
+		03D067BF28BD4B4E002C5214 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		03E1923F28AEAC4E00876C5D /* Actors */ = {
 			isa = PBXGroup;
 			children = (
 				03A2016F28A6D62200573848 /* HTTPActor.swift */,
-				03E1923D28AEAB0300876C5D /* MeActor.swift */,
+				03E1923D28AEAB0300876C5D /* UserActor.swift */,
 				030BFDAB28A31D7700606B12 /* ChatActor.swift */,
 			);
 			path = Actors;
@@ -296,6 +427,7 @@
 			isa = PBXGroup;
 			children = (
 				03E1922D28AEA3B000876C5D /* KeyboardHeightObserver.swift */,
+				034FFC8628BB3F89003724FF /* NewParticipantObserver.swift */,
 				03E1922F28AEA49000876C5D /* ChatObserver.swift */,
 				0376F5C328A0EBE90040CB40 /* ChatsObserver.swift */,
 				03FE3BC12897273A00208D5D /* Authentication.swift */,
@@ -365,6 +497,61 @@
 			productReference = 0389BCA3286FAB2B00CBDC3B /* AffirmateUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		03D0679328BD3F44002C5214 /* AffirmateServerGUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 03D067BC28BD3F46002C5214 /* Build configuration list for PBXNativeTarget "AffirmateServerGUI" */;
+			buildPhases = (
+				03D0679028BD3F44002C5214 /* Sources */,
+				03D0679128BD3F44002C5214 /* Frameworks */,
+				03D0679228BD3F44002C5214 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AffirmateServerGUI;
+			packageProductDependencies = (
+			);
+			productName = AffirmateServerGUI;
+			productReference = 03D0679428BD3F44002C5214 /* AffirmateServerGUI.app */;
+			productType = "com.apple.product-type.application";
+		};
+		03D067A328BD3F46002C5214 /* AffirmateServerGUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 03D067BD28BD3F46002C5214 /* Build configuration list for PBXNativeTarget "AffirmateServerGUITests" */;
+			buildPhases = (
+				03D067A028BD3F46002C5214 /* Sources */,
+				03D067A128BD3F46002C5214 /* Frameworks */,
+				03D067A228BD3F46002C5214 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				03D067A628BD3F46002C5214 /* PBXTargetDependency */,
+			);
+			name = AffirmateServerGUITests;
+			productName = AffirmateServerGUITests;
+			productReference = 03D067A428BD3F46002C5214 /* AffirmateServerGUITests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		03D067AD28BD3F46002C5214 /* AffirmateServerGUIUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 03D067BE28BD3F46002C5214 /* Build configuration list for PBXNativeTarget "AffirmateServerGUIUITests" */;
+			buildPhases = (
+				03D067AA28BD3F46002C5214 /* Sources */,
+				03D067AB28BD3F46002C5214 /* Frameworks */,
+				03D067AC28BD3F46002C5214 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				03D067B028BD3F46002C5214 /* PBXTargetDependency */,
+			);
+			name = AffirmateServerGUIUITests;
+			productName = AffirmateServerGUIUITests;
+			productReference = 03D067AE28BD3F46002C5214 /* AffirmateServerGUIUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -385,6 +572,17 @@
 					0389BCA2286FAB2B00CBDC3B = {
 						CreatedOnToolsVersion = 14.0;
 						TestTargetID = 0389BC87286FAB2A00CBDC3B;
+					};
+					03D0679328BD3F44002C5214 = {
+						CreatedOnToolsVersion = 14.0;
+					};
+					03D067A328BD3F46002C5214 = {
+						CreatedOnToolsVersion = 14.0;
+						TestTargetID = 03D0679328BD3F44002C5214;
+					};
+					03D067AD28BD3F46002C5214 = {
+						CreatedOnToolsVersion = 14.0;
+						TestTargetID = 03D0679328BD3F44002C5214;
 					};
 				};
 			};
@@ -410,6 +608,9 @@
 				0389BC87286FAB2A00CBDC3B /* Affirmate */,
 				0389BC98286FAB2A00CBDC3B /* AffirmateTests */,
 				0389BCA2286FAB2B00CBDC3B /* AffirmateUITests */,
+				03D0679328BD3F44002C5214 /* AffirmateServerGUI */,
+				03D067A328BD3F46002C5214 /* AffirmateServerGUITests */,
+				03D067AD28BD3F46002C5214 /* AffirmateServerGUIUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -438,6 +639,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		03D0679228BD3F44002C5214 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03D0679E28BD3F46002C5214 /* Preview Assets.xcassets in Resources */,
+				03D0679B28BD3F46002C5214 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03D067A228BD3F46002C5214 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03D067AC28BD3F46002C5214 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -447,10 +671,11 @@
 			files = (
 				03772C9428975965001DAE4B /* TaskButton.swift in Sources */,
 				03AE007F28B96AA8000C2FE0 /* ProfileView.swift in Sources */,
-				03E1923E28AEAB0300876C5D /* MeActor.swift in Sources */,
+				03E1923E28AEAB0300876C5D /* UserActor.swift in Sources */,
 				0376F5C828A102490040CB40 /* NewChatView.swift in Sources */,
 				03E1923228AEA5AC00876C5D /* MessageView.swift in Sources */,
 				03FE3BC02897222D00208D5D /* AffirmateTabView.swift in Sources */,
+				03AE008328B9B9A8000C2FE0 /* WebSocketMessage.swift in Sources */,
 				030BFDAC28A31D7700606B12 /* ChatActor.swift in Sources */,
 				03772C9028975815001DAE4B /* Chat.swift in Sources */,
 				03E1923028AEA49000876C5D /* ChatObserver.swift in Sources */,
@@ -459,10 +684,12 @@
 				03AE008128B972B6000C2FE0 /* NewParticipantsView.swift in Sources */,
 				03772C97289759A3001DAE4B /* ThrowingTaskButton.swift in Sources */,
 				031FF1F328A08015008343CA /* ServerError.swift in Sources */,
+				03AE008628B9B9C6000C2FE0 /* Data+Extensions.swift in Sources */,
 				035DE94228B560080026FA55 /* ConfirmConnection.swift in Sources */,
 				0358D0FA28B2C4BA005FA999 /* AppDelegate.swift in Sources */,
 				0374074428AEDC33004DAA72 /* Representation.swift in Sources */,
 				03FE3BBC289721A500208D5D /* ChatsView.swift in Sources */,
+				03AE008928BAEA47000C2FE0 /* OpenChatIntent.swift in Sources */,
 				03A2017228A6D6A100573848 /* JWTToken.swift in Sources */,
 				03FE3BBA2897214700208D5D /* HomeView.swift in Sources */,
 				03498A6728702E270081A221 /* LocalizedContent.swift in Sources */,
@@ -474,6 +701,7 @@
 				03FE3BBE2897220F00208D5D /* MeView.swift in Sources */,
 				03772C8E2897580C001DAE4B /* Message.swift in Sources */,
 				03772C9928975B04001DAE4B /* AuthenticationView.swift in Sources */,
+				034FFC8728BB3F89003724FF /* NewParticipantObserver.swift in Sources */,
 				03E1922E28AEA3B000876C5D /* KeyboardHeightObserver.swift in Sources */,
 				0389BC8E286FAB2A00CBDC3B /* ContentView.swift in Sources */,
 				03A2017028A6D62200573848 /* HTTPActor.swift in Sources */,
@@ -505,6 +733,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		03D0679028BD3F44002C5214 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03D0679928BD3F44002C5214 /* ContentView.swift in Sources */,
+				03D0679728BD3F44002C5214 /* AffirmateServerApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03D067A028BD3F46002C5214 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03D067A928BD3F46002C5214 /* AffirmateServerGUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03D067AA28BD3F46002C5214 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03D067B328BD3F46002C5214 /* AffirmateServerGUIUITests.swift in Sources */,
+				03D067B528BD3F46002C5214 /* AffirmateServerGUIUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -517,6 +771,16 @@
 			isa = PBXTargetDependency;
 			target = 0389BC87286FAB2A00CBDC3B /* Affirmate */;
 			targetProxy = 0389BCA4286FAB2B00CBDC3B /* PBXContainerItemProxy */;
+		};
+		03D067A628BD3F46002C5214 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 03D0679328BD3F44002C5214 /* AffirmateServerGUI */;
+			targetProxy = 03D067A528BD3F46002C5214 /* PBXContainerItemProxy */;
+		};
+		03D067B028BD3F46002C5214 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 03D0679328BD3F44002C5214 /* AffirmateServerGUI */;
+			targetProxy = 03D067AF28BD3F46002C5214 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -788,6 +1052,160 @@
 			};
 			name = Release;
 		};
+		03D067B628BD3F46002C5214 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = AffirmateServerGUI/AffirmateServerGUI.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"AffirmateServerGUI/Preview Content\"";
+				DEVELOPMENT_TEAM = LU6454UVH5;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Affirmate Server";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.affirmate.Affirmate.Server;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		03D067B728BD3F46002C5214 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = AffirmateServerGUI/AffirmateServerGUI.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"AffirmateServerGUI/Preview Content\"";
+				DEVELOPMENT_TEAM = LU6454UVH5;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Affirmate Server";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.affirmate.Affirmate.Server;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Release;
+		};
+		03D067B828BD3F46002C5214 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LU6454UVH5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briannadoubt.AffirmateServerGUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AffirmateServerGUI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AffirmateServerGUI";
+			};
+			name = Debug;
+		};
+		03D067B928BD3F46002C5214 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LU6454UVH5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briannadoubt.AffirmateServerGUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AffirmateServerGUI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AffirmateServerGUI";
+			};
+			name = Release;
+		};
+		03D067BA28BD3F46002C5214 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LU6454UVH5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briannadoubt.AffirmateServerGUIUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = AffirmateServerGUI;
+			};
+			name = Debug;
+		};
+		03D067BB28BD3F46002C5214 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LU6454UVH5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briannadoubt.AffirmateServerGUIUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = AffirmateServerGUI;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -823,6 +1241,33 @@
 			buildConfigurations = (
 				0389BCB4286FAB2B00CBDC3B /* Debug */,
 				0389BCB5286FAB2B00CBDC3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		03D067BC28BD3F46002C5214 /* Build configuration list for PBXNativeTarget "AffirmateServerGUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				03D067B628BD3F46002C5214 /* Debug */,
+				03D067B728BD3F46002C5214 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		03D067BD28BD3F46002C5214 /* Build configuration list for PBXNativeTarget "AffirmateServerGUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				03D067B828BD3F46002C5214 /* Debug */,
+				03D067B928BD3F46002C5214 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		03D067BE28BD3F46002C5214 /* Build configuration list for PBXNativeTarget "AffirmateServerGUIUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				03D067BA28BD3F46002C5214 /* Debug */,
+				03D067BB28BD3F46002C5214 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

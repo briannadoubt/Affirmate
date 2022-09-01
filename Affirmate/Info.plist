@@ -2,6 +2,31 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>org.affirmate.Affirmate</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>affirmate</string>
+			</array>
+		</dict>
+	</array>
+	<key>INIntentsRestrictedWhileLocked</key>
+	<array>
+		<string>OpenChat</string>
+	</array>
+	<key>INIntentsRestrictedWhileProtectedDataUnavailable</key>
+	<array>
+		<string>OpenChat</string>
+	</array>
+	<key>INIntentsSupported</key>
+	<array>
+		<string>OpenChat</string>
+	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict/>
 	<key>UIBackgroundModes</key>

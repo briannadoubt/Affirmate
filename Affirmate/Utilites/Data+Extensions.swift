@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+extension Data {
+    func decodeWebSocketMessage<T: Codable>(_: T.Type) throws -> WebSocketMessage<T> {
+        return try JSONDecoder().decode(WebSocketMessage<T>.self, from: self)
+    }
+}

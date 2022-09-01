@@ -11,76 +11,34 @@ import Starscream
 import SwiftKeychainWrapper
 import SwiftUI
 
-struct WebSocketMessage<T: Codable>: Codable {
-    let client: UUID
-    let data: T
-}
-
-extension Data {
-    func decodeWebSocketMessage<T: Codable>(_: T.Type) throws -> WebSocketMessage<T> {
-        return try JSONDecoder().decode(WebSocketMessage<T>.self, from: self)
-    }
-}
-
 final class ChatObserver: ObservableObject {
     
-    var chatId: UUID
+    @Published var name: String
+    @Published var messages: [Message]
+    @Published var participants: [User]
+    @Published var isConnected = false
     
-    var clientId: UUID {
+    var shareableUrl: URL {
+        URL(string: "affirmate://chat?chatId:" + chatId.uuidString)!
+    }
+    
+    private var socket: WebSocket?
+    private let chatActor = ChatsActor()
+    private let chatId: UUID
+    
+    private var clientId: UUID {
         get {
             let uuidString = KeychainWrapper.standard.string(forKey: Constants.chatClientIdKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true)!
             return UUID(uuidString: uuidString)!
         }
     }
     
-    @Published var name: String
-    @Published var messages: [Message]
-    @Published var participants: [Participant]
-    @Published var isConnected = false
-    
-    private var socket: WebSocket?
-    
-    let actor = ChatsActor()
-    
     init(chat: Chat) {
         self.chatId = chat.id
         self.name = chat.name ?? "Chat"
         self.messages = chat.messages ?? []
-        self.participants = chat.participants ?? []
+        self.participants = chat.users ?? []
         setUpWebSocketConnection(chat: chat)
-    }
-    
-    @MainActor func set(isConnected: Bool) {
-        set(clientId: isConnected ? UUID() : nil)
-        withAnimation {
-            self.isConnected = isConnected
-        }
-    }
-    
-    func set(clientId: UUID?) {
-        if let clientId {
-            KeychainWrapper.standard.set(clientId.uuidString, forKey: Constants.chatClientIdKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true)
-        } else {
-            KeychainWrapper.standard.removeObject(forKey: Constants.chatClientIdKey)
-        }
-    }
-    
-    @MainActor func insert(_ newMessage: Message) {
-        withAnimation {
-            self.messages.append(newMessage)
-        }
-    }
-    
-    func setUpWebSocketConnection(chat: Chat) {
-        let sessionToken = actor.http.interceptor.sessionToken
-        let request = ChatsActor.Request.chat(chatId: chat.id, sessionToken: sessionToken)
-        guard let urlRequest = try? request.asURLRequest() else {
-            assertionFailure()
-            return
-        }
-        self.socket = WebSocket(request: urlRequest)
-        self.socket?.delegate = self
-        print(request)
     }
     
     func connect() throws {
@@ -92,8 +50,8 @@ final class ChatObserver: ObservableObject {
     }
     
     func getChat(chatId: UUID) async throws {
-        let chat = try await actor.get(chatId)
-        await setMessages(from: chat)
+        let chat = try await chatActor.get(chatId)
+        await set(chat)
     }
     
     func sendMessage(_ text: String) throws {
@@ -101,9 +59,23 @@ final class ChatObserver: ObservableObject {
         try write(newMessage, from: clientId)
     }
     
-    func addParticipant(_ user: User, role: Participant.Role) throws {
-        let newParticipant = Participant.Create(role: role, user: user.id, chat: chatId)
-        try write(newParticipant, from: clientId)
+    func addParticipants(_ newParticipants: [Participant.Create]) throws {
+        try write(newParticipants, from: clientId)
+    }
+}
+
+private extension ChatObserver {
+    
+    func setUpWebSocketConnection(chat: Chat) {
+        let sessionToken = chatActor.http.interceptor.sessionToken
+        let request = ChatsActor.Request.chat(chatId: chat.id, sessionToken: sessionToken)
+        guard let urlRequest = try? request.asURLRequest() else {
+            assertionFailure()
+            return
+        }
+        self.socket = WebSocket(request: urlRequest)
+        self.socket?.delegate = self
+        print(request)
     }
     
     func write<T: Codable>(_ data: T, from client: UUID = UUID()) throws {
@@ -113,14 +85,43 @@ final class ChatObserver: ObservableObject {
         }
     }
     
-    @MainActor func setMessages(from chat: Chat) {
+    @MainActor func set(isConnected: Bool) {
+        set(clientId: isConnected ? UUID() : nil)
+        withAnimation {
+            self.isConnected = isConnected
+        }
+    }
+    
+    @MainActor func insert(_ newMessage: Message) {
+        withAnimation {
+            self.messages.append(newMessage)
+        }
+    }
+    
+    @MainActor func add(_ participant: User) {
+        withAnimation {
+            self.participants.append(participant)
+        }
+    }
+    
+    @MainActor func set(_ chat: Chat) {
         withAnimation {
             self.messages = chat.messages ?? []
+            self.participants = chat.users ?? []
+        }
+    }
+    
+    func set(clientId: UUID?) {
+        if let clientId {
+            KeychainWrapper.standard.set(clientId.uuidString, forKey: Constants.chatClientIdKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true)
+        } else {
+            KeychainWrapper.standard.removeObject(forKey: Constants.chatClientIdKey)
         }
     }
 }
 
 extension ChatObserver: WebSocketDelegate {
+    
     func didReceive(event: Starscream.WebSocketEvent, client: Starscream.WebSocket) {
         switch event {
         case .connected(let headers):
@@ -142,17 +143,23 @@ extension ChatObserver: WebSocketDelegate {
         case .text(let text):
             print("WebSocket: Recieved text:", text)
         case .binary(let data):
-            if let newMessage = try? data.decodeWebSocketMessage(Message.self) {
+            if let connectionConfirmation = try? data.decodeWebSocketMessage(ConfirmConnection.self) {
+                self.set(clientId: connectionConfirmation.client)
+                print("WebSocket: Connection confirmed!")
+            } else if let newMessage = try? data.decodeWebSocketMessage(Message.self) {
                 self.set(clientId: newMessage.client)
                 Task {
                     await self.insert(newMessage.data)
                     print("WebSocket: Recieved message:", newMessage)
                 }
-            } else if let connectionConfirmation = try? data.decodeWebSocketMessage(ConfirmConnection.self) {
-                self.set(clientId: connectionConfirmation.client)
-                print("WebSocket: Connection confirmed!")
-            } else if let serverError = try? JSONDecoder().decode(WebSocketError.self, from: data) {
-                print("Recieved server error:", serverError)
+            } else if let newParticipant = try? data.decodeWebSocketMessage(User.self) {
+                self.set(clientId: newParticipant.client)
+                Task {
+                    await self.add(newParticipant.data)
+                    print("WebSocket: Did add new participant:", newParticipant)
+                }
+            } else if let webSocketError = try? JSONDecoder().decode(WebSocketError.self, from: data) {
+                print("Recieved webSocket server error:", webSocketError)
             } else {
                 print("WebSocket: Received unrecognized data:", (try? JSONSerialization.jsonObject(with: data) as Any) as? [String: Any] as Any)
             }

@@ -11,11 +11,11 @@ import Foundation
 struct Message: Object {
     var id: UUID?
     var text: String
-    var chat: Chat
+    var chat: Relation
     var sender: User
     var imageURLs: [URL]?
 
-    struct Create: CreateObject {
+    struct Create: Codable {
         var text: String
     }
     

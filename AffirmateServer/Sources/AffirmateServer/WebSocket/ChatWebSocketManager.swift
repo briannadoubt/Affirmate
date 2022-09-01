@@ -82,7 +82,7 @@ private extension ChatWebSocketManager {
                 let newParticipant = try await request.db.transaction { database in
                     let currentUser = try await self.getUser(request)
                     let chat = try await self.getChat(request, on: database)
-                    guard let user = try await User.find(participant.user, on: database) else {
+                    guard let user = try await AffirmateUser.find(participant.user, on: database) else {
                         throw Abort(.notFound)
                     }
                     try await chat.$users.attach(user, method: .ifNotExists, on: database)
@@ -127,8 +127,8 @@ private extension ChatWebSocketManager {
         return chat
     }
     
-    func getUser(_ request: Request) throws -> User {
-        try request.auth.require(User.self)	
+    func getUser(_ request: Request) throws -> AffirmateUser {
+        try request.auth.require(AffirmateUser.self)	
     }
     
     func get<T: Codable>(_ buffer: ByteBuffer, _ type: T.Type) -> WebSocketMessage<T>? {

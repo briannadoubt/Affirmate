@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+enum DeepLink: String {
+    case chat = "chat"
+}
+
 struct AffirmateTabView: View {
     @SceneStorage("tabSelection") var tabSelection: TabSelection = .home
     enum TabSelection: String {
@@ -31,6 +35,18 @@ struct AffirmateTabView: View {
                 .tabItem {
                     Label("Me", systemImage: tabSelection == .me ? "person.fill" : "person")
                 }
+        }
+        .onOpenURL { url in
+            guard
+                let firstPathComponent = url.pathComponents.first,
+                let deepLink = DeepLink(rawValue: firstPathComponent)
+            else {
+                return
+            }
+            switch deepLink {
+            case .chat:
+                tabSelection = .chat
+            }
         }
     }
 }

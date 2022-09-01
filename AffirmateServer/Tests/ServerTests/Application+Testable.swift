@@ -20,7 +20,7 @@ extension Application {
 
 //extension XCTApplicationTester {
 //  public func login(
-//    user: User
+//    user: AffirmateUser
 //  ) throws -> Token {
 //    var request = XCTHTTPRequest(
 //      method: .POST,

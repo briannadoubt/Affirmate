@@ -3,9 +3,11 @@ import PackageDescription
 
 let package = Package(
     name: "AffirmateServer",
-    platforms: [.macOS(.v12)],
+    platforms: [.macOS(.v12), .iOS(.v15), .tvOS(.v15)],
+    products: [
+        .library(name: "AffirmateServer", targets: ["AffirmateServer"]),
+    ],
     dependencies: [
-        // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0"),
@@ -32,8 +34,8 @@ let package = Package(
             ]
         ),
         .executableTarget(name: "Server", dependencies: [.target(name: "AffirmateServer")]),
-        .testTarget(name: "AffirmateServerTests", dependencies: [
-            .target(name: "AffirmateServer"),
+        .testTarget(name: "ServerTests", dependencies: [
+            .target(name: "Server"),
             .product(name: "XCTVapor", package: "vapor"),
         ])
     ]

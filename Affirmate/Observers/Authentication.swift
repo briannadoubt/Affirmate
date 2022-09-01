@@ -15,7 +15,7 @@ final class Authentication: ObservableObject {
     @Published var currentUser: User?
     
     let http = HTTPActor()
-    let meActor = MeActor()
+    let meActor = UserActor()
     
     @MainActor private func setState(to newState: Authentication.State) {
         withAnimation {
@@ -34,7 +34,7 @@ final class Authentication: ObservableObject {
     }
     
     func getCurrentUser() async throws {
-        let me = try await meActor.get()
+        let me = try await meActor.me()
         await setCurrentUser(to: me)
     }
     
@@ -81,18 +81,18 @@ final class Authentication: ObservableObject {
         case refresh(token: String)
         case updateDeviceToken(Data?)
 
-        var url: URL? { Constants.baseURL?.appending(component: "auth") }
+        var url: URL { Constants.baseURL.appending(component: "auth") }
         
         var uri: URLConvertible? {
             switch self {
             case .new:
-                return url?.appending(path: "new")
+                return url.appending(path: "new")
             case .login:
-                return url?.appending(path: "login")
+                return url.appending(path: "login")
             case .refresh:
-                return url?.appending(path: "validate")
+                return url.appending(path: "validate")
             case .updateDeviceToken:
-                return url?.appending(path: "deviceToken")
+                return url.appending(path: "deviceToken")
             }
         }
 
@@ -147,6 +147,23 @@ final class Authentication: ObservableObject {
         case loading
         case loggedOut
         case loggedIn
+    }
+}
+
+extension Authentication {
+    
+    enum ViewState: String, CaseIterable, Identifiable {
+        case login
+        case signUp
+        var id: String { rawValue }
+        var labelText: String {
+            switch self {
+            case .signUp:
+                return "Sign Up"
+            case .login:
+                return "Login"
+            }
+        }
     }
 }
 

@@ -13,14 +13,14 @@ struct AuthenticationRouteCollection: RouteCollection {
         let auth = routes.grouped("auth")
         // MARK: - POST: /auth/new
         // "/new" is an open endpoint with no security validation. In the future, work in some middleware to handle denying requests based on the rate of requests, end-user's IP address, variability in account information, and other suspicious activity.
-        auth.post("new") { request async throws -> User.GetResponse in
-            try User.Create.validate(content: request)
-            let create = try request.content.decode(User.Create.self)
+        auth.post("new") { request async throws -> AffirmateUser.GetResponse in
+            try AffirmateUser.Create.validate(content: request)
+            let create = try request.content.decode(AffirmateUser.Create.self)
             guard create.password == create.confirmPassword else {
                 throw Abort(.badRequest, reason: "Passwords do not match")
             }
             let passwordHash = try Bcrypt.hash(create.password)
-            let user = User(firstName: create.firstName, lastName: create.lastName, username: create.username, email: create.email, passwordHash: passwordHash)
+            let user = AffirmateUser(firstName: create.firstName, lastName: create.lastName, username: create.username, email: create.email, passwordHash: passwordHash)
             try await user.create(on: request.db)
             let getResponse = try user.getResponse
             return getResponse
@@ -36,15 +36,15 @@ struct AuthenticationRouteCollection: RouteCollection {
         }
         // MARK: - GET: /auth/login
         // "/login" requires Basic Authentication data containing the username and password
-        let passwordProtected = auth.grouped(User.authenticator(), User.guardMiddleware())
-        passwordProtected.get("login") { request async throws -> User.LoginResponse in
-            let user = try request.auth.require(User.self)
+        let passwordProtected = auth.grouped(AffirmateUser.authenticator(), AffirmateUser.guardMiddleware())
+        passwordProtected.get("login") { request async throws -> AffirmateUser.LoginResponse in
+            let user = try request.auth.require(AffirmateUser.self)
             let payload = try JWTToken(user: user)
             let jwtToken = try request.jwt.sign(payload)
             let sessionToken = try user.generateToken()
             try await sessionToken.create(on: request.db)
             let jwtTokenResponse = JWTToken.Response(jwtToken: jwtToken, sesionToken: sessionToken.value)
-            return User.LoginResponse(jwt: jwtTokenResponse, user: try user.getResponse)
+            return AffirmateUser.LoginResponse(jwt: jwtTokenResponse, user: try user.getResponse)
         }
         
         // MARK: - POST: /auth/validate
@@ -60,7 +60,7 @@ struct AuthenticationRouteCollection: RouteCollection {
         // NOTE: This route requires no prior authentication since it is used for sign up.
 //        auth.get("apple") { request async throws -> Token.Response in
 //            let appleIdentityToken = try await request.jwt.apple.verify()
-//            let payload = Token(user: <#T##User#>)
+//            let payload = Token(user: <#T##AffirmateUser#>)
 //        }
     }
 }

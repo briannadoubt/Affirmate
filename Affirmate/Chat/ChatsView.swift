@@ -66,9 +66,7 @@ struct ChatsView: View {
     @State var selectedChat: Chat?
     
     var body: some View {
-        NavigationSplitView(
-            columnVisibility: $navigationSplitViewVisibility
-        ) {
+        NavigationSplitView(columnVisibility: $navigationSplitViewVisibility) {
             ChatsListView(selectedChat: $selectedChat, getChats: getChats)
                 .environmentObject(authentication)
                 .environmentObject(chatsObserver)
@@ -82,6 +80,28 @@ struct ChatsView: View {
             }
         }
         .navigationSplitViewStyle(.balanced)
+        .onOpenURL { url in
+            guard
+                let firstPathComponent = url.pathComponents.first,
+                let deepLink = DeepLink(rawValue: firstPathComponent)
+            else {
+                return
+            }
+            switch deepLink {
+            case .chat:
+                guard
+                    let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                    let queryItems = components.queryItems,
+                    let chatIdQueryItem = queryItems.first(where: { $0.name == "chatId"}),
+                    let chatIdString = chatIdQueryItem.value,
+                    let chatId = UUID(uuidString: chatIdString),
+                    let chat = chatsObserver.chats.first(where: { $0.id == chatId })
+                else {
+                    return
+                }
+                selectedChat = chat
+            }
+        }
     }
 }
 

@@ -9,14 +9,14 @@ import Foundation
 
 enum Constants {
     #if PRODUCTION
-    static let baseURL = URL(string: "https://affirmate.org")
-    static let baseSocketURL = URL(string: "wss://affirmate.org")
+    static let baseURL = URL(string: "https://affirmate.org")!
+    static let baseSocketURL = URL(string: "wss://affirmate.org")!
     #elseif targetEnvironment(simulator)
-    static let baseURL = URL(string: "http://localhost:8080")
-    static let baseSocketURL = URL(string: "ws://localhost:8080")
+    static let baseURL = URL(string: "http://localhost:8080")!
+    static let baseSocketURL = URL(string: "ws://localhost:8080")!
     #elseif DEBUG
-    static let baseURL = URL(string: "http://10.0.0.77:8080")
-    static let baseSocketURL = URL(string: "ws://10.0.0.77:8080")
+    static let baseURL = URL(string: "http://10.0.0.77:8080")!
+    static let baseSocketURL = URL(string: "ws://10.0.0.77:8080")!
     #endif
     
     static let sessionTokenKey = "org.affirmate.keys.session"

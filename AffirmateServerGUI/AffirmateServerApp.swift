@@ -1,5 +1,5 @@
 //
-//  AffirmateServerGUIApp.swift
+//  AffirmateServerApp.swift
 //  AffirmateServerGUI
 //
 //  Created by Bri on 8/29/22.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct AffirmateServerGUIApp: App {
+struct AffirmateServerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
