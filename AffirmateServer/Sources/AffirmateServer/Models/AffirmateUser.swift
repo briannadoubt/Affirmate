@@ -1,5 +1,5 @@
 //
-//  User.swift
+//  AffirmateUser.swift
 //  AffirmateServer
 //
 //  Created by Bri on 7/3/22.
@@ -13,7 +13,7 @@ extension String {
     var validationKey: ValidationKey { ValidationKey(stringLiteral: self) }
 }
 
-final class User: Model, Content, Codable {
+final class AffirmateUser: Model, Content, Codable {
     
     static let schema = "users"
     
@@ -24,6 +24,8 @@ final class User: Model, Content, Codable {
     @Field(key: "email") var email: String
     @Field(key: "password_hash") var passwordHash: String
     @OptionalField(key: "apns_id") var apnsId: Data?
+    @Siblings(through: Participant.self, from: \.$user, to: \.$chat) var chats: [Chat]
+    @Children(for: \.$user) var chatInvitations: [ChatInvitation]
     
     init() { }
     
@@ -38,14 +40,14 @@ final class User: Model, Content, Codable {
     }
 }
 
-extension User {
+extension AffirmateUser {
     /// Handle asyncronous database migration; creating and destroying the "User" table.
     struct Migration: AsyncMigration {
         /// The name of the migrator
         var name: String { "UserMigration" }
         /// Outlines the `user` table schema
         func prepare(on database: Database) async throws {
-            try await database.schema(User.schema)
+            try await database.schema(AffirmateUser.schema)
                 .id()
                 .field("first_name", .string)
                 .field("last_name", .string)
@@ -53,26 +55,26 @@ extension User {
                 .field("username", .string)
                 .field("password_hash", .string, .required)
                 .field("apns_id", .data)
-                .unique(on: "email")
-                .unique(on: "username")
+                .field("chat_invitations", .uuid, .required, .references(ChatInvitation.schema, .id))
+                .unique(on: "email", "username")
                 .create()
         }
         /// Destroys the `user` table
         func revert(on database: Database) async throws {
-            try await database.schema(User.schema).delete()
+            try await database.schema(AffirmateUser.schema).delete()
         }
     }
 }
 
-extension User: ModelAuthenticatable {
-    static let usernameKey = \User.$username
-    static let passwordHashKey = \User.$passwordHash
+extension AffirmateUser: ModelAuthenticatable {
+    static let usernameKey = \AffirmateUser.$username
+    static let passwordHashKey = \AffirmateUser.$passwordHash
     func verify(password: String) throws -> Bool {
         try Bcrypt.verify(password, created: passwordHash)
     }
 }
 
-extension User {
+extension AffirmateUser {
     /// The post parameter used to create a new user
     struct Create: Content, Validatable, Codable {
         var firstName: String
@@ -101,7 +103,7 @@ extension User {
     }
 }
 
-extension User {
+extension AffirmateUser {
     var getResponse: GetResponse {
         get throws {
             GetResponse(id: try requireID(), firstName: firstName, lastName: lastName, username: username, email: email)
@@ -123,11 +125,29 @@ extension User {
     }
 }
 
-extension User {
+extension AffirmateUser {
+    func publicResponse() throws -> Public {
+        Public(id: try requireID(), username: username)
+    }
+    struct Public: Content, Equatable, Codable {
+        var id: UUID
+        var username: String
+    }
+}
+
+extension AffirmateUser {
     func generateToken() throws -> SessionToken {
         try .init(
             value: [UInt8].random(count: 32).base64,
             userID: self.requireID()
         )
+    }
+}
+
+extension Collection where Element == AffirmateUser {
+    var getResponse: [AffirmateUser.GetResponse] {
+        get throws {
+            try map { try $0.getResponse }
+        }
     }
 }

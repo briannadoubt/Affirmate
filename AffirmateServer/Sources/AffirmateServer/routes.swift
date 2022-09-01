@@ -11,5 +11,6 @@ func restRoutes(_ app: Application) throws {
     }
     try app.register(collection: AuthenticationRouteCollection())
     try app.register(collection: MeRouteCollection())
+    try app.register(collection: UserRouteCollection())
     try app.register(collection: ChatRouteCollection())
 }

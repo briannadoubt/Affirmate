@@ -1,5 +1,5 @@
 //
-//  MeActor.swift
+//  UserActor.swift
 //  Affirmate
 //
 //  Created by Bri on 8/18/22.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Alamofire
 
-actor MeActor {
+actor UserActor {
     private let http = HTTPActor()
     func get() async throws -> User {
         try await http.requestDecodable(Request.get, to: User.self)

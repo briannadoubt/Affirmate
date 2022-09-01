@@ -105,3 +105,5 @@ public func configure(_ app: Application) throws {
             await chatWebSocketManager.connect(request, webSocket)
         }
 }
+
+

@@ -1,40 +1,35 @@
 //
-//  Participant.swift
+//  ChatInvitation.swift
 //  AffirmateServer
 //
-//  Created by Bri on 7/30/22.
+//  Created by Bri on 8/27/22.
 //
 
 import Fluent
 import Vapor
 
-final class Participant: Model, Content {
+final class ChatInvitation: Model, Content {
     
-    static let schema = "participant"
+    static let schema = "chat_invitation"
     
     @ID(key: FieldKey.id) var id: UUID?
-    @Field(key: "role") var role: Role
+    @Field(key: "role") var role: Participant.Role
     @Parent(key: "user_id") var user: User
     @Parent(key: "chat_id") var chat: Chat
     
     init() { }
     
-    init(id: UUID? = nil, role: Participant.Role = .participant, user: User.IDValue, chat: User.IDValue) {
+    init(id: UUID? = nil, role: Participant.Role, user: User.IDValue, chat: Chat.IDValue) {
         self.id = id
         self.role = role
         self.$user.id = user
         self.$chat.id = chat
     }
-    
-    enum Role: String, CaseIterable, Codable, Hashable {
-        case admin
-        case participant
-    }
 }
 
-extension Participant {
+extension ChatInvitation {
     struct Create: Content, Validatable {
-        var role: Role
+        var role: Participant.Role
         var user: UUID
         static func validations(_ validations: inout Validations) {
             validations.add("role", as: String.self, is: !.empty)
@@ -43,11 +38,11 @@ extension Participant {
     }
 }
 
-extension Participant {
+extension ChatInvitation {
     /// Handle asyncronous database migration; creating and destroying the "ChatParticipant" table.
     struct Migration: AsyncMigration {
         /// The name of the migrator
-        var name: String { "ParticipantMigration" }
+        var name: String { "ChatInvitationMigration" }
         /// Outlines the `chat-participants` table schema
         func prepare(on database: Database) async throws {
             try await database.schema(Participant.schema)
@@ -65,21 +60,21 @@ extension Participant {
     }
 }
 
-extension Participant {
+extension ChatInvitation {
     var getResponse: GetResponse {
         get throws {
             try GetResponse(role: role, user: user.getResponse, chat: chat.participantResponse)
         }
     }
     struct GetResponse: Content {
-        var role: Role
+        var role: Participant.Role
         var user: User.GetResponse
         var chat: Chat.ParticipantResponse?
     }
 }
 
-extension Collection where Element == Participant {
-    var getResponse: [Participant.GetResponse] {
+extension Collection where Element == ChatInvitation {
+    var getResponse: [ChatInvitation.GetResponse] {
         get throws {
             try map { try $0.getResponse }
         }

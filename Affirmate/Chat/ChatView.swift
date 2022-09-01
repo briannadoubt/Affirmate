@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ReversedScrollView
+import UniformTypeIdentifiers
 
 public struct ChatView: View {
     
@@ -18,6 +19,7 @@ public struct ChatView: View {
     @FocusState fileprivate var focused
     
     @State var presentedParticipant: Participant?
+    @State var presentedCopiedUrl = false
     
     #if os(iOS)
     @StateObject fileprivate var keyboard = KeyboardHeightObserver()
@@ -144,7 +146,7 @@ public struct ChatView: View {
                 ForEach(chatObserver.participants) { participant in
                     HStack {
                         Circle().frame(width: 44, height: 44)
-                        Text("@" + participant.user.username)
+                        Text("@" + participant.username)
                     }
                 }
                 Button {
@@ -168,6 +170,19 @@ public struct ChatView: View {
         }
         .toolbar {
             ToolbarTitleMenu()
+            ToolbarItem(placement: .secondaryAction) {
+                Button {
+                    UIPasteboard.general.setValue(chatObserver.shareableUrl, forPasteboardType: UTType.url.identifier)
+                    withAnimation {
+                        presentedCopiedUrl = true
+                    }
+                } label: {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+            }
+        }
+        .alert(isPresented: $presentedCopiedUrl) {
+            Alert(title: Text("Link Copied!"), message: Text(""))
         }
         .sheet(item: $presentedParticipant) {
             presentedParticipant = nil

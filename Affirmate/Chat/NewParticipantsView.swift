@@ -8,12 +8,16 @@
 import SwiftUI
 
 struct NewParticipantsView: View {
+    
     @EnvironmentObject var chatObserver: ChatObserver
     @SceneStorage("newParticipant_username") var username: String = ""
+    
     var body: some View {
         NavigationView {
             Form {
-                TextField("Username", text: $username)
+                Section {
+                    TextField("Username", text: $username)
+                }
             }
             .navigationTitle("Add Participant(s) to " + chatObserver.name)
         }

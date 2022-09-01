@@ -44,8 +44,8 @@ extension SessionToken {
 }
 
 extension SessionToken: ModelTokenAuthenticatable {
-    typealias User = AffirmateServer.User
-    
+    typealias User = Server.User
+
     static let valueKey = \SessionToken.$value
     static let userKey = \SessionToken.$user
 

@@ -16,7 +16,8 @@ final class Chat: Model, Content {
     @ID(key: FieldKey.id) var id: UUID?
     @Field(key: "name") var name: String?
     @Children(for: \.$chat) var messages: [Message]
-    @Children(for: \.$chat) var participants: [Participant]
+    @Siblings(through: Participant.self, from: \.$chat, to: \.$user) var users: [User]
+//    @Children(for: \.$chat) var openInvitations: [ChatInvitation]
     
     init() { }
     
@@ -55,11 +56,6 @@ extension Chat {
 }
 
 extension Chat {
-    var getResponse: GetResponse {
-        get throws {
-            try GetResponse(id: requireID(), participants: participants.getResponse, messages: messages.getResponse)
-        }
-    }
     
     struct GetResponse: Content {
         var id: UUID
@@ -76,13 +72,5 @@ extension Chat {
     
     struct ParticipantResponse: Content {
         var id: UUID?
-    }
-}
-
-extension Collection where Element == Chat {
-    var getResponse: [Chat.GetResponse] {
-        get throws {
-            try map { try $0.getResponse }
-        }
     }
 }
