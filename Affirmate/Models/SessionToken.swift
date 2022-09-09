@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum SessionToken {
-    struct Response: Codable {
-        var token: String
-    }
+struct SessionToken: Codable {
+    var id: UUID
+    var value: String
+    var user: AffirmateUser.SessionTokenResponse
 }

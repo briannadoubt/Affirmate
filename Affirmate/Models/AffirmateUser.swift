@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct User: Object {
+struct AffirmateUser: Object {
     var id: UUID
     var firstName: String
     var lastName: String
@@ -23,8 +23,8 @@ struct User: Object {
     }
     
     struct LoginResponse: Decodable {
-        var jwt: JWTToken.Response
-        var user: User
+        var sessionToken: SessionToken
+        var user: AffirmateUser
     }
     
     /// The post parameter used to create a new user
@@ -40,5 +40,9 @@ struct User: Object {
     struct Public: Object {
         var id: UUID
         var username: String
+    }
+    
+    struct SessionTokenResponse: Codable {
+        var id: UUID
     }
 }

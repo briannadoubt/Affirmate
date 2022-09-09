@@ -10,7 +10,7 @@ import SwiftUI
 struct ChatsListView: View {
     @Binding var selectedChat: Chat?
     @EnvironmentObject var chatsObserver: ChatsObserver
-    @EnvironmentObject var authentication: Authentication
+    @EnvironmentObject var authenticationObserver: AuthenticationObserver
     @SceneStorage("chat.isShowingNewChat") var isShowingNewChat = false
     var getChats: () async -> ()
     var body: some View {
@@ -18,8 +18,8 @@ struct ChatsListView: View {
             ForEach(chatsObserver.chats) { chat in
                 VStack {
                     if let lastMessage = chat.messages?.last {
-                        Text((lastMessage.sender.username) + ": ").bold()
-                        Text(lastMessage.text)
+                        Text((lastMessage.sender.user.username) + ": ").bold()
+                        Text(lastMessage.text ?? "")
                     } else {
                         Text("No messages yet...")
                     }
@@ -40,8 +40,9 @@ struct ChatsListView: View {
                     Label("New Chat", systemImage: "plus")
                 }
                 .popover(isPresented: $isShowingNewChat) {
-                    NewChatView()
+                    NewChatView(isPresented: $isShowingNewChat)
                         .environmentObject(chatsObserver)
+                        .environmentObject(authenticationObserver)
                 }
             }
         }
@@ -51,7 +52,7 @@ struct ChatsListView: View {
 struct ChatsView: View {
     
     @StateObject var chatsObserver = ChatsObserver()
-    @EnvironmentObject var authentication: Authentication
+    @EnvironmentObject var authenticationObserver: AuthenticationObserver
     
     func getChats() async {
         do {
@@ -68,7 +69,7 @@ struct ChatsView: View {
     var body: some View {
         NavigationSplitView(columnVisibility: $navigationSplitViewVisibility) {
             ChatsListView(selectedChat: $selectedChat, getChats: getChats)
-                .environmentObject(authentication)
+                .environmentObject(authenticationObserver)
                 .environmentObject(chatsObserver)
                 .navigationSplitViewColumnWidth(ideal: 320)
         } detail: {

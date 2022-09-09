@@ -8,7 +8,11 @@
 import Fluent
 import Vapor
 
-final class Participant: Model, Content {
+final class Participant: Model, Content, Equatable {
+    
+    static func == (lhs: Participant, rhs: Participant) -> Bool {
+        lhs.id == rhs.id
+    }
     
     static let schema = "participant"
     
@@ -33,7 +37,7 @@ final class Participant: Model, Content {
 }
 
 extension Participant {
-    struct Create: Content, Validatable {
+    struct Create: Content, Validatable, Equatable, Hashable {
         var role: Role
         var user: UUID
         static func validations(_ validations: inout Validations) {
@@ -66,22 +70,10 @@ extension Participant {
 }
 
 extension Participant {
-    var getResponse: GetResponse {
-        get throws {
-            try GetResponse(role: role, user: user.getResponse, chat: chat.participantResponse)
-        }
-    }
     struct GetResponse: Content {
+        var id: UUID
         var role: Role
-        var user: AffirmateUser.GetResponse
-        var chat: Chat.ParticipantResponse?
-    }
-}
-
-extension Collection where Element == Participant {
-    var getResponse: [Participant.GetResponse] {
-        get throws {
-            try map { try $0.getResponse }
-        }
+        var user: AffirmateUser.ParticipantReponse
+        var chat: Chat.ParticipantResponse
     }
 }

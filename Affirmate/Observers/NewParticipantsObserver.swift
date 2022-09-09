@@ -1,5 +1,5 @@
 //
-//  NewParticipantObserver.swift
+//  NewParticipantsObserver.swift
 //  Affirmate
 //
 //  Created by Bri on 8/27/22.
@@ -8,33 +8,34 @@
 import Alamofire
 import SwiftUI
 
-final class NewParticipantObserver: ObservableObject {
+final class NewParticipantsObserver: ObservableObject {
     
     @Published var username: String = ""
-    @Published var searchResults: [User.Public] = []
-    @Published var selectedParticipants: [User.Public: Participant.Role] = [:]
+    @Published var searchResults: [AffirmateUser.Public] = []
+    @Published var selectedParticipants: [AffirmateUser.Public: Participant.Role] = [:]
     
-    let userActor = UserActor()
+    let userActor = AffirmateUserActor()
     
-    @MainActor func set(_ searchResults: [User.Public]) {
+    @MainActor func set(searchResults: [AffirmateUser.Public]) {
         withAnimation {
             self.searchResults = searchResults
         }
     }
     
-    @MainActor func select(user: User.Public) {
+    @MainActor func select(user: AffirmateUser.Public) {
         withAnimation {
             self.selectedParticipants[user] = .participant
+            self.set(searchResults: [])
         }
     }
     
-    @MainActor func set(role: Participant.Role, for user: User.Public) {
+    @MainActor func set(role: Participant.Role, for user: AffirmateUser.Public) {
         withAnimation {
             self.selectedParticipants[user] = role
         }
     }
     
-    @MainActor func remove(user: User.Public) {
+    @MainActor func remove(user: AffirmateUser.Public) {
         withAnimation {
             self.selectedParticipants.removeValue(forKey: user)
         }
@@ -42,6 +43,6 @@ final class NewParticipantObserver: ObservableObject {
     
     func find() async throws {
         let publicUsers = try await userActor.find(username: username)
-        await set(publicUsers)
+        await set(searchResults: publicUsers)
     }
 }

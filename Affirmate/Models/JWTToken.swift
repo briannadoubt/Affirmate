@@ -6,12 +6,7 @@
 //
 
 import Foundation
-import Alamofire
-import SwiftKeychainWrapper
 
-enum JWTToken {
-    struct Response: Codable {
-        var jwtToken: String
-        var sesionToken: String
-    }
+struct JWTToken: Codable {
+    var jwt: String
 }

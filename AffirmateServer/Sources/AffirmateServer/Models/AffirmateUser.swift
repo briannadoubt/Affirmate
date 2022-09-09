@@ -111,7 +111,7 @@ extension AffirmateUser {
     }
     
     struct LoginResponse: Content {
-        var jwt: JWTToken.Response
+        var sessionToken: SessionToken
         var user: GetResponse
     }
     
@@ -122,6 +122,11 @@ extension AffirmateUser {
         var lastName: String
         var username: String
         var email: String
+    }
+    
+    struct ParticipantReponse: Content, Equatable, Codable {
+        var id: UUID
+        var username: String
     }
 }
 

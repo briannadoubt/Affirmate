@@ -15,7 +15,7 @@ final class ChatObserver: ObservableObject {
     
     @Published var name: String
     @Published var messages: [Message]
-    @Published var participants: [User]
+    @Published var participants: [Participant]
     @Published var isConnected = false
     
     var shareableUrl: URL {
@@ -37,7 +37,7 @@ final class ChatObserver: ObservableObject {
         self.chatId = chat.id
         self.name = chat.name ?? "Chat"
         self.messages = chat.messages ?? []
-        self.participants = chat.users ?? []
+        self.participants = chat.participants ?? []
         setUpWebSocketConnection(chat: chat)
     }
     
@@ -98,16 +98,16 @@ private extension ChatObserver {
         }
     }
     
-    @MainActor func add(_ participant: User) {
+    @MainActor func add(_ participants: [Participant]) {
         withAnimation {
-            self.participants.append(participant)
+            self.participants.append(contentsOf: participants)
         }
     }
     
     @MainActor func set(_ chat: Chat) {
         withAnimation {
             self.messages = chat.messages ?? []
-            self.participants = chat.users ?? []
+            self.participants = chat.participants ?? []
         }
     }
     
@@ -152,11 +152,11 @@ extension ChatObserver: WebSocketDelegate {
                     await self.insert(newMessage.data)
                     print("WebSocket: Recieved message:", newMessage)
                 }
-            } else if let newParticipant = try? data.decodeWebSocketMessage(User.self) {
-                self.set(clientId: newParticipant.client)
+            } else if let newParticipants = try? data.decodeWebSocketMessage([Participant].self) {
+                self.set(clientId: newParticipants.client)
                 Task {
-                    await self.add(newParticipant.data)
-                    print("WebSocket: Did add new participant:", newParticipant)
+                    await self.add(newParticipants.data)
+                    print("WebSocket: Did add new participant:", newParticipants)
                 }
             } else if let webSocketError = try? JSONDecoder().decode(WebSocketError.self, from: data) {
                 print("Recieved webSocket server error:", webSocketError)

@@ -8,13 +8,13 @@
 import Foundation
 
 struct Relation: Object {
-    var id: UUID?
+    var id: UUID
 }
 
 struct Participant: Object {
     var id: UUID?
     var role: Role
-    var user: User.Public
+    var user: AffirmateUser.Public
     var chat: Relation
     
     enum Role: String, CaseIterable, Codable, Hashable, Equatable, Identifiable {
@@ -36,5 +36,12 @@ struct Participant: Object {
     struct Create: Codable, Hashable {
         var role: Role
         var user: UUID
+    }
+    
+    struct GetResponse: Object {
+        var id: UUID
+        var role: Role
+        var user: AffirmateUser.Public
+        var chat: Chat.ParticipantResponse
     }
 }

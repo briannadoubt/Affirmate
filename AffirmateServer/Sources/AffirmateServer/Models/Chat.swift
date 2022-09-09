@@ -8,15 +8,18 @@
 import Fluent
 import Vapor
 
-final class Chat: Model, Content {
+final class Chat: Model, Content, Equatable {
+    
+    static func == (lhs: Chat, rhs: Chat) -> Bool {
+        lhs.id == rhs.id
+    }
     
     static let schema = "chat"
-    static let idKey = "chat_id"
     
     @ID(key: FieldKey.id) var id: UUID?
     @Field(key: "name") var name: String?
     @Children(for: \.$chat) var messages: [Message]
-    @Siblings(through: Participant.self, from: \.$chat, to: \.$user) var users: [AffirmateUser]
+    @Children(for: \.$chat) var participants: [Participant]
 //    @Children(for: \.$chat) var openInvitations: [ChatInvitation]
     
     init() { }
@@ -49,8 +52,10 @@ extension Chat {
 extension Chat {
     struct Create: Content, Validatable {
         var name: String?
+        var participants: [Participant.Create]
         static func validations(_ validations: inout Validations) {
             validations.add("name", as: String.self)
+            validations.add("participants", as: [Participant.Create].self)
         }
     }
 }
@@ -59,8 +64,9 @@ extension Chat {
     
     struct GetResponse: Content {
         var id: UUID
-        var participants: [Participant.GetResponse]
+        var name: String?
         var messages: [Message.GetResponse]
+        var participants: [Participant.GetResponse]
     }
     
     var participantResponse: ParticipantResponse? {
@@ -71,6 +77,10 @@ extension Chat {
     }
     
     struct ParticipantResponse: Content {
-        var id: UUID?
+        var id: UUID
+    }
+    
+    struct MessageResponse: Content {
+        var id: UUID
     }
 }

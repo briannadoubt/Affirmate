@@ -9,17 +9,23 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @StateObject var authentication = Authentication()
+    @StateObject var authentication = AuthenticationObserver()
     
     var body: some View {
         switch authentication.state {
         case .initial:
-            ProgressView()
-                .task {
-                    await authentication.setCurrentAuthenticationState()
-                }
-        case .loading:
-            ProgressView()
+            VStack {
+                ProgressView()
+                Text("Preparing...")
+            }
+            .task {
+                await authentication.setCurrentAuthenticationState()
+            }
+        case .loading(let message):
+            VStack {
+                ProgressView()
+                Text(message)
+            }
         case .loggedOut:
             AuthenticationView()
                 .environmentObject(authentication)
@@ -30,7 +36,7 @@ struct ContentView: View {
                     await AffirmateApp.requestNotificationPermissions()
                     if let token = AppDelegate.deviceToken {
                         do {
-                            try await authentication.updateDeviceToken(token)
+                            try await authentication.refresh(deviceToken: token)
                         } catch {
                             print("TODO: Show this error in the UI:", error)
                         }

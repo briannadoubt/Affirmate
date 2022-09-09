@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MeView: View {
     
-    @EnvironmentObject var authentication: Authentication
+    @EnvironmentObject var authentication: AuthenticationObserver
     
     func signOut() {
         Task {

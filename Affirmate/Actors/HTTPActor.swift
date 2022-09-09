@@ -10,12 +10,27 @@ import Alamofire
 import SwiftKeychainWrapper
 
 actor HTTPActor {
+    
     let interceptor = Interceptor()
     
     func request(_ requestConvertible: any URLRequestConvertible) async throws {
         switch await AF
             .request(requestConvertible, interceptor: interceptor)
-            .serializingData()
+            .validate(statusCode: [200])
+            .serializingDecodable(Empty.self, emptyResponseCodes: [200])
+            .result {
+        case .failure(let error):
+            throw error
+        case .success:
+            break
+        }
+    }
+    
+    func request(unauthorized requestConvertible: any URLRequestConvertible) async throws {
+        switch await AF
+            .request(requestConvertible)
+            .validate(statusCode: [200])
+            .serializingDecodable(Empty.self, emptyResponseCodes: [200])
             .result {
         case .failure(let error):
             throw error
@@ -26,12 +41,13 @@ actor HTTPActor {
     
     func requestDecodable<Value: Decodable>(_ requestConvertible: any URLRequestConvertible, to type: Value.Type) async throws -> Value {
         print(type.self)
-        let response = await AF
+        let response = try await AF
             .request(requestConvertible, interceptor: interceptor)
+            .validate()
             .serializingDecodable(type.self)
-            .response
+            .value
         print(response)
-        return try response.result.get()
+        return response
     }
     
     func requestOptionalDecodable<Value: Decodable>(_ requestConvertible: any URLRequestConvertible, to type: Value.Type) async -> Value? {
@@ -77,7 +93,7 @@ extension HTTPActor {
 //            Task {
 //                // Inject the refresh token into request
 //                do {
-//                    let newToken = try await Authentication.refreshToken(token)
+//                    let newToken = try await AuthenticationObserver.refreshToken(token)
 //                    try Self.set(newToken)
 //                } catch {
 //                    return completion(.doNotRetryWithError(error))
@@ -86,19 +102,19 @@ extension HTTPActor {
 //            }
 //        }
         
-        static func set(_ response: JWTToken.Response) throws {
-            if !KeychainWrapper.standard.set(response.jwtToken, forKey: Constants.jwtKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true) {
-                throw AuthenticationError.failedToSaveTokenToKeychain
-            }
-            if !KeychainWrapper.standard.set(response.sesionToken, forKey: Constants.sessionTokenKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true) {
+        func set(_ sessionToken: SessionToken) throws {
+//            if !KeychainWrapper.standard.set(response.jwtToken, forKey: Constants.jwtKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true) {
+//                throw AuthenticationError.failedToSaveTokenToKeychain
+//            }
+            if !KeychainWrapper.standard.set(sessionToken.value, forKey: Constants.sessionTokenKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true) {
                 throw AuthenticationError.failedToSaveTokenToKeychain
             }
         }
         
-        static func removeTokens() throws {
-            if !KeychainWrapper.standard.removeObject(forKey: Constants.jwtKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true) {
-                throw AuthenticationError.failedToRemoveTokenFromKeychain
-            }
+        func removeTokens() throws {
+//            if !KeychainWrapper.standard.removeObject(forKey: Constants.jwtKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true) {
+//                throw AuthenticationError.failedToRemoveTokenFromKeychain
+//            }
             if !KeychainWrapper.standard.removeObject(forKey: Constants.sessionTokenKey, withAccessibility: .afterFirstUnlock, isSynchronizable: true) {
                 throw AuthenticationError.failedToRemoveTokenFromKeychain
             }

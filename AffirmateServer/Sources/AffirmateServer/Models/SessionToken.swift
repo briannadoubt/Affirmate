@@ -32,7 +32,7 @@ extension SessionToken {
             try await database.schema(SessionToken.schema)
                 .id()
                 .field("value", .string, .required)
-                .field("user_id", .uuid, .required, .references(User.schema, FieldKey.id))
+                .field("user_id", .uuid, .required, .references(User.schema, .id))
                 .unique(on: "value")
                 .create()
         }

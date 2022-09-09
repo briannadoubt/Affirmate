@@ -11,7 +11,7 @@ import UniformTypeIdentifiers
 
 public struct ChatView: View {
     
-    @EnvironmentObject var authentication: Authentication
+    @EnvironmentObject var authentication: AuthenticationObserver
     @EnvironmentObject var chatObserver: ChatObserver
     
     @SceneStorage("chat_newMessageText") var newMessageText = ""
@@ -68,6 +68,10 @@ public struct ChatView: View {
         return false
     }
     
+    var currentParticipantId: UUID? {
+        chatObserver.participants.first(where: { $0.user.id == authentication.currentUser?.id })?.id
+    }
+    
     public var body: some View {
         let newParticipantButton = Button {
             showingNewParticipants = true
@@ -81,10 +85,10 @@ public struct ChatView: View {
                     spacing: 0,
                     pinnedViews: [.sectionHeaders, .sectionFooters]
                 ) {
-                    if let currentUserId = authentication.currentUser?.id {
+                    if let currentParticipantId {
                         ForEach(chatObserver.messages) { message in
                             MessageView(
-                                currentUserId: currentUserId,
+                                currentParticipantId: currentParticipantId,
                                 withTail: shouldHaveTail(message),
                                 message: message
                             )
@@ -151,7 +155,7 @@ public struct ChatView: View {
                 ForEach(chatObserver.participants) { participant in
                     HStack {
                         Circle().frame(width: 44, height: 44)
-                        Text("@" + participant.username)
+                        Text("@" + participant.user.username)
                     }
                 }
                 newParticipantButton

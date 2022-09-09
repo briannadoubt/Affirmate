@@ -11,9 +11,9 @@ struct ProfileView: View {
 
     @EnvironmentObject var chatObserver: ChatObserver
 
-    let user: User.Public
+    let user: AffirmateUser.Public
     
-    init(user: User.Public) {
+    init(user: AffirmateUser.Public) {
         self.user = user
     }
     
@@ -57,6 +57,6 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView(user: User.Public(id: UUID(), username: "meowface"))
+        ProfileView(user: AffirmateUser.Public(id: UUID(), username: "meowface"))
     }
 }

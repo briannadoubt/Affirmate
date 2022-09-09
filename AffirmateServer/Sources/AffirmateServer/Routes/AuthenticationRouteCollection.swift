@@ -9,49 +9,73 @@ import Fluent
 import Vapor
 
 struct AuthenticationRouteCollection: RouteCollection {
+    
     func boot(routes: RoutesBuilder) throws {
+        
         let auth = routes.grouped("auth")
+        
         // MARK: - POST: /auth/new
         // "/new" is an open endpoint with no security validation. In the future, work in some middleware to handle denying requests based on the rate of requests, end-user's IP address, variability in account information, and other suspicious activity.
-        auth.post("new") { request async throws -> AffirmateUser.GetResponse in
-            try AffirmateUser.Create.validate(content: request)
-            let create = try request.content.decode(AffirmateUser.Create.self)
-            guard create.password == create.confirmPassword else {
-                throw Abort(.badRequest, reason: "Passwords do not match")
+        auth.post("new") { request async throws -> HTTPStatus in
+            try await request.db.transaction { database in
+                try AffirmateUser.Create.validate(content: request)
+                let create = try request.content.decode(AffirmateUser.Create.self)
+                guard create.password == create.confirmPassword else {
+                    throw Abort(.badRequest, reason: "Passwords do not match")
+                }
+                let passwordHash = try Bcrypt.hash(create.password)
+                let user = AffirmateUser(
+                    firstName: create.firstName,
+                    lastName: create.lastName,
+                    username: create.username,
+                    email: create.email,
+                    passwordHash: passwordHash
+                )
+                try await user.create(on: database)
+                return .ok
             }
-            let passwordHash = try Bcrypt.hash(create.password)
-            let user = AffirmateUser(firstName: create.firstName, lastName: create.lastName, username: create.username, email: create.email, passwordHash: passwordHash)
-            try await user.create(on: request.db)
-            let getResponse = try user.getResponse
-            return getResponse
         }
-        // MARK: - GET: /auth
-        auth.get { request in
-            request.view.render(
-                "auth", [
-                    "title": "Auth",
-                    "header": "Authenticate yourself, human!"
-                ]
-            )
-        }
+        
+        let passwordProtected = auth.grouped(AffirmateUser.authenticator())
+        
         // MARK: - GET: /auth/login
         // "/login" requires Basic Authentication data containing the username and password
-        let passwordProtected = auth.grouped(AffirmateUser.authenticator(), AffirmateUser.guardMiddleware())
         passwordProtected.get("login") { request async throws -> AffirmateUser.LoginResponse in
+            print(request)
             let user = try request.auth.require(AffirmateUser.self)
-            let payload = try JWTToken(user: user)
-            let jwtToken = try request.jwt.sign(payload)
+            print("User:", user)
             let sessionToken = try user.generateToken()
-            try await sessionToken.create(on: request.db)
-            let jwtTokenResponse = JWTToken.Response(jwtToken: jwtToken, sesionToken: sessionToken.value)
-            return AffirmateUser.LoginResponse(jwt: jwtTokenResponse, user: try user.getResponse)
+            print("Session Token:", sessionToken)
+            try await sessionToken.save(on: request.db)
+            print("Did save token")
+            let loginResponse = AffirmateUser.LoginResponse(
+                sessionToken: sessionToken,
+                user: AffirmateUser.GetResponse(
+                    id: try user.requireID(),
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    username: user.username,
+                    email: user.email
+                )
+            )
+            print("Login Response:", loginResponse)
+            return loginResponse
         }
         
         // MARK: - POST: /auth/validate
         // "/validate" checks if there is a valid token on the JWT session.
         // If this check fails the client is expected to re-authenticate with another call to "/login"
-        passwordProtected.post("validate") { request -> HTTPStatus in
+        auth.post("validate") { request -> HTTPStatus in
             try request.auth.require(SessionToken.self)
+            return .ok
+        }
+        
+        let tokenProtected = auth.grouped(SessionToken.authenticator(), SessionToken.guardMiddleware())
+        
+        // MARK: - POST: /auth/logout
+        tokenProtected.post("logout") { request -> HTTPStatus in
+            let token = try request.auth.require(SessionToken.self)
+            try await token.delete(on: request.db)
             return .ok
         }
         

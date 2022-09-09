@@ -21,43 +21,81 @@ struct ChatRouteCollection: RouteCollection {
         
         // MARK: - POST "/chats": Creates a new blank chat and adds the current user as a participant
         chats.post { request async throws -> HTTPStatus in
-            try await request.db.transaction { transaction in
+            try await request.db.transaction { database in
                 let chatCreate = try request.content.decode(Chat.Create.self)
                 let newChat = Chat(name: chatCreate.name)
-                try await newChat.save(on: transaction)
-                let user = try request.auth.require(AffirmateUser.self)
-                guard let userId = user.id, let chatId = newChat.id else {
-                    throw Abort(.notFound)
+                try await newChat.save(on: database)
+                let currentUser = try request.auth.require(AffirmateUser.self)
+                var newParticipants = try chatCreate.participants.map {
+                    Participant(
+                        role: $0.role,
+                        user: $0.user,
+                        chat: try newChat.requireID()
+                    )
                 }
-                let newParticipant = Participant(role: .admin, user: userId, chat: chatId)
-                print(newParticipant)
-                try await newParticipant.save(on: transaction)
+                let currentParticipant = Participant(
+                    role: .admin,
+                    user: try newChat.requireID(),
+                    chat: try newChat.requireID()
+                )
+                newParticipants.append(currentParticipant)
+                try await newChat.$participants.create(newParticipants, on: database)
+                print(newParticipants)
             }
             return .ok
         }
         
         // MARK: - GET "/chats": Returns all authorized chats based on the user token session.
-        chats.get { request async throws -> [Chat] in
-            try await request.db.transaction { database -> [Chat] in
+        chats.get { request async throws -> [Chat.GetResponse] in
+            try await request.db.transaction { database in
                 let currentUser = try request.auth.require(AffirmateUser.self)
-                try await currentUser.$chats.load(on: database)
-                let chats = currentUser.chats
-                for chat in chats {
-                    try await chat.$messages.load(on: database)
-                    for message in chat.messages {
-                        try await message.$sender.load(on: database)
+                let chats = try await currentUser.$chats.query(on: database)
+                    .with(\.$messages) {
+                        $0.with(\.$sender) {
+                            $0.with(\.$user)
+                        }
                     }
-                    try await chat.$users.load(on: database)
-                    for user in chat.users {
-                        user.passwordHash = "HIDDEN"
+                    .with(\.$participants) {
+                        $0.with(\.$user)
                     }
+                    .all()
+                return try chats.map { chat in
+                    return Chat.GetResponse(
+                        id: try chat.requireID(),
+                        name: chat.name,
+                        messages: try chat.messages.map { message in
+                            Message.GetResponse(
+                                id: try message.requireID(),
+                                text: message.text,
+                                chat: Chat.MessageResponse(id: try chat.requireID()),
+                                sender: Participant.GetResponse(
+                                    id: try message.sender.requireID(),
+                                    role: message.sender.role,
+                                    user: AffirmateUser.ParticipantReponse(
+                                        id: try message.sender.user.requireID(),
+                                        username: message.sender.user.username
+                                    ),
+                                    chat: Chat.ParticipantResponse(id: try chat.requireID())
+                                )
+                            )
+                        },
+                        participants: try chat.participants.map { participant in
+                            Participant.GetResponse(
+                                id: try participant.requireID(),
+                                role: participant.role,
+                                user: AffirmateUser.ParticipantReponse(
+                                    id: try participant.requireID(),
+                                    username: participant.user.username
+                                ),
+                                chat: Chat.ParticipantResponse(id: try chat.requireID())
+                            )
+                        }
+                    )
                 }
-                print(chats.json ?? "No Values")
-                return currentUser.chats
             }
         }
         
-        let specificChat = chats.grouped(":chatId")
+//        let specificChat = chats.grouped(":chatId")
         
         // MARK: - GET "/chat/:chatId/invitations"
         

@@ -36,6 +36,6 @@ extension JWTToken: JWTPayload {
 extension JWTToken {
     struct Response: Content {
         var jwtToken: String
-        var sesionToken: String
+        var sesionToken: SessionToken
     }
 }

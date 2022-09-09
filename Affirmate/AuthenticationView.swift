@@ -9,9 +9,9 @@ import SwiftUI
 
 struct AuthenticationView: View {
     
-    @EnvironmentObject var authentication: Authentication
+    @EnvironmentObject var authentication: AuthenticationObserver
     
-    @SceneStorage("auth.viewState") var viewState: Authentication.ViewState = .signUp
+    @SceneStorage("auth.viewState") var viewState: AuthenticationObserver.ViewState = .signUp
     
     #if DEVELOPMENT
     @SceneStorage("auth.first_name") var firstName: String = "Meow"
@@ -38,7 +38,6 @@ struct AuthenticationView: View {
             do {
                 try await authentication.login(username: username, password: password)
             } catch {
-                authentication.state = .loggedOut
                 showError(error)
             }
         }
@@ -47,7 +46,7 @@ struct AuthenticationView: View {
     func signUp() {
         Task {
             do {
-                let newUser = User.Create(
+                let newUser = AffirmateUser.Create(
                     firstName: firstName,
                     lastName: lastName,
                     username: username,
@@ -55,10 +54,9 @@ struct AuthenticationView: View {
                     password: password,
                     confirmPassword: confirmPassword
                 )
-                try await authentication.signUp(userCreate: newUser)
-                try await authentication.login(username: email, password: password)
+                print("Signing up new user")
+                try await authentication.signUp(user: newUser)
             } catch {
-                authentication.state = .loggedOut
                 showError(error)
             }
         }
@@ -72,16 +70,12 @@ struct AuthenticationView: View {
                 .ignoresSafeArea()
             #if os(macOS)
             rainbowImage
+//            #elseif os(iOS)
+//            if UIScreen.main.traitCollection.horizontalSizeClass == .regular {
+//                rainbowImage
+//            }
             #endif
             Form {
-                Picker("Authentication Mode", selection: $viewState.animation(.spring())) {
-                    ForEach(Authentication.ViewState.allCases.reversed()) { viewState in
-                        Text(viewState.labelText)
-                            .tag(viewState)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .listRowBackground(Color.clear)
                 switch viewState {
                 case .login:
                     Section {
@@ -123,13 +117,34 @@ struct AuthenticationView: View {
                         Button("Sign Up", action: signUp)
                     }
                 }
+                
+                Section {
+                    HStack {
+                        Spacer()
+                        switch viewState {
+                        case .login:
+                            Text("Need an account?")
+                            Button("Sign up instead...") {
+                                withAnimation {
+                                    viewState = .signUp
+                                }
+                            }
+                        case .signUp:
+                            Text("Already have an account?")
+                            Button("Login instead...") {
+                                withAnimation {
+                                    viewState = .login
+                                }
+                            }
+                        }
+                        Spacer()
+                    }
+                    .font(.caption)
+                    .listRowBackground(Color.clear)
+                }
             }
             .onAppear {
-                do {
-                    try HTTPActor.Interceptor.removeTokens()
-                } catch {
-                    print("TODO: Display error on screen:", error.localizedDescription)
-                }
+                try? authentication.authenticationActor.interceptor.removeTokens()
             }
             .navigationTitle("Authentication")
         }

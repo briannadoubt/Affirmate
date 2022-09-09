@@ -9,13 +9,13 @@ import SwiftUI
 
 public struct MessageView: View {
     
-    init(currentUserId: UUID, withTail: Bool = false, message: Message) {
-        self.currentUserId = currentUserId
+    init(currentParticipantId: UUID, withTail: Bool = false, message: Message) {
+        self.currentParticipantId = currentParticipantId
         self.message = message
         self.hasTail = withTail
     }
     
-    let currentUserId: UUID
+    let currentParticipantId: UUID
     let message: Message
     let hasTail: Bool
     
@@ -23,25 +23,25 @@ public struct MessageView: View {
         if !hasTail {
             return .none
         }
-        return message.sender.id == currentUserId ? .rightBottomTrailing : .leftBottomLeading
+        return message.sender.id == currentParticipantId ? .rightBottomTrailing : .leftBottomLeading
     }
     
     public var body: some View {
         HStack {
-            if message.sender.id == currentUserId {
+            if message.sender.id == currentParticipantId {
                 Spacer(minLength: 64)
             }
             MessageBubble(
-                text: message.text,
-                isSender: message.sender.id == currentUserId,
+                text: message.text ?? "",
+                isSender: message.sender.id == currentParticipantId,
                 tailPosition: tailPosition
             )
-            if message.sender.id != currentUserId {
+            if message.sender.id != currentParticipantId {
                 Spacer(minLength: 64)
             }
         }
-        .animation(.spring(), value: message.sender.id == currentUserId)
-        .transition(.move(edge: message.sender.id == currentUserId ? .leading : .trailing).combined(with: .opacity))
+        .animation(.spring(), value: message.sender.id == currentParticipantId)
+        .transition(.move(edge: message.sender.id == currentParticipantId ? .leading : .trailing).combined(with: .opacity))
         .flipsForRightToLeftLayoutDirection(true)
     }
 }
@@ -49,16 +49,19 @@ public struct MessageView: View {
 struct MessageView_Previews: PreviewProvider {
     static var previews: some View {
         MessageView(
-            currentUserId: UUID(),
+            currentParticipantId: UUID(),
             message: Message(
+                id: UUID(),
                 text: "Meow",
-                chat: Relation(id: UUID()),
-                sender: User(
+                chat: Chat.MessageResponse(id: UUID()),
+                sender: Participant.GetResponse(
                     id: UUID(),
-                    firstName: "meow",
-                    lastName: "face",
-                    username: "meowface",
-                    email: "meow@fake.com"
+                    role: .participant,
+                    user: AffirmateUser.Public(
+                        id: UUID(),
+                        username: "Meowface"
+                    ),
+                    chat: Chat.ParticipantResponse(id: UUID())
                 )
             )
         )

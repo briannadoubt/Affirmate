@@ -9,11 +9,10 @@ import Foundation
 //import AppIntents
 
 struct Message: Object {
-    var id: UUID?
-    var text: String
-    var chat: Relation
-    var sender: User
-    var imageURLs: [URL]?
+    var id: UUID
+    var text: String?
+    var chat: Chat.MessageResponse
+    var sender: Participant.GetResponse
 
     struct Create: Codable {
         var text: String

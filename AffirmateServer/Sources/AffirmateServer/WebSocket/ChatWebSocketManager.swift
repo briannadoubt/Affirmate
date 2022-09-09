@@ -26,75 +26,94 @@ actor ChatWebSocketManager {
     }
     
     func connect(_ request: Request, _ webSocket: WebSocket) {
-        if #available(iOS 15, *) {
-            webSocket.onBinary { webSocket, buffer async -> () in
-                print("Binary recieved")
-                // MARK: Connect
-                if let connectMessage = self.get(buffer, Connect.self) {
-                    await self.handle(connect: connectMessage, request: request, webSocket: webSocket)
-                    
-                    // MARK: Message
-                } else if let webSocketMessage = self.get(buffer, Message.Create.self) {
-                    await self.handle(message: webSocketMessage, request: request, webSocket: webSocket)
-                    
-                    // MARK: Participant
-                } else if let webSocketMessage = self.get(buffer, [Participant.Create].self) {
-                    await self.handle(participants: webSocketMessage, request: request, webSocket: webSocket)
-                    
-                } else {
-                    self.sendError("Recieved data in unrecognizable format", on: webSocket)
-                }
+        webSocket.onBinary { webSocket, buffer async -> () in
+            print("Binary recieved")
+            // MARK: Connect
+            if let connectMessage = self.get(buffer, Connect.self) {
+                await self.handle(connect: connectMessage, request: request, webSocket: webSocket)
+                
+                // MARK: Message
+            } else if let webSocketMessage = self.get(buffer, Message.Create.self) {
+                await self.handle(chatMessage: webSocketMessage, request: request, webSocket: webSocket)
+                
+                // MARK: Participant
+            } else if let webSocketMessage = self.get(buffer, [Participant.Create].self) {
+                await self.handle(participants: webSocketMessage, request: request, webSocket: webSocket)
+                
+            } else {
+                self.sendError("Recieved data in unrecognizable format", on: webSocket)
             }
         }
     }
 }
     
 private extension ChatWebSocketManager {
-    func handle(message: WebSocketMessage<Message.Create>, request: Request, webSocket: WebSocket) async {
-        await handle(webSocket: webSocket) {
+    func handle(chatMessage message: WebSocketMessage<Message.Create>, request: Request, webSocket: WebSocket) async {
+        await handle(request: request, webSocket: webSocket) { database, currentUser, chat, currentParticipant in
             // TODO: Check message content (`create.text`) for moderation or embedded content, etc.
             guard let createString = message.data.json else {
                 throw Abort(.badRequest)
             }
             try Message.Create.validate(json: createString)
-            if #available(iOS 15, *) {
-                let newMessage = try await request.db.transaction { database in
-                    let currentUser = try await self.getUser(request)
-                    let chat = try await self.getChat(request, on: database)
-                    let newMessage = try Message(text: message.data.text, chat: chat.requireID(), sender: currentUser.requireID())
-                    try await newMessage.$chat.load(on: database)
-                    try await newMessage.$sender.load(on: database)
-                    try await chat.$messages.create(newMessage, on: database)
-                    return newMessage
-                }
-            }
+            let newMessage = try Message(
+                text: message.data.text,
+                chat: chat.requireID(),
+                sender: try currentParticipant.requireID()
+            )
+            try await newMessage.$chat.load(on: database)
+            try await newMessage.$sender.load(on: database)
+            try await newMessage.sender.$user.load(on: database)
+            try await chat.$messages.create(newMessage, on: database)
+            let newMessageResponse = Message.GetResponse(
+                id: try newMessage.requireID(),
+                text: newMessage.text,
+                chat: Chat.MessageResponse(id: try chat.requireID()),
+                sender: Participant.GetResponse(
+                    id: try newMessage.sender.requireID(),
+                    role: newMessage.sender.role,
+                    user: AffirmateUser.ParticipantReponse(
+                        id: try newMessage.sender.user.requireID(),
+                        username: newMessage.sender.user.username
+                    ),
+                    chat: Chat.ParticipantResponse(id: try chat.requireID())
+                )
+            )
+            try await self.broadcast(newMessageResponse)
         }
     }
     
     func handle(participants message: WebSocketMessage<[Participant.Create]>, request: Request, webSocket: WebSocket) async {
-        await handle(webSocket: webSocket) {
-            let participants = message.data
-            for participant in participants {
-                guard let createString = participant.json else {
-                    throw Abort(.badRequest)
-                }
-                try Participant.Create.validate(json: createString)
-                let newParticipant = try await request.db.transaction { database in
-                    let currentUser = try await self.getUser(request)
-                    let chat = try await self.getChat(request, on: database)
-                    guard let user = try await AffirmateUser.find(participant.user, on: database) else {
-                        throw Abort(.notFound)
+        await handle(request: request, webSocket: webSocket) { database, currentUser, chat, currentParticipant in
+            let newParticipantCreates = message.data
+                var newParticipants: [Participant] = []
+                for newParticipantCreate in newParticipantCreates {
+                    guard let createString = newParticipantCreate.json else {
+                        throw Abort(.badRequest)
                     }
-                    try await chat.$users.attach(user, method: .ifNotExists, on: database)
-                    return user
-                }
-                try await self.broadcast(newParticipant.getResponse)
+                    try Participant.Create.validate(json: createString)
+                    let currentUser = try request.auth.require(AffirmateUser.self)
+                    let chat = try await self.getChat(request, on: database)
+                    let participants = try await chat.$participants.query(on: database).with(\.$user).all()
+                    guard
+                        let currentParticipant = try participants.first(where: { try $0.user.requireID() == currentUser.requireID() }),
+                        currentParticipant.role == .admin
+                    else {
+                        throw Abort(.methodNotAllowed)
+                    }
+                    let newParticipant = Participant(
+                        role: newParticipantCreate.role,
+                        user: newParticipantCreate.user,
+                        chat: try chat.requireID()
+                    )
+                    try await newParticipant.save(on: database)
+                    newParticipants.append(newParticipant)
             }
+            try await self.broadcast(newParticipants)
         }
     }
     
     func handle(connect message: WebSocketMessage<Connect>, request: Request, webSocket: WebSocket) async {
-        await handle(webSocket: webSocket) {
+        await handle(request: request, webSocket: webSocket) { database, currentUser, chat, currentParticipant in
             let clientId = message.client
             let client = WebSocketClient(id: clientId, socket: webSocket)
             await self.clients.add(client)
@@ -104,9 +123,23 @@ private extension ChatWebSocketManager {
         }
     }
     
-    func handle(webSocket: WebSocket, withThrowing block: () async throws -> ()) async {
+    func handle(request: Request, webSocket: WebSocket, withThrowing block: @escaping (_ database: Database, _ currentUser: AffirmateUser, _ chat: Chat, _ currentParticipant: Participant) async throws -> ()) async {
         do {
-            try await block()
+            try await request.db.transaction { database in
+                let currentUser = try await self.getUser(request)
+                let chat = try await self.getChat(request, on: database)
+                guard let currentParticipant = try await Participant
+                    .query(on: database)
+                    .filter(try \.$user.$id == currentUser.requireID())
+                    .filter(try \.$chat.$id == chat.requireID())
+                    .limit(1)
+                    .all()
+                    .first
+                else {
+                    throw Abort(.methodNotAllowed, reason: "You are not a part of this chat.")
+                }
+                try await block(database, currentUser, chat, currentParticipant)
+            }
         } catch {
             self.sendError(error.localizedDescription, on: webSocket)
         }
@@ -120,9 +153,14 @@ private extension ChatWebSocketManager {
         else {
             throw Abort(.notFound)
         }
-        try await chat.$users.load(on: database)
-        for user in chat.users {
-            user.passwordHash = "HIDDEN"
+        try await chat.$participants.load(on: database)
+        try await chat.$messages.load(on: database)
+        for participant in chat.participants {
+            try await participant.$user.load(on: database)
+            participant.user.passwordHash = "HIDDEN"
+        }
+        for message in chat.messages {
+            try await message.$sender.load(on: database)
         }
         return chat
     }

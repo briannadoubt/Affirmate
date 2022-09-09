@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct Connect: Codable {
+struct Connect: Codable, Hashable, Equatable {
   let connect: Bool
 }

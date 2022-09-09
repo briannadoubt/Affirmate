@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct ConfirmConnection: Codable {
+struct ConfirmConnection: Codable, Hashable {
     var connected: Bool
 }

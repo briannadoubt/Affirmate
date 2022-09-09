@@ -1,9 +1,9 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.7
 import PackageDescription
 
 let package = Package(
     name: "AffirmateServer",
-    platforms: [.macOS(.v12), .iOS(.v15), .tvOS(.v15)],
+    platforms: [.macOS(.v13), .iOS(.v16), .tvOS(.v16)],
     products: [
         .library(name: "AffirmateServer", targets: ["AffirmateServer"]),
     ],

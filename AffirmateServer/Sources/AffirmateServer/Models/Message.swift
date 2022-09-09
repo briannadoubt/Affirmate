@@ -9,18 +9,22 @@ import Fluent
 import Vapor
 import APNS
 
-final class Message: Model, Content {
+final class Message: Model, Content, Equatable {
+    
+    static func == (lhs: Message, rhs: Message) -> Bool {
+        lhs.id == rhs.id
+    }
     
     static let schema = "message"
     
     @ID(key: FieldKey.id) var id: UUID?
-    @Field(key: "text") var text: String
+    @OptionalField(key: "text") var text: String?
     @Parent(key: "chat_id") var chat: Chat
-    @Parent(key: "sender_id") var sender: AffirmateUser
+    @Parent(key: "sender_id") var sender: Participant
     
     init() { }
     
-    init(id: UUID? = nil, text: String, chat: Chat.IDValue, sender: AffirmateUser.IDValue) {
+    init(id: UUID? = nil, text: String? = nil, chat: Chat.IDValue, sender: Participant.IDValue) {
         self.id = id
         self.text = text
         self.$chat.id = chat
@@ -39,7 +43,7 @@ extension Message {
                 .id()
                 .field("text", .string)
                 .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
-                .field("sender_id", .uuid, .required, .references(AffirmateUser.schema, .id))
+                .field("sender_id", .uuid, .required, .references(Participant.schema, .id))
                 .create()
         }
         /// Destroys the `messages` table
@@ -50,21 +54,35 @@ extension Message {
 }
 
 extension Message {
-    struct Create: Content, Validatable {
+    struct Create: Content, Validatable, Equatable, Hashable {
         var text: String
         static func validations(_ validations: inout Validations) {
-            validations.add("text", as: String.self, is: !.empty)
+//            validations.add("text", as: String.self, is: !.empty)
         }
     }
 }
 
 extension Message {
+    struct GetResponse: Content {
+        var id: UUID
+        var text: String?
+        var chat: Chat.MessageResponse
+        var sender: Participant.GetResponse
+    }
+}
+
+extension Message {
+    
     var notification: Notification {
         Notification(message: self)
     }
+    
     struct Notification: APNSwiftNotification {
+        
+        /// Assure that `message.sender.user` is loaded before instantiating this variable.
         let message: Message
-        var aps: APNSwiftPayload {
+        
+        var aps: APNSwift.APNSwiftPayload {
             APNSwiftPayload(
                 alert: alert,
                 badge: 1,
@@ -74,9 +92,10 @@ extension Message {
                 relevanceScore: 1
             )
         }
+        
         var alert: APNSwiftAlert {
-            APNSwiftAlert(
-                title: "\(message.sender.username) sent you a message!",
+            return APNSwiftAlert(
+                title: "\(message.sender.user.username) sent you a message!",
                 subtitle: message.chat.name,
                 body: message.text
             )
@@ -90,13 +109,5 @@ extension APNSwiftPayload {
         static let active = "active"
         static let timeSensitive = "time-sensitive"
         static let critical = "critical"
-    }
-}
-
-extension Message {
-    struct GetResponse: Content {
-        var text: String
-        var chat: Chat.GetResponse
-        var sender: AffirmateUser.GetResponse
     }
 }

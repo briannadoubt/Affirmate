@@ -1,5 +1,5 @@
 //
-//  UserActor.swift
+//  AffirmateUserActor.swift
 //  Affirmate
 //
 //  Created by Bri on 8/18/22.
@@ -8,20 +8,20 @@
 import SwiftUI
 import Alamofire
 
-actor UserActor {
+actor AffirmateUserActor {
     
     private let http = HTTPActor()
     
-    func me() async throws -> User {
-        try await http.requestDecodable(Request.me, to: User.self)
+    func me() async throws -> AffirmateUser {
+        try await http.requestDecodable(Request.me, to: AffirmateUser.self)
     }
     
-    func find(username: String?) async throws -> [User.Public] {
-        try await http.requestDecodable(Request.find(username: username), to: [User.Public].self)
+    func find(username: String?) async throws -> [AffirmateUser.Public] {
+        try await http.requestDecodable(Request.find(username: username), to: [AffirmateUser.Public].self)
     }
 }
 
-extension UserActor {
+extension AffirmateUserActor {
     
     enum Request: URLRequestConvertible {
         
