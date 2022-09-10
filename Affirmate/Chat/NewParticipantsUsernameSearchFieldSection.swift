@@ -41,7 +41,11 @@ struct NewParticipantsUsernameSearchFieldSection: View {
                 }
             ForEach(newPublicUsers) { publicUser in
                 HStack {
-                    Button { didSelect(publicUser: publicUser) } label: {
+                    Button {
+                        Task {
+                            didSelect(publicUser: publicUser)
+                        }
+                    } label: {
                         PublicUserRow(publicUser: publicUser)
                     }
                 }

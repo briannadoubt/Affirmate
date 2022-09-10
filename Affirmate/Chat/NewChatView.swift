@@ -54,8 +54,10 @@ struct NewChatView: View {
     }
     
     var newParticipantsCreate: [Participant.Create] {
-        newParticipantsObserver.selectedParticipants.map {
-            Participant.Create(role: $0.value, user: $0.key.id)
+        newParticipantsObserver.selectedParticipants.map { index in
+            let role = index.value
+            let publicUser = index.key
+            return Participant.Create(role: role, user: publicUser.id)
         }
     }
     
@@ -67,7 +69,7 @@ struct NewChatView: View {
     
     var body: some View {
         NavigationView {
-            Form {
+            List {
                 Section {
                     TextField("Name", text: $name)
                 } footer: {

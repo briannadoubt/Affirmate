@@ -35,12 +35,12 @@ struct ChatRouteCollection: RouteCollection {
                 }
                 let currentParticipant = Participant(
                     role: .admin,
-                    user: try newChat.requireID(),
+                    user: try currentUser.requireID(),
                     chat: try newChat.requireID()
                 )
                 newParticipants.append(currentParticipant)
-                try await newChat.$participants.create(newParticipants, on: database)
                 print(newParticipants)
+                try await newChat.$participants.create(newParticipants, on: database)
             }
             return .ok
         }
