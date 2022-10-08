@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct AffirmateApp: App {
     
+    #if !os(watchOS)
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
     
     static func requestNotificationPermissions() async {
@@ -21,6 +22,7 @@ struct AffirmateApp: App {
         }
         UIApplication.shared.registerForRemoteNotifications()
     }
+    #endif
     
     var body: some Scene {
         WindowGroup {

@@ -15,18 +15,6 @@
 			</array>
 		</dict>
 	</array>
-	<key>INIntentsRestrictedWhileLocked</key>
-	<array>
-		<string>OpenChat</string>
-	</array>
-	<key>INIntentsRestrictedWhileProtectedDataUnavailable</key>
-	<array>
-		<string>OpenChat</string>
-	</array>
-	<key>INIntentsSupported</key>
-	<array>
-		<string>OpenChat</string>
-	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict/>
 	<key>UIBackgroundModes</key>

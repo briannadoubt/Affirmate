@@ -1,5 +1,5 @@
 //
-//  PublicUserRow.swift
+//  NewParticipantPublicUserRow.swift
 //  Affirmate
 //
 //  Created by Bri on 9/8/22.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PublicUserRow: View {
+struct NewParticipantPublicUserRow: View {
     let publicUser: AffirmateUser.Public
     var body: some View {
         HStack {
@@ -16,8 +16,8 @@ struct PublicUserRow: View {
     }
 }
 
-struct PublicUserRow_Previews: PreviewProvider {
+struct NewParticipantPublicUserRow_Previews: PreviewProvider {
     static var previews: some View {
-        PublicUserRow(publicUser: AffirmateUser.Public(id: UUID(), username: "meowface"))
+        NewParticipantPublicUserRow(publicUser: AffirmateUser.Public(id: UUID(), username: "meowface"))
     }
 }

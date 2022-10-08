@@ -13,18 +13,18 @@ struct AuthenticationView: View {
     
     @SceneStorage("auth.viewState") var viewState: AuthenticationObserver.ViewState = .signUp
     
-    #if DEVELOPMENT
-    @SceneStorage("auth.first_name") var firstName: String = "Meow"
-    @SceneStorage("auth.last_name") var lastName: String = "Face"
-    @SceneStorage("auth.username") var username: String = "meowface"
-    @SceneStorage("auth.email") var email: String = "meow@fake.com"
+    #if DEBUG
+    @State var firstName: String = "Meow"
+    @State var lastName: String = "Face"
+    @State var username: String = "meowface"
+    @State var email: String = "meow@fake.com"
     @State var password: String = "Test123$"
     @State var confirmPassword: String = "Test123$"
     #else
-    @SceneStorage("auth.first_name") var firstName: String = ""
-    @SceneStorage("auth.last_name") var lastName: String = ""
-    @SceneStorage("auth.username") var username: String = ""
-    @SceneStorage("auth.email") var email: String = ""
+    @State var firstName: String = ""
+    @State var lastName: String = ""
+    @State var username: String = ""
+    @State var email: String = ""
     @State var password: String = ""
     @State var confirmPassword: String = ""
     #endif
@@ -79,7 +79,7 @@ struct AuthenticationView: View {
                 switch viewState {
                 case .login:
                     Section {
-                        TextField("Email", text: $email)
+                        TextField("Username", text: $username)
                             .textContentType(.emailAddress)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
@@ -123,14 +123,18 @@ struct AuthenticationView: View {
                         Spacer()
                         switch viewState {
                         case .login:
+                            #if !os(watchOS)
                             Text("Need an account?")
+                            #endif
                             Button("Sign up instead...") {
                                 withAnimation {
                                     viewState = .signUp
                                 }
                             }
                         case .signUp:
+                            #if !os(watchOS)
                             Text("Already have an account?")
+                            #endif
                             Button("Login instead...") {
                                 withAnimation {
                                     viewState = .login

@@ -41,11 +41,10 @@ actor HTTPActor {
     
     func requestDecodable<Value: Decodable>(_ requestConvertible: any URLRequestConvertible, to type: Value.Type) async throws -> Value {
         print(type.self)
-        let response = try await AF
-            .request(requestConvertible, interceptor: interceptor)
-            .validate()
-            .serializingDecodable(type.self)
-            .value
+        print(requestConvertible)
+        let request = AF.request(requestConvertible, interceptor: interceptor).validate()
+        let result = request.serializingDecodable(type.self)
+        let response = try await result.value
         print(response)
         return response
     }
@@ -87,13 +86,13 @@ extension HTTPActor {
         }
         
 //        func retry(_ request: Alamofire.Request, for session: Alamofire.Session, dueTo error: Error, completion: @escaping (Alamofire.RetryResult) -> Void) {
-//            guard let token, request.response?.statusCode == 401 else {
+//            guard let sessionToken, request.response?.statusCode == 401 else {
 //                return completion(.doNotRetryWithError(error))
 //            }
 //            Task {
 //                // Inject the refresh token into request
 //                do {
-//                    let newToken = try await AuthenticationObserver.refreshToken(token)
+//                    let newToken = try await AuthenticationActor().refresh(sessionToken: sessionToken)
 //                    try Self.set(newToken)
 //                } catch {
 //                    return completion(.doNotRetryWithError(error))

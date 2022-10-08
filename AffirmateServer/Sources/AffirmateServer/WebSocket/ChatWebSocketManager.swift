@@ -61,19 +61,17 @@ private extension ChatWebSocketManager {
                 sender: try currentParticipant.requireID()
             )
             try await newMessage.$chat.load(on: database)
-            try await newMessage.$sender.load(on: database)
-            try await newMessage.sender.$user.load(on: database)
             try await chat.$messages.create(newMessage, on: database)
             let newMessageResponse = Message.GetResponse(
                 id: try newMessage.requireID(),
                 text: newMessage.text,
                 chat: Chat.MessageResponse(id: try chat.requireID()),
                 sender: Participant.GetResponse(
-                    id: try newMessage.sender.requireID(),
-                    role: newMessage.sender.role,
+                    id: try currentParticipant.requireID(),
+                    role: currentParticipant.role,
                     user: AffirmateUser.ParticipantReponse(
-                        id: try newMessage.sender.user.requireID(),
-                        username: newMessage.sender.user.username
+                        id: try currentUser.requireID(),
+                        username: currentUser.username
                     ),
                     chat: Chat.ParticipantResponse(id: try chat.requireID())
                 )
@@ -128,13 +126,13 @@ private extension ChatWebSocketManager {
             try await request.db.transaction { database in
                 let currentUser = try await self.getUser(request)
                 let chat = try await self.getChat(request, on: database)
-                guard let currentParticipant = try await Participant
+                let currentUserId = try currentUser.requireID()
+                guard let currentParticipant = try await chat.$participants
                     .query(on: database)
-                    .filter(try \.$user.$id == currentUser.requireID())
-                    .filter(try \.$chat.$id == chat.requireID())
+                    .filter(\.$user.$id == currentUserId)
                     .limit(1)
-                    .all()
-                    .first
+                    .with(\.$user)
+                    .first()
                 else {
                     throw Abort(.methodNotAllowed, reason: "You are not a part of this chat.")
                 }

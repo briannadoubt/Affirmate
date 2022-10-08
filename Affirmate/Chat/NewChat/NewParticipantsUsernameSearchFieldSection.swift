@@ -26,7 +26,9 @@ struct NewParticipantsUsernameSearchFieldSection: View {
             TextField("Username", text: $newParticipantsObserver.username)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
+                #if !os(watchOS)
                 .keyboardType(.twitter)
+                #endif
                 .onReceive(newParticipantsObserver.$username.debounce(for: 1, scheduler: RunLoop.main)) { newUserName in
                     guard !newUserName.isEmpty else {
                         return
@@ -46,7 +48,7 @@ struct NewParticipantsUsernameSearchFieldSection: View {
                             didSelect(publicUser: publicUser)
                         }
                     } label: {
-                        PublicUserRow(publicUser: publicUser)
+                        NewParticipantPublicUserRow(publicUser: publicUser)
                     }
                 }
             }

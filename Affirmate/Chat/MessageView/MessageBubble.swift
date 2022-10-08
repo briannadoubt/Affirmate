@@ -20,26 +20,18 @@ public struct MessageBubble: View {
     fileprivate var tailPosition: MessageBubbleTailPosition
     
     public var body: some View {
-        HStack {
-            if isSender {
-                Spacer()
-            }
-            ZStack {
-                MessageBubbleShape(tailPosition)
-                    .fill(isSender ? Color.accentColor : Color.gray)
-                VStack {
-                    Text(text)
-                        .textSelection(.enabled)
-                        .foregroundColor(.white)
-                        .font(.body)
-                        .padding(8)
-                        .padding(tailPosition.isOnTop != nil ? (tailPosition.isOnTop! ? .top : .bottom) : .bottom, tailPosition == .none ? 8 : 10)
-                        .layoutPriority(1)
-                }
-            }
-            if !isSender {
-                Spacer()
-            }
+        ZStack {
+            MessageBubbleShape(tailPosition)
+                .fill(isSender ? Color.accentColor : Color.gray)
+            Text(text)
+                #if !os(watchOS)
+                .textSelection(.enabled)
+                #endif
+                .foregroundColor(.white)
+                .font(.body)
+                .padding(8)
+                .padding(.bottom, tailPosition == .none ? 8 : 10)
+                .layoutPriority(1)
         }
     }
 }

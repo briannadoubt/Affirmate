@@ -18,13 +18,16 @@ actor AuthenticationActor: Repository {
         try await http.requestDecodable(Request.login(username: username, password: password), to: AffirmateUser.LoginResponse.self)
     }
     
-    func refresh(deviceToken token: Data?) async throws {
-        try await http.request(Request.refresh(deviceToken: token))
+    func refresh(sessionToken: SessionToken) async throws -> SessionToken {
+        try await http.requestDecodable(Request.refresh(sessionToken: sessionToken), to: SessionToken.self)
+    }
+    
+    func update(deviceToken token: Data?) async throws {
+        try await http.request(Request.update(deviceToken: token))
     }
     
     func logout() async throws {
         try await http.request(Request.logout)
-        try? interceptor.removeTokens()
     }
 }
 
@@ -34,8 +37,8 @@ extension AuthenticationActor {
     
         case new(user: AffirmateUser.Create)
         case login(username: String, password: String)
-//        case refresh(token: String)
-        case refresh(deviceToken: Data?)
+        case refresh(sessionToken: SessionToken)
+        case update(deviceToken: Data?)
         case logout
 
         var url: URL { Constants.baseURL.appending(component: "auth") }
@@ -46,9 +49,9 @@ extension AuthenticationActor {
                 return url.appending(path: "new")
             case .login:
                 return url.appending(path: "login")
-//            case .refresh:
-//                return url.appending(path: "validate")
             case .refresh:
+                return url.appending(path: "refresh")
+            case .update:
                 return url.appending(path: "deviceToken")
             case .logout:
                 return url.appending(path: "logout")
@@ -57,11 +60,11 @@ extension AuthenticationActor {
 
         var method: HTTPMethod {
             switch self {
-            case .new, .logout://, .refresh:
+            case .new, .logout, .refresh:
                 return .post
             case .login:
                 return .get
-            case .refresh:
+            case .update:
                 return .put
             }
         }
@@ -74,12 +77,10 @@ extension AuthenticationActor {
             headers.add(.contentType("application/json"))
             headers.add(.accept("application/json"))
             switch self {
-            case .new, .refresh, .logout:
+            case .new, .update, .logout, .refresh:
                 break
             case let .login(username, password):
                 headers.add(.authorization(username: username, password: password))
-//            case .refresh(let token):
-//                headers.add(.authorization(token))
             }
             return headers
         }
@@ -89,12 +90,15 @@ extension AuthenticationActor {
                 throw ChatError.failedToBuildURL
             }
             var request = try URLRequest(url: requestURL, method: method, headers: headers)
+            let encoder = JSONEncoder()
             switch self {
             case .new(let user):
-                request.httpBody = try JSONEncoder().encode(user)
-            case .refresh(let deviceToken):
-                request.httpBody = try JSONEncoder().encode(APNSDeviceToken(token: deviceToken))
-            case .login, .logout://, .refresh:
+                request.httpBody = try encoder.encode(user)
+            case .update(let deviceToken):
+                request.httpBody = try encoder.encode(APNSDeviceToken(token: deviceToken))
+            case .refresh(let sessionToken):
+                request.httpBody = try encoder.encode(sessionToken)
+            case .login, .logout:
                 break
             }
             return request

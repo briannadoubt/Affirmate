@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct NewChatButton: View {
+struct CreateNewChatButton: View {
     
     @EnvironmentObject var newParticipantsObserver: NewParticipantsObserver
     
@@ -78,7 +78,7 @@ struct NewChatView: View {
                 NewParticipantsUsernameSearchFieldSection(newPublicUsers: newPublicUsers)
                 NewParticipantsSelectionSection()
                 Section {
-                    NewChatButton(newChat: newChat)
+                    CreateNewChatButton(newChat: newChat)
                 }
             }
             .navigationTitle("New Chat")

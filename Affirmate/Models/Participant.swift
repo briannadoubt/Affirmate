@@ -12,7 +12,7 @@ struct Relation: Object {
 }
 
 struct Participant: Object {
-    var id: UUID?
+    var id: UUID
     var role: Role
     var user: AffirmateUser.Public
     var chat: Relation

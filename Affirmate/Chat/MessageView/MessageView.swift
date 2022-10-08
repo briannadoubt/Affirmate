@@ -26,18 +26,32 @@ public struct MessageView: View {
         return message.sender.id == currentParticipantId ? .rightBottomTrailing : .leftBottomLeading
     }
     
+    @State private var swipeOffset = CGSize.zero
+    @State private var deviceShouldIndicateSwipeAction = false
+    @State private var shouldReply = false
+    
+    #if os(watchOS)
+    private let spacerLength: CGFloat = 24
+    #else
+    private let spacerLength: CGFloat = 64
+    #endif
+    
+    var isSender: Bool {
+        message.sender.id == currentParticipantId
+    }
+    
     public var body: some View {
         HStack {
             if message.sender.id == currentParticipantId {
-                Spacer(minLength: 64)
+                Spacer(minLength: spacerLength)
             }
             MessageBubble(
                 text: message.text ?? "",
-                isSender: message.sender.id == currentParticipantId,
+                isSender: isSender,
                 tailPosition: tailPosition
             )
             if message.sender.id != currentParticipantId {
-                Spacer(minLength: 64)
+                Spacer(minLength: spacerLength)
             }
         }
         .animation(.spring(), value: message.sender.id == currentParticipantId)

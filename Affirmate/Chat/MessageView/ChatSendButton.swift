@@ -22,9 +22,8 @@ public struct ChatSendButton: View {
     }
 }
 
-// TODO: Fix Previews
-//struct ChatSendButton_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ChatSendButton(message: .constant("Preview message, 1...2...3... <3"), send: { print("Sent!") })
-//    }
-//}
+struct ChatSendButton_Previews: PreviewProvider {
+    static var previews: some View {
+        ChatSendButton(send: { print("Sent!") })
+    }
+}

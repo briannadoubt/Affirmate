@@ -16,7 +16,6 @@ public struct ChatView: View {
     
     @SceneStorage("chat_newMessageText") var newMessageText = ""
     @SceneStorage("chat_showingNewParticipants") var showingNewParticipants = false
-    @FocusState fileprivate var focused
     
     @State var presentedParticipant: Participant?
     @State var presentedCopiedUrl = false
@@ -24,6 +23,8 @@ public struct ChatView: View {
     #if os(iOS)
     @StateObject fileprivate var keyboard = KeyboardHeightObserver()
     #endif
+    
+    @FocusState fileprivate var focused
     
     fileprivate func send() {
         // Don't send if only whitespaces, or if message was empty
@@ -69,23 +70,25 @@ public struct ChatView: View {
     }
     
     var currentParticipantId: UUID? {
-        chatObserver.participants.first(where: { $0.user.id == authentication.currentUser?.id })?.id
+        guard
+            let currentParticipant = chatObserver
+                .participants
+                .first(where: { $0.user.id == authentication.currentUser?.id })
+        else {
+            return nil
+        }
+        return currentParticipant.id
     }
     
     public var body: some View {
-        let newParticipantButton = Button {
-            showingNewParticipants = true
-        } label: {
-            Label("New Participant", systemImage: "plus.message")
-        }
         ScrollViewReader { scrollView in
             ReversedScrollView(.vertical, showsIndicator: true) {
                 LazyVStack(
                     alignment: .center,
-                    spacing: 0,
+                    spacing: -6,
                     pinnedViews: [.sectionHeaders, .sectionFooters]
                 ) {
-                    if let currentParticipantId {
+                    if let currentParticipantId = currentParticipantId {
                         ForEach(chatObserver.messages) { message in
                             MessageView(
                                 currentParticipantId: currentParticipantId,
@@ -93,8 +96,12 @@ public struct ChatView: View {
                                 message: message
                             )
                         }
+                        #if os(watchOS)
+                        ChatInputBar(send: send)
+                            .environmentObject(chatObserver)
+                        #endif
                     } else {
-                        Text("You are logged in, but no user profile was found!")
+                        Text("It seems that you are not a part of this chat!")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -104,53 +111,26 @@ public struct ChatView: View {
                     scrollToLastMessage(scrollProxy: scrollView)
                 }
             }
+#if !os(watchOS)
             .safeAreaInset(edge: .bottom) {
-                HStack {
-                    if newMessageText == "" && focused {
-#if os(iOS)
-                        Button {
-                            withAnimation {
-                                focused = false
-                            }
-                        } label: {
-                            Image(systemName: "keyboard.chevron.compact.down")
-                        }
-                        .transition(.move(edge: .leading).combined(with: .opacity))
-                        .animation(.spring(), value: focused)
-#endif
-                    }
-                    TextField(
-                        "New Message",
-                        text: $newMessageText.animation(.spring()),
-                        prompt: Text("Affirmate")
-                    )
-                    .focused($focused)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .onSubmit(send)
-                    .onChange(of: focused) { isFocused in
-                        if isFocused {
-                            scrollToLastMessage(scrollProxy: scrollView)
-                        }
-                    }
-                    if newMessageText.trimmingCharacters(in: .whitespacesAndNewlines).count > 0 {
-                        ChatSendButton(send: send)
-                            .transition(.move(edge: .trailing).combined(with: .opacity))
-                            .animation(.spring(), value: focused)
-                    }
-                }
-                .flipsForRightToLeftLayoutDirection(true)
-#if os(iOS)
-                .onReceive(keyboard.$height) { newHeight in
-                    scrollToLastMessage(scrollProxy: scrollView)
-                }
-#endif
-                .onChange(of: chatObserver.messages.count) { newCount in
-                    scrollToLastMessage(scrollProxy: scrollView)
-                }
-                .padding()
-                .background(.bar)
-                .ignoresSafeArea(.keyboard, edges: .bottom)
+                ChatInputBar(send: send)
+                    .environmentObject(chatObserver)
             }
+#endif
+            .onChange(of: focused) { isFocused in
+                if isFocused {
+                    scrollToLastMessage(scrollProxy: scrollView)
+                }
+            }
+            .onChange(of: chatObserver.messages.count) { _ in
+                scrollToLastMessage(scrollProxy: scrollView)
+            }
+#if os(iOS)
+            .onReceive(keyboard.$height.debounce(for: 0.3, scheduler: RunLoop.main)) { _ in
+                scrollToLastMessage(scrollProxy: scrollView)
+            }
+#endif
+#if !os(watchOS)
             .toolbarTitleMenu {
                 ForEach(chatObserver.participants) { participant in
                     HStack {
@@ -158,12 +138,13 @@ public struct ChatView: View {
                         Text("@" + participant.user.username)
                     }
                 }
-                newParticipantButton
+                ShowNewParticipantsButton(showingNewParticipants: $showingNewParticipants)
             }
             .sheet(isPresented: $showingNewParticipants) {
                 NewParticipantsView()
                     .environmentObject(chatObserver)
             }
+#endif
         }
         .navigationTitle(chatObserver.name)
         .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
@@ -175,6 +156,7 @@ public struct ChatView: View {
             }
         }
         .toolbar {
+            #if !os(watchOS)
             ToolbarTitleMenu()
             ToolbarItem(placement: .secondaryAction) {
                 Button {
@@ -187,12 +169,15 @@ public struct ChatView: View {
                 }
             }
             ToolbarItem(placement: .secondaryAction) {
-                newParticipantButton
+                ShowNewParticipantsButton(showingNewParticipants: $showingNewParticipants)
             }
+            #endif
         }
+        #if !os(watchOS)
         .alert(isPresented: $presentedCopiedUrl) {
             Alert(title: Text("Link Copied!"), message: Text(""))
         }
+        #endif
         .sheet(item: $presentedParticipant) {
             presentedParticipant = nil
         } content: { participant in

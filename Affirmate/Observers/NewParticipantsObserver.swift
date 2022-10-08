@@ -17,28 +17,20 @@ final class NewParticipantsObserver: ObservableObject {
     let userActor = AffirmateUserActor()
     
     @MainActor func set(searchResults: [AffirmateUser.Public]) {
-        withAnimation {
-            self.searchResults = searchResults
-        }
+        self.searchResults = searchResults
     }
     
     @MainActor func select(user: AffirmateUser.Public) {
-        withAnimation {
-            self.selectedParticipants[user] = .participant
-            self.set(searchResults: [])
-        }
+        self.selectedParticipants[user] = .participant
+        self.set(searchResults: [])
     }
     
     @MainActor func set(role: Participant.Role, for user: AffirmateUser.Public) {
-        withAnimation {
-            self.selectedParticipants[user] = role
-        }
+        self.selectedParticipants[user] = role
     }
     
     @MainActor func remove(user: AffirmateUser.Public) {
-        withAnimation {
-            self.selectedParticipants.removeValue(forKey: user)
-        }
+        self.selectedParticipants.removeValue(forKey: user)
     }
     
     func find() async throws {

@@ -28,12 +28,23 @@ final class AuthenticationObserver: ObservableObject {
     @MainActor func setCurrentUser(to user: AffirmateUser?) {
         withAnimation {
             self.currentUser = user
+            if user == nil {
+                do {
+                    try authenticationActor.http.interceptor.removeTokens()
+                } catch {
+                    print("Failed to remove tokens")
+                }
+            }
         }
     }
     
     func getCurrentUser() async throws {
-        let me = try await meActor.me()
-        await setCurrentUser(to: me)
+        do {
+            let me = try await meActor.me()
+            await setCurrentUser(to: me)
+        } catch {
+            await setCurrentUser(to: nil)
+        }
     }
     
     func signUp(user create: AffirmateUser.Create) async throws {
@@ -46,7 +57,7 @@ final class AuthenticationObserver: ObservableObject {
         do {
             await setState(to: .loading(message: "Logging in..."))
             let loginResponse = try await authenticationActor.login(username: username, password: password)
-            try authenticationActor.interceptor.set(loginResponse.sessionToken)
+            try store(sessionToken: loginResponse.sessionToken)
             await setCurrentUser(to: loginResponse.user)
             await setState(to: .loggedIn)
         } catch {
@@ -68,8 +79,22 @@ final class AuthenticationObserver: ObservableObject {
         }
     }
     
-    func refresh(deviceToken token: Data?) async throws {
-        try await authenticationActor.refresh(deviceToken: token)
+    func update(deviceToken token: Data?) async throws {
+        try await authenticationActor.update(deviceToken: token)
+    }
+    
+    func refesh(sessionToken: SessionToken) async throws {
+        let newSessionToken = try await authenticationActor.refresh(sessionToken: sessionToken)
+        try store(sessionToken: nil)
+        try store(sessionToken: newSessionToken)
+    }
+    
+    private func store(sessionToken: SessionToken?) throws {
+        if let sessionToken {
+            try authenticationActor.interceptor.set(sessionToken)
+        } else {
+            try authenticationActor.interceptor.removeTokens()
+        }
     }
     
     enum State {

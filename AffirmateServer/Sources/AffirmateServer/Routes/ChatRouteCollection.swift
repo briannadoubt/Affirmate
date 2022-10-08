@@ -84,7 +84,7 @@ struct ChatRouteCollection: RouteCollection {
                                 id: try participant.requireID(),
                                 role: participant.role,
                                 user: AffirmateUser.ParticipantReponse(
-                                    id: try participant.requireID(),
+                                    id: try participant.user.requireID(),
                                     username: participant.user.username
                                 ),
                                 chat: Chat.ParticipantResponse(id: try chat.requireID())
