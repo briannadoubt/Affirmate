@@ -274,14 +274,6 @@
 		03AE008528B9B9C6000C2FE0 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		03C366C328C8E9CE0027CA1F /* AuthenticationActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationActor.swift; sourceTree = "<group>"; };
 		03CB0DFE28C02BA700B1E26F /* AffirmateServer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AffirmateServer; sourceTree = "<group>"; };
-		03D0679628BD3F44002C5214 /* AffirmateServerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateServerApp.swift; sourceTree = "<group>"; };
-		03D0679828BD3F44002C5214 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		03D0679A28BD3F46002C5214 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		03D0679D28BD3F46002C5214 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		03D0679F28BD3F46002C5214 /* AffirmateServerGUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AffirmateServerGUI.entitlements; sourceTree = "<group>"; };
-		03D067A828BD3F46002C5214 /* AffirmateServerGUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateServerGUITests.swift; sourceTree = "<group>"; };
-		03D067B228BD3F46002C5214 /* AffirmateServerGUIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateServerGUIUITests.swift; sourceTree = "<group>"; };
-		03D067B428BD3F46002C5214 /* AffirmateServerGUIUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateServerGUIUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		03D9C8CB28F12D2D00FCFAE7 /* Affirmate Watch Extension.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Affirmate Watch Extension.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D9C8DD28F12D2E00FCFAE7 /* Affirmate.Watch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Affirmate.Watch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D9C8E128F12D2E00FCFAE7 /* Affirmate_Watch_Watch_AppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Affirmate_Watch_Watch_AppTests.swift; sourceTree = "<group>"; };
@@ -523,9 +515,6 @@
 				0389BC8A286FAB2A00CBDC3B /* Affirmate */,
 				0389BC9C286FAB2A00CBDC3B /* AffirmateTests */,
 				0389BCA6286FAB2B00CBDC3B /* AffirmateUITests */,
-				03D0679528BD3F44002C5214 /* AffirmateServerGUI */,
-				03D067A728BD3F46002C5214 /* AffirmateServerGUITests */,
-				03D067B128BD3F46002C5214 /* AffirmateServerGUIUITests */,
 				0389BCB6286FAC1400CBDC3B /* Packages */,
 				03D9C8CF28F12D2D00FCFAE7 /* Affirmate Watch */,
 				03D9C8E028F12D2E00FCFAE7 /* Affirmate.Watch Watch AppTests */,
@@ -621,43 +610,6 @@
 				0397C7DE28FB592F00FE8693 /* ChatIdentityStore.swift */,
 			);
 			path = Security;
-			sourceTree = "<group>";
-		};
-		03D0679528BD3F44002C5214 /* AffirmateServerGUI */ = {
-			isa = PBXGroup;
-			children = (
-				03D0679628BD3F44002C5214 /* AffirmateServerApp.swift */,
-				03D0679828BD3F44002C5214 /* ContentView.swift */,
-				03D0679A28BD3F46002C5214 /* Assets.xcassets */,
-				03D0679F28BD3F46002C5214 /* AffirmateServerGUI.entitlements */,
-				03D0679C28BD3F46002C5214 /* Preview Content */,
-			);
-			path = AffirmateServerGUI;
-			sourceTree = "<group>";
-		};
-		03D0679C28BD3F46002C5214 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				03D0679D28BD3F46002C5214 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		03D067A728BD3F46002C5214 /* AffirmateServerGUITests */ = {
-			isa = PBXGroup;
-			children = (
-				03D067A828BD3F46002C5214 /* AffirmateServerGUITests.swift */,
-			);
-			path = AffirmateServerGUITests;
-			sourceTree = "<group>";
-		};
-		03D067B128BD3F46002C5214 /* AffirmateServerGUIUITests */ = {
-			isa = PBXGroup;
-			children = (
-				03D067B228BD3F46002C5214 /* AffirmateServerGUIUITests.swift */,
-				03D067B428BD3F46002C5214 /* AffirmateServerGUIUITestsLaunchTests.swift */,
-			);
-			path = AffirmateServerGUIUITests;
 			sourceTree = "<group>";
 		};
 		03D067BF28BD4B4E002C5214 /* Frameworks */ = {
