@@ -8,24 +8,27 @@
 import Fluent
 import Vapor
 
-extension String {
-    var fieldKey: FieldKey { FieldKey(stringLiteral: self) }
-    var validationKey: ValidationKey { ValidationKey(stringLiteral: self) }
-}
-
 final class AffirmateUser: Model, Content, Codable {
     
     static let schema = "users"
     
     @ID(key: FieldKey.id) var id: UUID?
+    
     @Field(key: "first_name") var firstName: String
     @Field(key: "last_name") var lastName: String
     @Field(key: "username") var username: String
     @Field(key: "email") var email: String
     @Field(key: "password_hash") var passwordHash: String
+    
+    @Timestamp(key: "created", on: .create) var created: Date?
+    @Timestamp(key: "updated", on: .update) var updated: Date?
+    
     @OptionalField(key: "apns_id") var apnsId: Data?
+    
     @Siblings(through: Participant.self, from: \.$user, to: \.$chat) var chats: [Chat]
-    @Children(for: \.$user) var chatInvitations: [ChatInvitation]
+    @Siblings(through: ChatInvitation.self, from: \.$user, to: \.$chat) var chatInvitations: [Chat]
+    
+    @Children(for: \.$user) var publicKeys: [PublicKey]
     
     init() { }
     
@@ -55,7 +58,8 @@ extension AffirmateUser {
                 .field("username", .string)
                 .field("password_hash", .string, .required)
                 .field("apns_id", .data)
-                .field("chat_invitations", .uuid, .required, .references(ChatInvitation.schema, .id))
+                .field("created", .datetime)
+                .field("updated", .datetime)
                 .unique(on: "email", "username")
                 .create()
         }
@@ -104,11 +108,6 @@ extension AffirmateUser {
 }
 
 extension AffirmateUser {
-    var getResponse: GetResponse {
-        get throws {
-            GetResponse(id: try requireID(), firstName: firstName, lastName: lastName, username: username, email: email)
-        }
-    }
     
     struct LoginResponse: Content {
         var sessionToken: SessionToken
@@ -122,6 +121,7 @@ extension AffirmateUser {
         var lastName: String
         var username: String
         var email: String
+        var chatInvitations: [ChatInvitation.GetResponse]
     }
     
     struct ParticipantReponse: Content, Equatable, Codable {
@@ -146,13 +146,5 @@ extension AffirmateUser {
             value: [UInt8].random(count: 32).base64,
             userID: self.requireID()
         )
-    }
-}
-
-extension Collection where Element == AffirmateUser {
-    var getResponse: [AffirmateUser.GetResponse] {
-        get throws {
-            try map { try $0.getResponse }
-        }
     }
 }

@@ -7,12 +7,9 @@
 
 import Vapor
 
-open class WebSocketClient {
-  open var id: UUID
-  open var socket: WebSocket
-
-  public init(id: UUID, socket: WebSocket) {
-    self.id = id
-    self.socket = socket
-  }
+protocol WebSocketClient {
+    var id: UUID { get set }
+    var chatId: UUID { get set }
+    var socket: WebSocket { get set }
+    init(id: UUID, chatId: UUID, socket: WebSocket)
 }

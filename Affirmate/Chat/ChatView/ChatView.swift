@@ -111,12 +111,12 @@ public struct ChatView: View {
                     scrollToLastMessage(scrollProxy: scrollView)
                 }
             }
-#if !os(watchOS)
+            #if !os(watchOS)
             .safeAreaInset(edge: .bottom) {
                 ChatInputBar(send: send)
                     .environmentObject(chatObserver)
             }
-#endif
+            #endif
             .onChange(of: focused) { isFocused in
                 if isFocused {
                     scrollToLastMessage(scrollProxy: scrollView)
@@ -125,12 +125,12 @@ public struct ChatView: View {
             .onChange(of: chatObserver.messages.count) { _ in
                 scrollToLastMessage(scrollProxy: scrollView)
             }
-#if os(iOS)
+            #if os(iOS)
             .onReceive(keyboard.$height.debounce(for: 0.3, scheduler: RunLoop.main)) { _ in
                 scrollToLastMessage(scrollProxy: scrollView)
             }
-#endif
-#if !os(watchOS)
+            #endif
+            #if !os(watchOS) && !os(macOS)
             .toolbarTitleMenu {
                 ForEach(chatObserver.participants) { participant in
                     HStack {
@@ -144,21 +144,23 @@ public struct ChatView: View {
                 NewParticipantsView()
                     .environmentObject(chatObserver)
             }
-#endif
+            #endif
         }
         .navigationTitle(chatObserver.name)
+        #if !os(watchOS) && !os(macOS)
         .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
+        #endif
         .task {
             do {
-                try chatObserver.connect()
+                try chatObserver.connect(chatId: chatObserver.chatId)
             } catch {
-                print("TODO: Show this error in the UI:", "Connection Error:", error)
+                print("Failed to connect:", error)
             }
         }
         .toolbar {
-            #if !os(watchOS)
+            #if !os(watchOS) && !os(macOS)
             ToolbarTitleMenu()
-            ToolbarItem(placement: .secondaryAction) {
+            ToolbarItem {
                 Button {
                     UIPasteboard.general.setValue(chatObserver.shareableUrl, forPasteboardType: UTType.url.identifier)
                     withAnimation {
@@ -168,7 +170,7 @@ public struct ChatView: View {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
             }
-            ToolbarItem(placement: .secondaryAction) {
+            ToolbarItem {
                 ShowNewParticipantsButton(showingNewParticipants: $showingNewParticipants)
             }
             #endif
@@ -185,12 +187,15 @@ public struct ChatView: View {
                 ProfileView(user: presentedParticipant.user)
             }
         }
+        .onAppear {
+            
+        }
     }
 }
 
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
         ChatView()
-            .environmentObject(ChatObserver(chat: Chat(id: UUID(), name: "Meow")))
+            .environmentObject(ChatObserver(chat: Chat(id: UUID(), name: "Meow", preKey: Data()), currentUserId: UUID()))
     }
 }

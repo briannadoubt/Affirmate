@@ -44,20 +44,26 @@ struct NewChatView: View {
                 guard !newParticipantsObserver.selectedParticipants.isEmpty else {
                     throw ChatError.chatWithNoOtherParticipants
                 }
-                try await chatsObserver.newChat(Chat.Create(name: name, participants: newParticipantsCreate))
+                try await chatsObserver.newChat(
+                    name: name,
+                    selectedParticipants: newParticipantsObserver.selectedParticipants
+                )
                 try await chatsObserver.getChats()
                 dismiss()
             } catch {
-                print("TODO: Show this error in the UI:", error.localizedDescription)
+                print("Failed to create new chat:", error.localizedDescription)
             }
         }
     }
     
-    var newParticipantsCreate: [Participant.Create] {
-        newParticipantsObserver.selectedParticipants.map { index in
+    var newDraftParticipants: [Participant.Draft] {
+        return newParticipantsObserver.selectedParticipants.map { index in
             let role = index.value
             let publicUser = index.key
-            return Participant.Create(role: role, user: publicUser.id)
+            return Participant.Draft(
+                role: role,
+                user: publicUser.id
+            )
         }
     }
     
@@ -71,7 +77,7 @@ struct NewChatView: View {
         NavigationView {
             List {
                 Section {
-                    TextField("Name", text: $name)
+                    TextField("Name (Optional)", text: $name)
                 } footer: {
                     Text("Choose a name for your new chat!")
                 }

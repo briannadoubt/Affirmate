@@ -80,3 +80,14 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-vapor_database}
     ports:
       - '5432:5432'
+  testdb:
+    image: postgres:14-alpine
+    volumes:
+      - testdb_data:/var/lib/postgresql/data/pgdata
+    environment:
+      PGDATA: ${PGDATA:-/var/lib/postgresql/data/pgdata}
+      POSTGRES_USER: ${POSTGRES_USER:-vapor_username}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vapor_password}
+      POSTGRES_DB: ${POSTGRES_DB:-vapor_database}
+    ports:
+      - '5433:5433'

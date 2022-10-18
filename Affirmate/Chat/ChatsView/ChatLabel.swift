@@ -13,18 +13,18 @@ struct ChatLabel: View {
         VStack(alignment: .leading) {
             if let lastMessage = chat.messages?.last {
                 Text((lastMessage.sender.user.username) + ": ").bold()
-                Text(lastMessage.text ?? "")
-                    .lineLimit(2)
+//                Text(lastMessage.text ?? "")
+//                    .lineLimit(2)
             } else {
                 Text("No messages yet...")
             }
         }
-        .tag(chat)
+        .tag(chat.id)
     }
 }
 
 struct ChatLabel_Previews: PreviewProvider {
     static var previews: some View {
-        ChatLabel(chat: Chat(id: UUID()))
+        ChatLabel(chat: Chat(id: UUID(), preKey: Data()))
     }
 }

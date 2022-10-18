@@ -9,7 +9,12 @@ import SwiftUI
 
 struct HomeView: View {
     var body: some View {
-        NavigationView {
+        NavigationSplitView {
+            List {
+                Text("The place for things")
+            }
+            .navigationTitle("Affirmate")
+        } detail: {
             List {
                 Text("This is the home page")
             }

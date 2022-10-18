@@ -5,6 +5,7 @@
 //  Created by Bri on 8/21/22.
 //
 
+#if !os(macOS)
 import SwiftUI
 import UIKit
 
@@ -21,10 +22,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         Self.deviceToken = deviceToken
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print(error.localizedDescription)
+        print(error)
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) async -> UIBackgroundFetchResult {
+        print(userInfo)
         switch application.applicationState {
         case .active:
             break
@@ -44,3 +46,19 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return .noData
     }
 }
+#else
+import SwiftUI
+import AppKit
+class AppDelegate: NSObject, NSApplicationDelegate {
+    static var deviceToken: Data?
+    func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Self.deviceToken = deviceToken
+    }
+    func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print(error)
+    }
+    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
+        print(userInfo)
+    }
+}
+#endif

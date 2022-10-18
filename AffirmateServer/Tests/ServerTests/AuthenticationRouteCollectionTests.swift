@@ -14,16 +14,10 @@ final class AuthenticationRouteCollectionTests: XCTestCase {
     var app: Application!
     
     override func setUpWithError() throws {
-        self.app = Application(.testing)
-        configure(app)
-        try? app.autoRevert().wait()
-        try? app.autoMigrate().wait()
+        self.app = try Application.testable()
+        try super.setUpWithError()
     }
     
-    override func tearDown() {
-        app.shutdown()
-    }
-
     // MARK: /auth/new
     func test_newUser() async throws {
         let firstName = "Meow"

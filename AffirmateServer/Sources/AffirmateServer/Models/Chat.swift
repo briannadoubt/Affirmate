@@ -17,10 +17,14 @@ final class Chat: Model, Content, Equatable {
     static let schema = "chat"
     
     @ID(key: FieldKey.id) var id: UUID?
+    
     @Field(key: "name") var name: String?
+    
     @Children(for: \.$chat) var messages: [Message]
     @Children(for: \.$chat) var participants: [Participant]
-//    @Children(for: \.$chat) var openInvitations: [ChatInvitation]
+    @Children(for: \.$chat) var openInvitations: [ChatInvitation]
+    @Children(for: \.$chat) var publicKeys: [PublicKey]
+    @Children(for: \.$chat) var preKeys: [PreKey]
     
     init() { }
     
@@ -37,25 +41,34 @@ extension Chat {
         var name: String { "ChatMigration" }
         /// Outlines the `chats` table schema
         func prepare(on database: Database) async throws {
-            try await database.schema("chat")
+            try await database.schema(Chat.schema)
                 .id()
                 .field("name", .string)
                 .create()
         }
         /// Destroys the `chats` table
         func revert(on database: Database) async throws {
-            try await database.schema("chat").delete()
+            try await database.schema(Chat.schema).delete()
         }
     }
 }
 
 extension Chat {
     struct Create: Content, Validatable {
+        var id: UUID
         var name: String?
         var participants: [Participant.Create]
+        
+        var publicKey: Data
+        var preKeys: [Data]
+        var signedPreKey: Data
+        
         static func validations(_ validations: inout Validations) {
             validations.add("name", as: String.self)
-            validations.add("participants", as: [Participant.Create].self)
+            validations.add("participants", as: [Participant.Create].self, required: true)
+            validations.add("publicKey", as: Data.self, required: true)
+            validations.add("preKeys", as: [Data].self, required: true)
+            validations.add("signedPreKey", as: Data.self, required: true)
         }
     }
 }
@@ -67,6 +80,7 @@ extension Chat {
         var name: String?
         var messages: [Message.GetResponse]
         var participants: [Participant.GetResponse]
+        var preKey: PreKey.ChatGetResponse?
     }
     
     var participantResponse: ParticipantResponse? {

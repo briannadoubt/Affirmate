@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "AffirmateServer",
-    platforms: [.macOS(.v13), .iOS(.v16), .tvOS(.v16)],
+    platforms: [.macOS(.v12), .iOS(.v16), .tvOS(.v16)],
     products: [
         .library(name: "AffirmateServer", targets: ["AffirmateServer"]),
     ],
@@ -33,9 +33,9 @@ let package = Package(
                 .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
             ]
         ),
-        .executableTarget(name: "Server", dependencies: [.target(name: "AffirmateServer")]),
+        .executableTarget(name: "Run", dependencies: [.target(name: "AffirmateServer")]),
         .testTarget(name: "ServerTests", dependencies: [
-            .target(name: "Server"),
+            .target(name: "Run"),
             .product(name: "XCTVapor", package: "vapor"),
         ])
     ]

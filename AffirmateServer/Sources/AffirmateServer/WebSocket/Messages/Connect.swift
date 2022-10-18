@@ -8,5 +8,6 @@
 import Foundation
 
 struct Connect: Codable, Hashable, Equatable {
-  let connect: Bool
+    let connect: Bool
+    let chatId: UUID
 }

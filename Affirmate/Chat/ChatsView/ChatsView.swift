@@ -17,31 +17,30 @@ struct ChatsView: View {
         do {
             try await chatsObserver.getChats()
         } catch {
-            print("TODO: Show this error in the UI:", error.localizedDescription)
+            print("Failed to get chats:", error.localizedDescription)
         }
     }
     
-#if !os(watchOS)
-    @State var navigationSplitViewVisibility: NavigationSplitViewVisibility = .doubleColumn
-#endif
+    #if !os(watchOS) && !os(macOS)
+    @State var navigationSplitViewVisibility: NavigationSplitViewVisibility = .all
+    #endif
     
-    @State var selectedChat: Chat?
+    @State var selectedChat: UUID?
     
     var body: some View {
         Group {
-#if os(watchOS)
+            #if os(watchOS)
             NavigationStack {
                 ChatsList(getChats: getChats)
                     .environmentObject(authenticationObserver)
                     .environmentObject(chatsObserver)
             }
-#else
-            NavigationSplitView(columnVisibility: $navigationSplitViewVisibility) {
+            #elseif os(macOS)
+            NavigationView {
                 ChatsList(selectedChat: $selectedChat, getChats: getChats)
                     .environmentObject(authenticationObserver)
                     .environmentObject(chatsObserver)
-                    .navigationSplitViewColumnWidth(ideal: 320)
-            } detail: {
+                
                 if let selectedChat {
                     ChatView()
                         .environmentObject(ChatObserver(chat: selectedChat))
@@ -49,8 +48,26 @@ struct ChatsView: View {
                     Text("👈 Select a chat on the left")
                 }
             }
-            .navigationSplitViewStyle(.balanced)
-#endif
+            #else
+            NavigationSplitView(columnVisibility: $navigationSplitViewVisibility) {
+                ChatsList(selectedChat: $selectedChat, getChats: getChats)
+                    .environmentObject(authenticationObserver)
+                    .environmentObject(chatsObserver)
+                    .navigationSplitViewColumnWidth(ideal: 320)
+            } detail: {
+                if
+                    let selectedChat = selectedChat,
+                    let chat = chatsObserver.chats.first(where: { $0.id == selectedChat }),
+                    let currentUserId = authenticationObserver.currentUser?.id
+                {
+                    ChatView()
+                        .environmentObject(ChatObserver(chat: chat, currentUserId: currentUserId))
+                } else {
+                    Text("👈 Select a chat on the left")
+                }
+            }
+            .navigationSplitViewStyle(.automatic)
+            #endif
         }
         .onOpenURL { url in
             guard
@@ -66,12 +83,11 @@ struct ChatsView: View {
                     let queryItems = components.queryItems,
                     let chatIdQueryItem = queryItems.first(where: { $0.name == "chatId"}),
                     let chatIdString = chatIdQueryItem.value,
-                    let chatId = UUID(uuidString: chatIdString),
-                    let chat = chatsObserver.chats.first(where: { $0.id == chatId })
+                    let chatId = UUID(uuidString: chatIdString)
                 else {
                     return
                 }
-                selectedChat = chat
+                selectedChat = chatId
             }
         }
     }

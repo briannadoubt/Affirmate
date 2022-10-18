@@ -8,10 +8,6 @@
 import Fluent
 import Vapor
 
-struct APNSDeviceToken: Content {
-    var token: Data?
-}
-
 struct MeRouteCollection: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         // "/me" requires the request header to contain a bearer token
@@ -21,7 +17,10 @@ struct MeRouteCollection: RouteCollection {
         
         // MARK: - GET: /me
         me.get() { request async throws -> AffirmateUser.GetResponse in
-            try request.auth.require(AffirmateUser.self).getResponse
+            try await request.db.transaction { database in
+                let currentUser = try request.auth.require(AffirmateUser.self)
+                return try await AffirmateUser.getCurrentUserResponse(currentUser, database: database)
+            }
         }
         
         // MARK: - PUT: /me/deviceToken

@@ -7,33 +7,72 @@
 
 import Vapor
 
-actor WebSocketClients {
-    var eventLoop: EventLoop
-    var storage: [UUID: WebSocketClient]
+protocol WebSocketClients: Actor {
+    associatedtype Client = WebSocketClient
+    associatedtype Storage = [UUID: [UUID: Client]]
+    var eventLoop: EventLoop { get set }
+    var storage: Storage { get set }
+    func active() -> Storage
+}
 
-    var active: [WebSocketClient] {
-        storage.values.filter { !$0.socket.isClosed }
+actor ChatWebSocketClients: WebSocketClients {
+    
+    /// Format: `[chatId: [clientId: WebSocketClient]]`
+    typealias Storage = [UUID: [UUID: ChatWebSocketClient]]
+    
+    var eventLoop: EventLoop
+    var storage: Storage
+
+    func active() -> Storage {
+        var activeChats: Storage = Storage()
+        storage.forEach { key, value in
+            let activeClients = value.filter { element in
+                !element.value.socket.isClosed
+            }
+            guard !activeClients.isEmpty else {
+                return
+            }
+            activeChats[key] = activeClients
+        }
+        return activeChats
     }
 
-    init(eventLoop: EventLoop, clients: [UUID: WebSocketClient] = [:]) {
+    init(eventLoop: EventLoop, clients: Storage = [:]) {
         self.eventLoop = eventLoop
         storage = clients
     }
 
-    func add(_ client: WebSocketClient) {
-        storage[client.id] = client
+    func add(_ client: ChatWebSocketClient, chatId: UUID) throws {
+        if storage[chatId] == nil {
+            storage[chatId] = [:]
+        }
+        storage[chatId]?[client.id] = client
     }
 
-    func remove(_ client: WebSocketClient) {
-        storage[client.id] = nil
+    func remove(_ chatId: UUID, client: ChatWebSocketClient) {
+        storage[chatId]?[client.id] = nil
+        if let clients = storage[chatId], clients.isEmpty {
+            storage[chatId] = nil
+        }
     }
 
-    func getClient(with id: UUID) -> WebSocketClient? {
-        storage[id]
+    func getClient(from chat: UUID, with clientId: UUID) -> ChatWebSocketClient? {
+        storage[chat]?[clientId]
     }
 
     deinit {
-        let futures = self.storage.values.map { $0.socket.close() }
-        try! self.eventLoop.flatten(futures).wait()
+        let futures = self.storage.values
+            .map {
+                $0.values.map {
+                    $0.socket.close()
+                }
+            }
+            .flatMap { $0 }
+        do {
+            try self.eventLoop.flatten(futures).wait()
+        } catch {
+            print("Failed to flatten WebSocket futures:", error)
+            assertionFailure("Failed to flatten WebSocket futures")
+        }
     }
 }

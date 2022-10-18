@@ -14,6 +14,7 @@ enum ChatError: LocalizedError {
     case chatIdNotFound
     case clientIdHasNotBeenSet
     case chatWithNoOtherParticipants
+    case failedToConvertMessageContentIntoData
     
     var errorDescription: String? {
         switch self {
@@ -29,6 +30,8 @@ enum ChatError: LocalizedError {
             return "Client ID has not been set."
         case .chatWithNoOtherParticipants:
             return "Chat with no other participants."
+        case .failedToConvertMessageContentIntoData:
+            return "Failed to convert message content into data."
         }
     }
     
@@ -44,6 +47,8 @@ enum ChatError: LocalizedError {
             return "We ran into an issue connecting to the chat. Please try again."
         case .chatWithNoOtherParticipants:
             return "You cannot start a chat without another participant."
+        case .failedToConvertMessageContentIntoData:
+            return "Failed to encrypt message."
         }
     }
 }

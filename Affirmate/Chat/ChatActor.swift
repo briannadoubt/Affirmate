@@ -8,7 +8,7 @@
 import Foundation
 import Alamofire
 
-actor ChatsActor: Repository {
+actor ChatActor: Repository {
     func get() async throws -> [Chat] {
         let chatResponses = try await http.requestDecodable(Request.chats, to: [Chat].self)
         return chatResponses
@@ -23,45 +23,66 @@ actor ChatsActor: Repository {
         try await http.request(Request.newChat(object))
     }
     
-    func update(_ object: Chat) async throws {
-        
+//    func invite(_ )
+    
+    func joinChat(_ chatId: UUID, confirmation: ChatInvitation.Join) async throws {
+        try await http.request(Request.joinChat(chatId: chatId, confirmation: confirmation, sessionToken: http.interceptor.sessionToken))
     }
     
-    func delete(_ id: UUID) async throws {
-        
-    }
-    
-    func sendMessage(_ newMessage: Message.Create, chatId: UUID) async throws {
-        try await http.request(Request.newMessage(chatId: chatId, message: newMessage))
+    func declineInvitation(_ chatId: UUID, declination: ChatInvitation.Decline) async throws {
+        try await http.request(Request.declineInvitation(chatId: chatId, declination: declination, sessionToken: http.interceptor.sessionToken))
     }
 }
     
-extension ChatsActor {
+extension ChatActor {
     
     enum Request: URLRequestConvertible {
         case newChat(Chat.Create)
         case chats
         case chat(chatId: UUID, sessionToken: String?)
-        case newMessage(chatId: UUID, message: Message.Create)
         
+        case joinChat(chatId: UUID, confirmation: ChatInvitation.Join, sessionToken: String?)
+        case declineInvitation(chatId: UUID, declination: ChatInvitation.Decline, sessionToken: String?)
+        
+        #if os(macOS)
+        var url: URL { Constants.baseURL.appendingPathComponent("chats") }
+        #else
         var url: URL { Constants.baseURL.appending(component: "chats") }
+        #endif
         
+        #if os(macOS)
+        var uri: URLConvertible? {
+            switch self {
+            case .chats, .newChat:
+                return url
+            case .chat(let chatId, _):
+                return url.appendingPathComponent(chatId.uuidString)
+            case .join(let chatId, _, _):
+                return url.appendingPathComponent(chatId.uuidString).appendingPathComponent("join")
+            case .decline(let chatId, _, _):
+                return url.appendingPathComponent(chatId.uuidString).appendingPathComponent("decline")
+            }
+        }
+        #else
         var uri: URLConvertible? {
             switch self {
             case .chats, .newChat:
                 return url
             case .chat(let chatId, _):
                 return url.appending(component: chatId.uuidString)
-            case let .newMessage(chatId, _):
-                return url.appending(component: chatId.uuidString).appending(component: "messages")
+            case .joinChat(let chatId, _, _):
+                return url.appending(component: chatId.uuidString).appending(component: "join")
+            case .declineInvitation(let chatId, _, _):
+                return url.appending(component: chatId.uuidString).appending(component: "decline")
             }
         }
+        #endif
         
         var method: HTTPMethod {
             switch self {
             case .chat, .chats:
                 return .get
-            case .newChat, .newMessage:
+            case .newChat, .joinChat, .declineInvitation:
                 return .post
             }
         }
@@ -74,7 +95,9 @@ extension ChatsActor {
             headers.add(.contentType("application/json"))
             headers.add(.accept("application/json"))
             switch self {
-            case .chat(_, let sessionToken):
+            case .chat(_, let sessionToken),
+                 .joinChat(_, _, let sessionToken),
+                 .declineInvitation(_, _, let sessionToken):
                 if let sessionToken {
                     headers.add(.authorization(bearerToken: sessionToken))
                 }
@@ -89,14 +112,14 @@ extension ChatsActor {
             }
             var request = try URLRequest(url: requestURL, method: method, headers: headers)
             switch self {
-            case .chats:
+            case .chats, .chat:
                 break
-            case .chat:
-                request.timeoutInterval = 3
-            case let .newMessage(_, message):
-                request.httpBody = try JSONEncoder().encode(message)
             case let .newChat(chat):
                 request.httpBody = try JSONEncoder().encode(chat)
+            case .joinChat(_, let confirmation, _):
+                request.httpBody = try JSONEncoder().encode(confirmation)
+            case .declineInvitation(_, let declination, _):
+                request.httpBody = try JSONEncoder().encode(declination)
             }
             return request
         }

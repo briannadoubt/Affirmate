@@ -24,9 +24,11 @@ struct NewParticipantsUsernameSearchFieldSection: View {
     var body: some View {
         Section {
             TextField("Username", text: $newParticipantsObserver.username)
+                #if !os(macOS)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
-                #if !os(watchOS)
+                #endif
+                #if !os(watchOS) && !os(macOS)
                 .keyboardType(.twitter)
                 #endif
                 .onReceive(newParticipantsObserver.$username.debounce(for: 1, scheduler: RunLoop.main)) { newUserName in
@@ -53,7 +55,7 @@ struct NewParticipantsUsernameSearchFieldSection: View {
                 }
             }
         } header: {
-            Text("Search For Uername")
+            Text("Search For Username")
         } footer: {
             if newParticipantsObserver.searchResults.isEmpty {
                 Text("Start typing someone's username to search for their profile.")
@@ -69,19 +71,14 @@ struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
         messages: [
             Message(
                 id: UUID(),
-                text: "Meow meow meow",
-                chat: Chat.MessageResponse(
-                    id: UUID(),
-                    name: "Meow"
-                ),
-                sender: Participant.GetResponse(
+                text: "Meow meow meow".data(using: .utf8),
+                chat: Chat.MessageResponse(id: UUID(), name: "Meow"),
+                sender: Participant(
                     id: UUID(),
                     role: .admin,
-                    user: AffirmateUser.Public(
-                        id: UUID(),
-                        username: "meowface"
-                    ),
-                    chat: Chat.ParticipantResponse(id: UUID())
+                    user: AffirmateUser.ParticipantResponse(id: UUID(), username: "meowface"),
+                    chat: Chat.ParticipantResponse(id: UUID()),
+                    signedPreKey: Data()
                 )
             )
         ],
@@ -89,13 +86,12 @@ struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
             Participant(
                 id: UUID(),
                 role: .admin,
-                user: AffirmateUser.Public(
-                    id: UUID(),
-                    username: "meowface"
-                ),
-                chat: Relation(id: UUID())
+                user: AffirmateUser.ParticipantResponse(id: UUID(), username: "meowface"),
+                chat: Chat.ParticipantResponse(id: UUID()),
+                signedPreKey: Data()
             )
-        ]
+        ],
+        preKey: Data()
     )
     static var previews: some View {
         NewParticipantsUsernameSearchFieldSection(
@@ -106,7 +102,7 @@ struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
                 )
             ]
         )
-        .environmentObject(ChatObserver(chat: chat))
+        .environmentObject(ChatObserver(chat: chat, currentUserId: UUID()))
         .environmentObject(NewParticipantsObserver())
     }
 }

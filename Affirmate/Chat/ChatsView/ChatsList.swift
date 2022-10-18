@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ChatsList: View {
 #if !os(watchOS)
-    @Binding var selectedChat: Chat?
+    @Binding var selectedChat: UUID?
 #endif
     
     @EnvironmentObject var chatsObserver: ChatsObserver
@@ -41,7 +41,7 @@ struct ChatsList: View {
 struct ChatsList_Previews: PreviewProvider {
     static var previews: some View {
 #if !os(watchOS)
-        ChatsList(selectedChat: .constant(Chat(id: UUID())), getChats: {})
+        ChatsList(selectedChat: .constant(UUID()), getChats: {})
 #else
         ChatsList(getChats: {})
 #endif

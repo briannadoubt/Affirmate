@@ -39,7 +39,7 @@ struct ContentView: View {
                         do {
                             try await authentication.update(deviceToken: token)
                         } catch {
-                            print("TODO: Show this error in the UI:", error)
+                            print("Failed to update device token:", error)
                         }
                     }
                 }
@@ -48,7 +48,7 @@ struct ContentView: View {
                     do {
                         try await authentication.getCurrentUser()
                     } catch {
-                        print("TODO: Show this error in the UI:", error)
+                        print("Failed to get current user:", error)
                     }
                 }
         }
