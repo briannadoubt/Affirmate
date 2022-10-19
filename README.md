@@ -1,5 +1,5 @@
 # Affirmate
-A chosen family ❤️‍🔥
+A place for things ❤️‍🔥
 
 ## Set Up Server Development Environment
 In order to build and run the server locally you will need to pass in a variety of Arguments and Environment Variables. The Environment Variables are also reccomended on a production server as well, but this repo isn't there yet.
