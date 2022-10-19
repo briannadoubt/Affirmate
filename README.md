@@ -61,3 +61,10 @@ See the following screenshot for an example of all the required keys and argumen
 13. Alice recieves a new encrypted message from Bob.
     1. Bob's device uses Alice's public key with his private key to unwrap the encrypted message.
     2. The unencrypted message is displayed on screen.
+
+### Questions:
+1. How to assure forward security?
+2. How are keys signed and messages encrypted with a group chat?
+    1. How to add/remove users?
+3. How to handle new devices?
+    * Note: I think iCloud will handle syncing the users' key pairs across their Apple devices.
