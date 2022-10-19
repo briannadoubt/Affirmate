@@ -37,6 +37,7 @@ let package = Package(
         .testTarget(name: "AffirmateServerTests", dependencies: [
             .target(name: "Run"),
             .product(name: "XCTVapor", package: "vapor"),
+            .product(name: "XCTFluent", package: "fluent"),
         ])
     ]
 )

@@ -1,16 +1,19 @@
 //
-//  AffirmateTests.swift
+//  AffirmateAppTests.swift
 //  AffirmateTests
 //
 //  Created by Bri on 7/1/22.
 //
 
+@testable import Affirmate
 import XCTest
 
-final class AffirmateTests: XCTestCase {
+final class AffirmateAppTests: XCTestCase {
 
+    
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        
     }
 
     override func tearDownWithError() throws {

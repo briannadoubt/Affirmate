@@ -32,9 +32,9 @@ services:
     build:
       context: .
     environment:
-      APNS_KEY: ${APNS_KEY:-secret}
-      APNS_KEY_ID: ${APNS_KEY_ID:-APNS_KEY_ID}
-      APNS_TEAM_ID: ${APNS_TEAM_ID:-APNS_TEAM_ID}
+      APNS_KEY: ${APNS_KEY:-defaultsecret}
+      APNS_KEY_ID: ${APNS_KEY_ID:-F+DEFAULT_APNS_KEY_ID}
+      APNS_TEAM_ID: ${APNS_TEAM_ID:-DEFAULT_APNS_TEAM_ID}
       LOG_LEVEL: ${LOG_LEVEL:-debug}
       DATABASE_HOST: db
       DATABASE_NAME: vapor_database

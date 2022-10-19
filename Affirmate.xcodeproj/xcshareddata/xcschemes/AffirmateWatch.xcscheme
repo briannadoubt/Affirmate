@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "03D9C8CA28F12D2D00FCFAE7"
-               BuildableName = "Affirmate Watch Extension.app"
-               BlueprintName = "Affirmate Watch Extension"
+               BuildableName = "AffirmateWatch.app"
+               BlueprintName = "AffirmateWatch"
                ReferencedContainer = "container:Affirmate.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -34,8 +34,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "03D9C8DC28F12D2E00FCFAE7"
-               BuildableName = "Affirmate.Watch Watch AppTests.xctest"
-               BlueprintName = "Affirmate.Watch Watch AppTests"
+               BuildableName = "AffirmateWatchTests.xctest"
+               BlueprintName = "AffirmateWatchTests"
                ReferencedContainer = "container:Affirmate.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -45,8 +45,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "03D9C8E628F12D2E00FCFAE7"
-               BuildableName = "Affirmate.Watch Watch AppUITests.xctest"
-               BlueprintName = "Affirmate.Watch Watch AppUITests"
+               BuildableName = "AffirmateWatchUITests.xctest"
+               BlueprintName = "AffirmateWatchUITests"
                ReferencedContainer = "container:Affirmate.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -67,8 +67,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "03D9C8CA28F12D2D00FCFAE7"
-            BuildableName = "Affirmate Watch Extension.app"
-            BlueprintName = "Affirmate Watch Extension"
+            BuildableName = "AffirmateWatch.app"
+            BlueprintName = "AffirmateWatch"
             ReferencedContainer = "container:Affirmate.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -84,8 +84,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "03D9C8CA28F12D2D00FCFAE7"
-            BuildableName = "Affirmate Watch Extension.app"
-            BlueprintName = "Affirmate Watch Extension"
+            BuildableName = "AffirmateWatch.app"
+            BlueprintName = "AffirmateWatch"
             ReferencedContainer = "container:Affirmate.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

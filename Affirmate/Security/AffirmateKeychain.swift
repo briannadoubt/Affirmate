@@ -5,6 +5,7 @@
 //  Created by Bri on 10/15/22.
 //
 
+import CryptoKit
 import Foundation
 import KeychainAccess
 import SignalProtocol
@@ -38,3 +39,4 @@ class AffirmateKeychain: ObservableObject {
         .synchronizable(true)
     }
 }
+

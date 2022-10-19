@@ -64,7 +64,7 @@
 		0389BC8E286FAB2A00CBDC3B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BC8D286FAB2A00CBDC3B /* ContentView.swift */; };
 		0389BC90286FAB2A00CBDC3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0389BC8F286FAB2A00CBDC3B /* Assets.xcassets */; };
 		0389BC94286FAB2A00CBDC3B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0389BC93286FAB2A00CBDC3B /* Preview Assets.xcassets */; };
-		0389BC9E286FAB2B00CBDC3B /* AffirmateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BC9D286FAB2B00CBDC3B /* AffirmateTests.swift */; };
+		0389BC9E286FAB2B00CBDC3B /* AffirmateAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BC9D286FAB2B00CBDC3B /* AffirmateAppTests.swift */; };
 		0389BCA8286FAB2B00CBDC3B /* AffirmateUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BCA7286FAB2B00CBDC3B /* AffirmateUITests.swift */; };
 		0389BCAA286FAB2B00CBDC3B /* AffirmateUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BCA9286FAB2B00CBDC3B /* AffirmateUITestsLaunchTests.swift */; };
 		038B3A0128F7531200C7AC0A /* ChatInvitationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038B3A0028F7531200C7AC0A /* ChatInvitationsView.swift */; };
@@ -105,6 +105,8 @@
 		03AE008128B972B6000C2FE0 /* NewParticipantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008028B972B6000C2FE0 /* NewParticipantsView.swift */; };
 		03AE008328B9B9A8000C2FE0 /* WebSocketMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008228B9B9A8000C2FE0 /* WebSocketMessage.swift */; };
 		03AE008628B9B9C6000C2FE0 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008528B9B9C6000C2FE0 /* Data+Extensions.swift */; };
+		03AE207B28FF719800B4C392 /* AffirmateCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE207A28FF719800B4C392 /* AffirmateCrypto.swift */; };
+		03AE207C28FF719800B4C392 /* AffirmateCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE207A28FF719800B4C392 /* AffirmateCrypto.swift */; };
 		03C366C428C8E9CE0027CA1F /* AuthenticationActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C366C328C8E9CE0027CA1F /* AuthenticationActor.swift */; };
 		03D9C8E228F12D2E00FCFAE7 /* WatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D9C8E128F12D2E00FCFAE7 /* WatchTests.swift */; };
 		03D9C8EC28F12D2E00FCFAE7 /* AffirmateWatchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D9C8EB28F12D2E00FCFAE7 /* AffirmateWatchUITests.swift */; };
@@ -246,7 +248,7 @@
 		0389BC91286FAB2A00CBDC3B /* Affirmate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Affirmate.entitlements; sourceTree = "<group>"; };
 		0389BC93286FAB2A00CBDC3B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		0389BC99286FAB2A00CBDC3B /* AffirmateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0389BC9D286FAB2B00CBDC3B /* AffirmateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateTests.swift; sourceTree = "<group>"; };
+		0389BC9D286FAB2B00CBDC3B /* AffirmateAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateAppTests.swift; sourceTree = "<group>"; };
 		0389BCA3286FAB2B00CBDC3B /* AffirmateUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0389BCA7286FAB2B00CBDC3B /* AffirmateUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateUITests.swift; sourceTree = "<group>"; };
 		0389BCA9286FAB2B00CBDC3B /* AffirmateUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -272,12 +274,13 @@
 		03AE008028B972B6000C2FE0 /* NewParticipantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewParticipantsView.swift; sourceTree = "<group>"; };
 		03AE008228B9B9A8000C2FE0 /* WebSocketMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketMessage.swift; sourceTree = "<group>"; };
 		03AE008528B9B9C6000C2FE0 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
+		03AE207A28FF719800B4C392 /* AffirmateCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateCrypto.swift; sourceTree = "<group>"; };
 		03C366C328C8E9CE0027CA1F /* AuthenticationActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationActor.swift; sourceTree = "<group>"; };
 		03CB0DFE28C02BA700B1E26F /* AffirmateServer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AffirmateServer; sourceTree = "<group>"; };
-		03D9C8CB28F12D2D00FCFAE7 /* Affirmate Watch Extension.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Affirmate Watch Extension.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		03D9C8DD28F12D2E00FCFAE7 /* Affirmate.Watch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Affirmate.Watch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03D9C8CB28F12D2D00FCFAE7 /* AffirmateWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AffirmateWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		03D9C8DD28F12D2E00FCFAE7 /* AffirmateWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D9C8E128F12D2E00FCFAE7 /* WatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTests.swift; sourceTree = "<group>"; };
-		03D9C8E728F12D2E00FCFAE7 /* Affirmate.Watch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Affirmate.Watch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03D9C8E728F12D2E00FCFAE7 /* AffirmateWatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateWatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D9C8EB28F12D2E00FCFAE7 /* AffirmateWatchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateWatchUITests.swift; sourceTree = "<group>"; };
 		03D9C8ED28F12D2E00FCFAE7 /* AffirmateWatchUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateWatchUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		03E1922828AEA2B600876C5D /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
@@ -528,9 +531,9 @@
 				0389BC88286FAB2A00CBDC3B /* Affirmate.app */,
 				0389BC99286FAB2A00CBDC3B /* AffirmateTests.xctest */,
 				0389BCA3286FAB2B00CBDC3B /* AffirmateUITests.xctest */,
-				03D9C8CB28F12D2D00FCFAE7 /* Affirmate Watch Extension.app */,
-				03D9C8DD28F12D2E00FCFAE7 /* Affirmate.Watch Watch AppTests.xctest */,
-				03D9C8E728F12D2E00FCFAE7 /* Affirmate.Watch Watch AppUITests.xctest */,
+				03D9C8CB28F12D2D00FCFAE7 /* AffirmateWatch.app */,
+				03D9C8DD28F12D2E00FCFAE7 /* AffirmateWatchTests.xctest */,
+				03D9C8E728F12D2E00FCFAE7 /* AffirmateWatchUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -570,7 +573,7 @@
 		0389BC9C286FAB2A00CBDC3B /* AffirmateTests */ = {
 			isa = PBXGroup;
 			children = (
-				0389BC9D286FAB2B00CBDC3B /* AffirmateTests.swift */,
+				0389BC9D286FAB2B00CBDC3B /* AffirmateAppTests.swift */,
 			);
 			path = AffirmateTests;
 			sourceTree = "<group>";
@@ -597,6 +600,7 @@
 			isa = PBXGroup;
 			children = (
 				0397C7C828FA953400FE8693 /* AffirmateKeychain.swift */,
+				03AE207A28FF719800B4C392 /* AffirmateCrypto.swift */,
 				03A683EB28FDB17B00EB0CCA /* AffirmateAddress.swift */,
 				03A683EE28FDB25A00EB0CCA /* AffirmateSenderKeyName.swift */,
 				0397C7D828FB58F000FE8693 /* ChatKeyStore.swift */,
@@ -690,9 +694,9 @@
 			productReference = 0389BCA3286FAB2B00CBDC3B /* AffirmateUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		03D9C8CA28F12D2D00FCFAE7 /* Affirmate Watch Extension */ = {
+		03D9C8CA28F12D2D00FCFAE7 /* AffirmateWatch */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03D9C8F828F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "Affirmate Watch Extension" */;
+			buildConfigurationList = 03D9C8F828F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "AffirmateWatch" */;
 			buildPhases = (
 				03D9C8C728F12D2D00FCFAE7 /* Sources */,
 				03D9C8C828F12D2D00FCFAE7 /* Frameworks */,
@@ -702,7 +706,7 @@
 			);
 			dependencies = (
 			);
-			name = "Affirmate Watch Extension";
+			name = AffirmateWatch;
 			packageProductDependencies = (
 				03D9C93228F12E0400FCFAE7 /* Alamofire */,
 				03D9C93428F12E0400FCFAE7 /* ReversedScrollView */,
@@ -710,12 +714,12 @@
 				0397C7C028FA243200FE8693 /* SignalProtocol */,
 			);
 			productName = "Affirmate.Watch Watch App";
-			productReference = 03D9C8CB28F12D2D00FCFAE7 /* Affirmate Watch Extension.app */;
+			productReference = 03D9C8CB28F12D2D00FCFAE7 /* AffirmateWatch.app */;
 			productType = "com.apple.product-type.application";
 		};
-		03D9C8DC28F12D2E00FCFAE7 /* Affirmate.Watch Watch AppTests */ = {
+		03D9C8DC28F12D2E00FCFAE7 /* AffirmateWatchTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03D9C8FA28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "Affirmate.Watch Watch AppTests" */;
+			buildConfigurationList = 03D9C8FA28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "AffirmateWatchTests" */;
 			buildPhases = (
 				03D9C8D928F12D2E00FCFAE7 /* Sources */,
 				03D9C8DA28F12D2E00FCFAE7 /* Frameworks */,
@@ -726,14 +730,14 @@
 			dependencies = (
 				03D9C8DF28F12D2E00FCFAE7 /* PBXTargetDependency */,
 			);
-			name = "Affirmate.Watch Watch AppTests";
+			name = AffirmateWatchTests;
 			productName = "Affirmate.Watch Watch AppTests";
-			productReference = 03D9C8DD28F12D2E00FCFAE7 /* Affirmate.Watch Watch AppTests.xctest */;
+			productReference = 03D9C8DD28F12D2E00FCFAE7 /* AffirmateWatchTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		03D9C8E628F12D2E00FCFAE7 /* Affirmate.Watch Watch AppUITests */ = {
+		03D9C8E628F12D2E00FCFAE7 /* AffirmateWatchUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03D9C8FB28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "Affirmate.Watch Watch AppUITests" */;
+			buildConfigurationList = 03D9C8FB28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "AffirmateWatchUITests" */;
 			buildPhases = (
 				03D9C8E328F12D2E00FCFAE7 /* Sources */,
 				03D9C8E428F12D2E00FCFAE7 /* Frameworks */,
@@ -744,9 +748,9 @@
 			dependencies = (
 				03D9C8E928F12D2E00FCFAE7 /* PBXTargetDependency */,
 			);
-			name = "Affirmate.Watch Watch AppUITests";
+			name = AffirmateWatchUITests;
 			productName = "Affirmate.Watch Watch AppUITests";
-			productReference = 03D9C8E728F12D2E00FCFAE7 /* Affirmate.Watch Watch AppUITests.xctest */;
+			productReference = 03D9C8E728F12D2E00FCFAE7 /* AffirmateWatchUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -807,9 +811,9 @@
 				0389BC87286FAB2A00CBDC3B /* Affirmate */,
 				0389BC98286FAB2A00CBDC3B /* AffirmateTests */,
 				0389BCA2286FAB2B00CBDC3B /* AffirmateUITests */,
-				03D9C8CA28F12D2D00FCFAE7 /* Affirmate Watch Extension */,
-				03D9C8DC28F12D2E00FCFAE7 /* Affirmate.Watch Watch AppTests */,
-				03D9C8E628F12D2E00FCFAE7 /* Affirmate.Watch Watch AppUITests */,
+				03D9C8CA28F12D2D00FCFAE7 /* AffirmateWatch */,
+				03D9C8DC28F12D2E00FCFAE7 /* AffirmateWatchTests */,
+				03D9C8E628F12D2E00FCFAE7 /* AffirmateWatchUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -924,6 +928,7 @@
 				03A683EF28FDB25A00EB0CCA /* AffirmateSenderKeyName.swift in Sources */,
 				0397C7DC28FB590E00FE8693 /* ChatSessionStore.swift in Sources */,
 				03772C8E2897580C001DAE4B /* Message.swift in Sources */,
+				03AE207B28FF719800B4C392 /* AffirmateCrypto.swift in Sources */,
 				03772C9928975B04001DAE4B /* AuthenticationView.swift in Sources */,
 				037430AA28CAC86C002DE8AA /* NewParticipantRow.swift in Sources */,
 				034FFC8728BB3F89003724FF /* NewParticipantsObserver.swift in Sources */,
@@ -950,7 +955,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0389BC9E286FAB2B00CBDC3B /* AffirmateTests.swift in Sources */,
+				0389BC9E286FAB2B00CBDC3B /* AffirmateAppTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1009,6 +1014,7 @@
 				03A683EA28FDB00D00EB0CCA /* ChatSenderKeyStore.swift in Sources */,
 				038B3A0728F7851A00C7AC0A /* ChatInvitationsObserver.swift in Sources */,
 				03D9C92628F12DBB00FCFAE7 /* ChatError.swift in Sources */,
+				03AE207C28FF719800B4C392 /* AffirmateCrypto.swift in Sources */,
 				03D9C91728F12DBB00FCFAE7 /* ChatsObserver.swift in Sources */,
 				0397C7DA28FB58F000FE8693 /* ChatKeyStore.swift in Sources */,
 				0397C7E028FB592F00FE8693 /* ChatIdentityStore.swift in Sources */,
@@ -1067,12 +1073,12 @@
 		};
 		03D9C8DF28F12D2E00FCFAE7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 03D9C8CA28F12D2D00FCFAE7 /* Affirmate Watch Extension */;
+			target = 03D9C8CA28F12D2D00FCFAE7 /* AffirmateWatch */;
 			targetProxy = 03D9C8DE28F12D2E00FCFAE7 /* PBXContainerItemProxy */;
 		};
 		03D9C8E928F12D2E00FCFAE7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 03D9C8CA28F12D2D00FCFAE7 /* Affirmate Watch Extension */;
+			target = 03D9C8CA28F12D2D00FCFAE7 /* AffirmateWatch */;
 			targetProxy = 03D9C8E828F12D2E00FCFAE7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1537,7 +1543,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03D9C8F828F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "Affirmate Watch Extension" */ = {
+		03D9C8F828F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "AffirmateWatch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03D9C8F228F12D2E00FCFAE7 /* Debug */,
@@ -1546,7 +1552,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03D9C8FA28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "Affirmate.Watch Watch AppTests" */ = {
+		03D9C8FA28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "AffirmateWatchTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03D9C8F428F12D2E00FCFAE7 /* Debug */,
@@ -1555,7 +1561,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03D9C8FB28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "Affirmate.Watch Watch AppUITests" */ = {
+		03D9C8FB28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "AffirmateWatchUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03D9C8F628F12D2E00FCFAE7 /* Debug */,
