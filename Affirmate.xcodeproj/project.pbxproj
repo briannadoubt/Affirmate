@@ -261,7 +261,7 @@
 		03E1923B28AEA88B00876C5D /* ChatSendButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatSendButton.swift; sourceTree = "<group>"; };
 		03E1923D28AEAB0300876C5D /* AffirmateUserActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateUserActor.swift; sourceTree = "<group>"; };
 		03EEAAC12903550D00A13A03 /* AffirmateWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AffirmateWatch.entitlements; sourceTree = "<group>"; };
-		03EEAAC22903551200A13A03 /* AffirmateWatch-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "AffirmateWatch-Info.plist"; sourceTree = "<group>"; };
+		03EEAAC22903551200A13A03 /* AffirmateWatch-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AffirmateWatch-Info.plist"; sourceTree = "<group>"; };
 		03FE3BB92897214700208D5D /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		03FE3BBB289721A500208D5D /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
 		03FE3BBD2897220F00208D5D /* MeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeView.swift; sourceTree = "<group>"; };
@@ -483,8 +483,6 @@
 		0389BC7F286FAB2A00CBDC3B = {
 			isa = PBXGroup;
 			children = (
-				03EEAAC22903551200A13A03 /* AffirmateWatch-Info.plist */,
-				03EEAAC12903550D00A13A03 /* AffirmateWatch.entitlements */,
 				0389BC8A286FAB2A00CBDC3B /* Affirmate */,
 				0389BC9C286FAB2A00CBDC3B /* AffirmateTests */,
 				0389BCA6286FAB2B00CBDC3B /* AffirmateUITests */,
@@ -513,6 +511,8 @@
 			isa = PBXGroup;
 			children = (
 				03498A65287027710081A221 /* Info.plist */,
+				03EEAAC22903551200A13A03 /* AffirmateWatch-Info.plist */,
+				03EEAAC12903550D00A13A03 /* AffirmateWatch.entitlements */,
 				0389BC8F286FAB2A00CBDC3B /* Assets.xcassets */,
 				0389BC91286FAB2A00CBDC3B /* Affirmate.entitlements */,
 				036A2F4528F5E2D5000B8DA4 /* Launch Screen.storyboard */,
