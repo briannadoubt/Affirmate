@@ -9,13 +9,13 @@ import Foundation
 import Alamofire
 
 actor ChatActor: Repository {
-    func get() async throws -> [Chat] {
-        let chatResponses = try await http.requestDecodable(Request.chats, to: [Chat].self)
+    func get() async throws -> [Chat.GetResponse] {
+        let chatResponses = try await http.requestDecodable(Request.chats, to: [Chat.GetResponse].self)
         return chatResponses
     }
     
-    func get(_ id: UUID) async throws -> Chat {
-        let chatResponse = try await http.requestDecodable(Request.chat(chatId: id, sessionToken: http.interceptor.sessionToken), to: Chat.self)
+    func get(_ id: UUID) async throws -> Chat.GetResponse {
+        let chatResponse = try await http.requestDecodable(Request.chat(chatId: id, sessionToken: http.interceptor.sessionToken), to: Chat.GetResponse.self)
         return chatResponse
     }
     

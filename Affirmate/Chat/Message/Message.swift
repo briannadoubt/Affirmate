@@ -7,19 +7,22 @@
 
 import Foundation
 
-struct Message: IdentifiableObject {
+extension Message {
     
-    static func == (lhs: Message, rhs: Message) -> Bool {
-        lhs.id == rhs.id
+    struct GetResponse: IdentifiableObject {
+        
+        static func == (lhs: GetResponse, rhs: GetResponse) -> Bool {
+            lhs.id == rhs.id
+        }
+        
+        var id: UUID
+        var text: Sealed
+        var chat: Chat.MessageResponse
+        var sender: Participant.GetResponse
+        var recipient: Participant.GetResponse
+        var created: Date?
+        var updated: Date?
     }
-    
-    var id: UUID
-    var text: Sealed
-    var chat: Chat.MessageResponse
-    var sender: Participant
-    var recipient: Participant
-    var created: Date?
-    var updated: Date?
 
     struct Sealed: Codable, Hashable {
         var ephemeralPublicKeyData: Data
@@ -31,4 +34,6 @@ struct Message: IdentifiableObject {
         var sealed: Sealed
         var recipient: UUID
     }
+
 }
+

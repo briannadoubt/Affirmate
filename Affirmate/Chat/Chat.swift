@@ -7,17 +7,21 @@
 
 import Foundation
 
-struct Chat: Codable, Equatable, Identifiable, Hashable {
+extension Chat {
     
-    static func == (lhs: Chat, rhs: Chat) -> Bool {
-        lhs.id == rhs.id
+    struct GetResponse: IdentifiableObject {
+        
+        static func == (lhs: GetResponse, rhs: GetResponse) -> Bool {
+            lhs.id == rhs.id
+        }
+        
+        var id: UUID
+        var name: String?
+        var salt: Data
+        var messages: [Message.GetResponse]?
+        var participants: [Participant.GetResponse]?
+        
     }
-    
-    var id: UUID
-    var name: String?
-    var salt: Data
-    var messages: [Message]?
-    var participants: [Participant]?
     
     struct Create: Object {
         var id: UUID

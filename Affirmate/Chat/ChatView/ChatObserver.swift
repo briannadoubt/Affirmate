@@ -28,10 +28,10 @@ class ChatObserver: WebSocketObserver {
     @Published var name: String
     
     /// The messages stored on the chat.
-    @Published var messages: [Message]
+    @Published var messages: [Message.GetResponse]
     
     /// The participants of the chat.
-    @Published var participants: [Participant]
+    @Published var participants: [Participant.GetResponse]
     
     /// The url that opens this chat in the app.
     var shareableUrl: URL {
@@ -51,7 +51,7 @@ class ChatObserver: WebSocketObserver {
     let salt: Data
     
     /// Create a `ChatObserver` with a an existing `Chat`.
-    init(chat: Chat, currentUserId: UUID) {
+    init(chat: Chat.GetResponse, currentUserId: UUID) {
         self.chatId = chat.id
         self.name = chat.name ?? "Chat"
         self.messages = chat.messages ?? []
@@ -67,7 +67,7 @@ class ChatObserver: WebSocketObserver {
         await set(chat)
     }
     
-    func decrypt(_ message: Message) async throws -> String {
+    func decrypt(_ message: Message.GetResponse) async throws -> String {
         let senderSigningKey = try Curve25519.Signing.PublicKey(rawRepresentation: message.sender.signingKey)
         guard let ourPrivateKey = try await crypto.getPrivateEncryptionKey(for: message.chat.id) else {
             throw AffirmateCryptoError.privateKeyNotFound
@@ -107,12 +107,12 @@ class ChatObserver: WebSocketObserver {
     
     /// Handle new data recieved from the `WebSocket` connection.
     func recieved(_ data: Data) {
-        if let newMessage = try? data.decodeWebSocketMessage(Message.self) {
+        if let newMessage = try? data.decodeWebSocketMessage(Message.GetResponse.self) {
             Task {
                 await self.insert(newMessage.data)
                 print("Chat: Recieved message:", newMessage)
             }
-        } else if let newParticipants = try? data.decodeWebSocketMessage([Participant].self) {
+        } else if let newParticipants = try? data.decodeWebSocketMessage([Participant.GetResponse].self) {
             Task {
                 await self.add(newParticipants.data)
                 print("Chat: Did add new participant:", newParticipants)
@@ -129,7 +129,7 @@ class ChatObserver: WebSocketObserver {
 private extension ChatObserver {
     
     /// Start a new chat.
-    func start(chat: Chat) {
+    func start(chat: Chat.GetResponse) {
         let sessionToken = chatActor.http.interceptor.sessionToken
         let request = ChatActor.Request.chat(chatId: chat.id, sessionToken: sessionToken)
         guard let urlRequest = try? request.asURLRequest() else {
@@ -141,21 +141,21 @@ private extension ChatObserver {
     }
     
     /// Insert a new message into the local chat, updating the view.
-    @MainActor func insert(_ newMessage: Message) {
+    @MainActor func insert(_ newMessage: Message.GetResponse) {
         withAnimation {
             self.messages.append(newMessage)
         }
     }
     
     /// Add a new participant to the local chat, updating the view.
-    @MainActor func add(_ participants: [Participant]) {
+    @MainActor func add(_ participants: [Participant.GetResponse]) {
         withAnimation {
             self.participants.append(contentsOf: participants)
         }
     }
     
     /// Set the current chat from another chat instance. Used when the chat is requested from the REST API.
-    @MainActor func set(_ chat: Chat) {
+    @MainActor func set(_ chat: Chat.GetResponse) {
         withAnimation {
             self.messages = chat.messages ?? []
             self.participants = chat.participants ?? []

@@ -17,7 +17,7 @@ public struct ChatView: View {
     @SceneStorage("chat_newMessageText") var newMessageText = ""
     @SceneStorage("chat_showingNewParticipants") var showingNewParticipants = false
     
-    @State var presentedParticipant: Participant?
+    @State var presentedParticipant: Participant.GetResponse?
     @State var presentedCopiedUrl = false
     
     #if os(iOS)
@@ -57,7 +57,7 @@ public struct ChatView: View {
         }
     }
     
-    fileprivate func shouldHaveTail(_ message: Message) -> Bool {
+    fileprivate func shouldHaveTail(_ message: Message.GetResponse) -> Bool {
         let messages = chatObserver.messages
         if let index = messages.firstIndex(of: message) {
             let nextMessageIndex = messages.index(after: index)
@@ -194,7 +194,7 @@ public struct ChatView: View {
         .sheet(item: $presentedParticipant) {
             presentedParticipant = nil
         } content: { participant in
-            if let presentedParticipant {
+            if let presentedParticipant = presentedParticipant {
                 ProfileView(user: presentedParticipant.user)
             }
         }
@@ -204,6 +204,6 @@ public struct ChatView: View {
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
         ChatView()
-            .environmentObject(ChatObserver(chat: Chat(id: UUID(), name: "Meow", salt: Data()), currentUserId: UUID()))
+            .environmentObject(ChatObserver(chat: Chat.GetResponse(id: UUID(), name: "Meow", salt: Data()), currentUserId: UUID()))
     }
 }

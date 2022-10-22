@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChatLabel: View {
-    var chat: Chat
+    var chat: Chat.GetResponse
     var body: some View {
         VStack(alignment: .leading) {
             if let lastMessage = chat.messages?.last {
@@ -25,6 +25,6 @@ struct ChatLabel: View {
 
 struct ChatLabel_Previews: PreviewProvider {
     static var previews: some View {
-        ChatLabel(chat: Chat(id: UUID(), salt: Data()))
+        ChatLabel(chat: Chat.GetResponse(id: UUID(), salt: Data()))
     }
 }

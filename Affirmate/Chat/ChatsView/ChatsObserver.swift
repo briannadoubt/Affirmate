@@ -12,7 +12,7 @@ import SwiftUI
 final class ChatsObserver: ObservableObject {
     
     /// The chats to appear on the view.
-    @Published var chats: [Chat] = []
+    @Published var chats: [Chat.GetResponse] = []
     
     /// Format: `[chatId: ChatObserver]
     var chatObservers: [UUID: ChatObserver] = [:]
@@ -30,7 +30,7 @@ final class ChatsObserver: ObservableObject {
     }
     
     /// Update the local chats with the chats that were acquired from an API call.
-    @MainActor private func updateChats(with newChats: [Chat]) {
+    @MainActor private func updateChats(with newChats: [Chat.GetResponse]) {
         withAnimation {
             let difference = newChats.difference(from: chats) { element, chat in
                 if let elementMessages = element.messages, let chatMessages = chat.messages {

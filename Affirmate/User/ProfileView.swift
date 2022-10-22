@@ -17,7 +17,7 @@ struct ProfileView: View {
         self.user = user
     }
     
-    init(participant: Participant) {
+    init(participant: Participant.GetResponse) {
         self.user = participant.user
     }
 

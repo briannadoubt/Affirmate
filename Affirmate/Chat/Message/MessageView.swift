@@ -11,14 +11,14 @@ public struct MessageView: View {
     
     @EnvironmentObject var chatObserver: ChatObserver
     
-    init(currentParticipantId: UUID, withTail: Bool = false, message: Message) {
+    init(currentParticipantId: UUID, withTail: Bool = false, message: Message.GetResponse) {
         self.currentParticipantId = currentParticipantId
         self.message = message
         self.hasTail = withTail
     }
     
     let currentParticipantId: UUID
-    let message: Message
+    let message: Message.GetResponse
     let hasTail: Bool
     
     var tailPosition: MessageBubbleTailPosition {
@@ -78,7 +78,7 @@ struct MessageView_Previews: PreviewProvider {
     static var previews: some View {
         MessageView(
             currentParticipantId: UUID(),
-            message: Message(
+            message: Message.GetResponse(
                 id: UUID(),
                 text: Message.Sealed(
                     ephemeralPublicKeyData: Data(),
@@ -86,7 +86,7 @@ struct MessageView_Previews: PreviewProvider {
                     signature: Data()
                 ),
                 chat: Chat.MessageResponse(id: UUID()),
-                sender: Participant(
+                sender: Participant.GetResponse(
                     id: UUID(),
                     role: .participant,
                     user: AffirmateUser.ParticipantResponse(
@@ -97,7 +97,7 @@ struct MessageView_Previews: PreviewProvider {
                     signingKey: Data(),
                     encryptionKey: Data()
                 ),
-                recipient: Participant(
+                recipient: Participant.GetResponse(
                     id: UUID(),
                     role: .admin,
                     user: AffirmateUser.ParticipantResponse(

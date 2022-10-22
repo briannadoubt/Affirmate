@@ -65,12 +65,12 @@ struct NewParticipantsUsernameSearchFieldSection: View {
 }
 
 struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
-    static let chat = Chat(
+    static let chat = Chat.GetResponse(
         id: UUID(),
         name: "Meow",
         salt: Data(),
         messages: [
-            Message(
+            Message.GetResponse(
                 id: UUID(),
                 text: Message.Sealed(
                     ephemeralPublicKeyData: Data(),
@@ -78,7 +78,7 @@ struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
                     signature: Data()
                 ),
                 chat: Chat.MessageResponse(id: UUID(), name: "Meow"),
-                sender: Participant(
+                sender: Participant.GetResponse(
                     id: UUID(),
                     role: .admin,
                     user: AffirmateUser.ParticipantResponse(
@@ -89,7 +89,7 @@ struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
                     signingKey: Data(),
                     encryptionKey: Data()
                 ),
-                recipient: Participant(
+                recipient: Participant.GetResponse(
                     id: UUID(),
                     role: .participant,
                     user: AffirmateUser.ParticipantResponse(
@@ -103,7 +103,7 @@ struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
             )
         ],
         participants: [
-            Participant(
+            Participant.GetResponse(
                 id: UUID(),
                 role: .admin,
                 user: AffirmateUser.ParticipantResponse(id: UUID(), username: "meowface"),

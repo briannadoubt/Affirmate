@@ -7,13 +7,16 @@
 
 import Foundation
 
-struct Participant: IdentifiableObject {
-    var id: UUID //
-    var role: Role //
-    var user: AffirmateUser.ParticipantResponse //
-    var chat: Chat.ParticipantResponse //
-    var signingKey: Data //
-    var encryptionKey: Data //
+extension Participant {
+    
+    struct GetResponse: IdentifiableObject {
+        var id: UUID
+        var role: Role
+        var user: AffirmateUser.ParticipantResponse
+        var chat: Chat.ParticipantResponse
+        var signingKey: Data
+        var encryptionKey: Data
+    }
     
     enum Role: String, CaseIterable, Codable, Hashable, Equatable, Identifiable {
         case admin
