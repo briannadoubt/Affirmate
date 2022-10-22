@@ -7,7 +7,28 @@
 
 import SwiftUI
 
-final class AuthenticationObserver: ObservableObject {
+protocol AuthenticationObservable: ObservableObject {
+    associatedtype _AuthenticationObservable
+    static var shared: _AuthenticationObservable { get set }
+    var state: AuthenticationObserver.State { get set }
+    var currentUser: AffirmateUser? { get set }
+    associatedtype _AuthenticationActable = AuthenticationActable
+    var authenticationActor: _AuthenticationActable { get }
+    associatedtype _AffirmateUserActable = AffirmateUserActable
+    var meActor: _AffirmateUserActable { get }
+    func setCurrentAuthenticationState() async
+    func setState(to newState: AuthenticationObserver.State)
+    func setCurrentUser(to user: AffirmateUser?)
+    func getCurrentUser() async throws
+    func signUp(user create: AffirmateUser.Create) async throws
+    func login(username: String, password: String) async throws
+    func signOut(serverHasValidKey: Bool) async throws
+    func update(deviceToken token: Data?) async throws
+    func refesh(sessionToken: SessionToken) async throws
+    func store(sessionToken: SessionToken?) throws
+}
+
+final class AuthenticationObserver: AuthenticationObservable {
     
     static var shared = AuthenticationObserver()
     

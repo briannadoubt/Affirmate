@@ -13,6 +13,11 @@ import KeychainAccess
 actor HTTPActor {
     
     let interceptor = Interceptor()
+    let session: Session
+    
+    init(session: Session = AF) {
+        self.session = session
+    }
     
     var decoder: JSONDecoder {
         let decoder = JSONDecoder()
@@ -21,10 +26,10 @@ actor HTTPActor {
     }
     
     func request(_ requestConvertible: any URLRequestConvertible) async throws {
-        switch await AF
+        switch await session
             .request(requestConvertible, interceptor: interceptor)
             .validate(statusCode: [200])
-            .serializingDecodable(Empty.self, emptyResponseCodes: [200])
+            .serializingData(emptyResponseCodes: [200])
             .result {
         case .failure(let error):
             if error.responseCode == 401 {
@@ -38,10 +43,10 @@ actor HTTPActor {
     }
     
     func request(unauthorized requestConvertible: any URLRequestConvertible) async throws {
-        switch await AF
+        switch await session
             .request(requestConvertible)
             .validate(statusCode: [200])
-            .serializingDecodable(Empty.self, emptyResponseCodes: [200])
+            .serializingData(emptyResponseCodes: [200])
             .result {
         case .failure(let error):
             throw error
@@ -51,7 +56,7 @@ actor HTTPActor {
     }
     
 func requestDecodable<Value: Decodable>(_ requestConvertible: any URLRequestConvertible, to type: Value.Type) async throws -> Value {
-    let request = AF.request(requestConvertible, interceptor: interceptor)
+    let request = session.request(requestConvertible, interceptor: interceptor)
         .validate(statusCode: [200])
     let response = request.serializingData(emptyResponseCodes: [200])
     let result = await response.result
@@ -63,7 +68,8 @@ func requestDecodable<Value: Decodable>(_ requestConvertible: any URLRequestConv
         }
         throw error
     case .success(let data):
-        let jsonString = String(describing: try JSONSerialization.jsonObject(with: data))
+        print(data)
+        let jsonString = data.base64EncodedString()
         Logger.network.debug("Recieved data: \(jsonString)")
         let value = try decoder.decode(type.self, from: data)
         return value

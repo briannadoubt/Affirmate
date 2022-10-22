@@ -18,6 +18,8 @@ protocol AuthenticationActable: Repository, Actor {
 
 actor AuthenticationActor: AuthenticationActable {
     
+    typealias Auth = AuthenticationObserver
+    
     func signUp(user create: AffirmateUser.Create) async throws {
         try await http.request(unauthorized: Request.new(user: create))
     }
