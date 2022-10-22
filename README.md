@@ -23,6 +23,10 @@ cd Affirmate/AffirmateServer
 docker-compose build db
 docker-compose up db
 ```
+Before the database can work the server needs to run a migration, which creates all the tables in the database. Run the following command from `Affirmate/AffirmateServer` to start the migration:
+```
+vapor run migrate
+```
 
 ## Start the server in Xcode
 Before the app will connect to the database, the server needs to be running.
