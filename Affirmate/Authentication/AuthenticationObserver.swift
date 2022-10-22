@@ -21,7 +21,7 @@ final class AuthenticationObserver: ObservableObject {
         await setState(to: authenticationActor.http.interceptor.sessionToken == nil ? .loggedOut : .loggedIn)
     }
     
-    @MainActor private func setState(to newState: AuthenticationObserver.State) {
+    @MainActor func setState(to newState: AuthenticationObserver.State) {
         withAnimation {
             state = newState
         }
@@ -103,7 +103,7 @@ final class AuthenticationObserver: ObservableObject {
         try store(sessionToken: newSessionToken)
     }
     
-    private func store(sessionToken: SessionToken?) throws {
+    func store(sessionToken: SessionToken?) throws {
         if let sessionToken {
             try AffirmateKeychain.session.set(sessionToken.value, key: Constants.KeyChain.Session.token)
         } else {

@@ -45,6 +45,8 @@ extension Curve25519.Signing.PrivateKey: GenericPasswordConvertible {
 /// A collection of functions for encrypting and decrypting messages.
 actor AffirmateCrypto {
     
+    let keychain = AffirmateKeychain.chat
+    
     /// Create a salt for key derivation. Stored on the server.
     /// - Returns: A ` Data` blob containing 32 random bytes.
     func generateSalt() throws -> Data {
@@ -73,7 +75,7 @@ actor AffirmateCrypto {
     /// Create a new key agreement private key (used for decryption) and a paired public key (stored on the server).
     /// - Parameter chatId: Used in the Keychain key calculation.
     /// - Returns: A tuple containing the `publicKey` and `privateKey` pair.
-    func generateKeyAgreementKeyPair(for chatId: UUID) throws -> (publicKey: Data, privateKey: Data) {
+    func generateEncryptionKeyPair(for chatId: UUID) throws -> (publicKey: Data, privateKey: Data) {
         let privateKey = Curve25519.KeyAgreement.PrivateKey()
         try store(privateKey: privateKey, for: chatId)
         let publicKey = privateKey.publicKey
@@ -83,15 +85,15 @@ actor AffirmateCrypto {
     /// Calculate the key for a `Curve25519.Signing.PrivateKey` on the Keychain.
     /// - Parameter chatId: Used in the Keychain key calculation.
     /// - Returns: The key used to reference the `Curve25519.Signing.PrivateKey` on the Keychain.
-    private func signingKey(for chatId: UUID) -> String {
+    func signingKey(for chatId: UUID) -> String {
         "keys.signing." + chatId.uuidString
     }
     
     /// Calculate the key for a `Curve25519.KeyAgreement.PrivateKey` on the Keychain.
     /// - Parameter chatId: Used in the Keychain key calculation.
     /// - Returns: The key used to reference the `Curve25519.KeyAgreement.PrivateKey` on the Keychain.
-    private func keyAgreementKey(for chatId: UUID) -> String {
-        "keys.keyAgreement." + chatId.uuidString
+    func encryptionKey(for chatId: UUID) -> String {
+        "keys.encryption." + chatId.uuidString
     }
     
     /// Store a given `Curve25519.Signing.PrivateKey` to the Keychain.
@@ -99,7 +101,7 @@ actor AffirmateCrypto {
     ///   - privateKey: The `Curve25519.Signing.PrivateKey` to be stored.
     ///   - chatId: The chatId that references the relevant Chat. This is used for the key on the Keychain.
     func store(privateKey: Curve25519.Signing.PrivateKey, for chatId: UUID) throws {
-        AffirmateKeychain.chat[data: signingKey(for: chatId)] = privateKey.rawRepresentation
+        keychain[data: signingKey(for: chatId)] = privateKey.rawRepresentation
     }
     
     /// Store a given `Curve25519.KeyAgreement.PrivateKey` to the Keychain.
@@ -107,14 +109,14 @@ actor AffirmateCrypto {
     ///   - privateKey: The `Curve25519.KeyAgreement.PrivateKey` to be stored.
     ///   - chatId: The chatId that references the relevant Chat. This is used for the key on the Keychain.
     func store(privateKey: Curve25519.KeyAgreement.PrivateKey, for chatId: UUID) throws {
-        AffirmateKeychain.chat[data: keyAgreementKey(for: chatId)] = privateKey.rawRepresentation
+        keychain[data: encryptionKey(for: chatId)] = privateKey.rawRepresentation
     }
     
     /// Fetch a stored `KeyAgreement` private key from the Keychain, using the `chatId` as reference.
     /// - Parameter chatId: The chatId that references the relevant Chat. This is used for the key on the Keychain.
     /// - Returns: The `Curve25519.KeyAgreement.PrivateKey` if the key exists on the Keychain, `nil` otherwise.
-    func getPrivateKeyAgreementKey(for chatId: UUID) throws -> Curve25519.KeyAgreement.PrivateKey? {
-        guard let data = try AffirmateKeychain.chat.getData(keyAgreementKey(for: chatId)) else {
+    func getPrivateEncryptionKey(for chatId: UUID) throws -> Curve25519.KeyAgreement.PrivateKey? {
+        guard let data = try keychain.getData(encryptionKey(for: chatId)) else {
             return nil
         }
         return try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: data)
@@ -124,7 +126,7 @@ actor AffirmateCrypto {
     /// - Parameter chatId: The chatId that references the relevant Chat. This is used for the key on the Keychain.
     /// - Returns: The `Curve25519.KeyAgreement.PrivateKey` if the key exists on the Keychain, `nil` otherwise.
     func getPrivateSigningKey(for chatId: UUID) throws -> Curve25519.Signing.PrivateKey? {
-        guard let data = try AffirmateKeychain.chat.getData(signingKey(for: chatId)) else {
+        guard let data = try keychain.getData(signingKey(for: chatId)) else {
             return nil
         }
         return try Curve25519.Signing.PrivateKey(rawRepresentation: data)

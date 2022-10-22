@@ -8,6 +8,11 @@
 import SwiftUI
 import Alamofire
 
+protocol AffirmateUserActable: Repository, Actor {
+    func me() async throws -> AffirmateUser
+    func find(username: String?) async throws -> [AffirmateUser.Public]
+}
+
 actor AffirmateUserActor {
     
     private let http = HTTPActor()

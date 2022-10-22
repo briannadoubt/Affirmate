@@ -18,7 +18,7 @@ struct ChatInvitationsView: View {
         Task {
             do {
                 let (signingPublicKey, _) = try await chatInvitationObserver.crypto.generateSigningKeyPair(for: chatId)
-                let (encryptionPublicKey, _) = try await chatInvitationObserver.crypto.generateKeyAgreementKeyPair(for: chatId)
+                let (encryptionPublicKey, _) = try await chatInvitationObserver.crypto.generateEncryptionKeyPair(for: chatId)
                 let confirmation = ChatInvitation.Join(
                     id: invitation.id,
                     signingKey: signingPublicKey,

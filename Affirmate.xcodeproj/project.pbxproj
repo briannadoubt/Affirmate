@@ -72,6 +72,9 @@
 		038B3A0628F7680E00C7AC0A /* ChatInvitationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038B3A0028F7531200C7AC0A /* ChatInvitationsView.swift */; };
 		038B3A0728F7851A00C7AC0A /* ChatInvitationsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038B3A0328F7633600C7AC0A /* ChatInvitationsObserver.swift */; };
 		0397773F2903640700246260 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 0397773E2903640700246260 /* KeychainAccess */; };
+		039777412903BDC200246260 /* AppDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039777402903BDC200246260 /* AppDelegateTests.swift */; };
+		039777492903C83700246260 /* AffirmateKeychainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039777482903C83700246260 /* AffirmateKeychainTests.swift */; };
+		0397774B2903CE8300246260 /* AffirmateCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397774A2903CE8300246260 /* AffirmateCryptoTests.swift */; };
 		0397C7C328FA89F800FE8693 /* EncodedMessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397C7C228FA89F800FE8693 /* EncodedMessageBubble.swift */; };
 		0397C7C428FA89F800FE8693 /* EncodedMessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397C7C228FA89F800FE8693 /* EncodedMessageBubble.swift */; };
 		0397C7C728FA943D00FE8693 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 0397C7C628FA943D00FE8693 /* KeychainAccess */; };
@@ -233,6 +236,9 @@
 		0389BCA9286FAB2B00CBDC3B /* AffirmateUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		038B3A0028F7531200C7AC0A /* ChatInvitationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInvitationsView.swift; sourceTree = "<group>"; };
 		038B3A0328F7633600C7AC0A /* ChatInvitationsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInvitationsObserver.swift; sourceTree = "<group>"; };
+		039777402903BDC200246260 /* AppDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateTests.swift; sourceTree = "<group>"; };
+		039777482903C83700246260 /* AffirmateKeychainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateKeychainTests.swift; sourceTree = "<group>"; };
+		0397774A2903CE8300246260 /* AffirmateCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateCryptoTests.swift; sourceTree = "<group>"; };
 		0397C7C228FA89F800FE8693 /* EncodedMessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncodedMessageBubble.swift; sourceTree = "<group>"; };
 		0397C7C828FA953400FE8693 /* AffirmateKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateKeychain.swift; sourceTree = "<group>"; };
 		03A2016F28A6D62200573848 /* HTTPActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPActor.swift; sourceTree = "<group>"; };
@@ -544,7 +550,10 @@
 		0389BC9C286FAB2A00CBDC3B /* AffirmateTests */ = {
 			isa = PBXGroup;
 			children = (
+				039777472903C82C00246260 /* Security */,
+				039777442903C6C300246260 /* Authentication */,
 				0389BC9D286FAB2B00CBDC3B /* AffirmateAppTests.swift */,
+				039777402903BDC200246260 /* AppDelegateTests.swift */,
 			);
 			path = AffirmateTests;
 			sourceTree = "<group>";
@@ -571,6 +580,22 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		039777442903C6C300246260 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		039777472903C82C00246260 /* Security */ = {
+			isa = PBXGroup;
+			children = (
+				039777482903C83700246260 /* AffirmateKeychainTests.swift */,
+				0397774A2903CE8300246260 /* AffirmateCryptoTests.swift */,
+			);
+			path = Security;
 			sourceTree = "<group>";
 		};
 		0397C7CB28FB563100FE8693 /* Security */ = {
@@ -910,6 +935,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0397774B2903CE8300246260 /* AffirmateCryptoTests.swift in Sources */,
+				039777412903BDC200246260 /* AppDelegateTests.swift in Sources */,
+				039777492903C83700246260 /* AffirmateKeychainTests.swift in Sources */,
 				0389BC9E286FAB2B00CBDC3B /* AffirmateAppTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

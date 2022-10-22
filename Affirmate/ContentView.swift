@@ -32,7 +32,7 @@ struct ContentView: View {
         case .loggedIn:
             AffirmateTabView()
                 .environmentObject(authentication)
-            #if !os(watchOS)
+                #if !os(watchOS)
                 .task {
                     await AffirmateApp.requestNotificationPermissions()
                     if let token = AppDelegate.deviceToken {
@@ -43,7 +43,7 @@ struct ContentView: View {
                         }
                     }
                 }
-            #endif
+                #endif
                 .task {
                     do {
                         try await authentication.getCurrentUser()

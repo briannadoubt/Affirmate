@@ -14,8 +14,6 @@ struct AffirmateApp: App {
     
     @AppStorage(Constants.UserDefaults.isFirstLaunch) var isFirstLaunch = true
     
-    @Environment(\.scenePhase) var scenePhase
-    
     #if os(iOS) || os(tvOS)
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
     #elseif os(macOS)
@@ -52,21 +50,6 @@ struct AffirmateApp: App {
                 #if os(macOS)
                 .frame(minWidth: 600, minHeight: 480, idealHeight: 600)
                 #endif
-        }
-        .onChange(of: scenePhase) { phase in
-            switch phase {
-            case .active:
-//                Task {
-//                    let _ = try! await AffirmateCrypto().generateSalt()
-//                }
-                break
-            case .background:
-                break
-            case .inactive:
-                break
-            default:
-                break
-            }
         }
     }
 }

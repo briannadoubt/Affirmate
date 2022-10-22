@@ -69,7 +69,7 @@ class ChatObserver: WebSocketObserver {
     
     func decrypt(_ message: Message) async throws -> String {
         let senderSigningKey = try Curve25519.Signing.PublicKey(rawRepresentation: message.sender.signingKey)
-        guard let ourPrivateKey = try await crypto.getPrivateKeyAgreementKey(for: message.chat.id) else {
+        guard let ourPrivateKey = try await crypto.getPrivateEncryptionKey(for: message.chat.id) else {
             throw AffirmateCryptoError.privateKeyNotFound
         }
         let decryptedData = try await crypto.decrypt(message.text, salt: salt, using: ourPrivateKey, from: senderSigningKey)

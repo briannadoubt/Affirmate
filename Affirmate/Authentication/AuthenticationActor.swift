@@ -8,7 +8,15 @@
 import Foundation
 import Alamofire
 
-actor AuthenticationActor: Repository {
+protocol AuthenticationActable: Repository, Actor {
+    func signUp(user create: AffirmateUser.Create) async throws
+    func login(username: String, password: String) async throws -> AffirmateUser.LoginResponse
+    func refresh(sessionToken: SessionToken) async throws -> SessionToken
+    func update(deviceToken token: Data?) async throws
+    func logout() async throws
+}
+
+actor AuthenticationActor: AuthenticationActable {
     
     func signUp(user create: AffirmateUser.Create) async throws {
         try await http.request(unauthorized: Request.new(user: create))

@@ -12,11 +12,10 @@ import SwiftUI
 
 class AffirmateKeychain: ObservableObject {
     
-    private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
-    
-    private static let chatService = "\(appIdentifierPrefix)org.affirmate.chat"
-    private static let sessionService = "\(appIdentifierPrefix)org.affirmate.session"
-    private static let accessGroup = "group.Affirmate"
+    static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
+    static let chatService = "\(appIdentifierPrefix)org.affirmate.chat"
+    static let sessionService = "\(appIdentifierPrefix)org.affirmate.session"
+    static let accessGroup = "group.Affirmate"
     
     static var chat: Keychain {
         Keychain(

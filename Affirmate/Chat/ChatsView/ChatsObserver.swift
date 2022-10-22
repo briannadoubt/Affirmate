@@ -76,7 +76,7 @@ final class ChatsObserver: ObservableObject {
         }
         let chatId = UUID()
         let (signingPublicKey, _) = try await crypto.generateSigningKeyPair(for: chatId)
-        let (encryptionPublicKey, _) = try await crypto.generateKeyAgreementKeyPair(for: chatId)
+        let (encryptionPublicKey, _) = try await crypto.generateEncryptionKeyPair(for: chatId)
         let salt = try await crypto.generateSalt()
         let createChat = Chat.Create(
             id: chatId,
