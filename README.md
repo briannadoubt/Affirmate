@@ -7,7 +7,7 @@ In order to build and run the server locally you will need to pass in a variety 
 ### You will need:
 #### Arguments Passed on Launch:
  * `serve --hostname 0.0.0.0 --port 8080`
-#### Environment Variables
+#### Environment Variables (Optional)
  * `APNS_TEAM_ID`: `<Your Team ID>`
  * `APNS_KEY`: `<Your .pem Private Key (downloaded from developer.apple.com, and configured with APNS permissions)`
  * `APNS_KEY_ID`: `<Your .pem Key ID (found on the page you downloaded your private key from)>`
