@@ -80,32 +80,23 @@ class ChatObserver: WebSocketObserver {
     }
     
     /// Send a new message to the current chat.
-    func sendMessage(_ text: String, from currentParticipant: Participant, to otherParticipants: [Participant]) async throws {
+    func sendMessage(_ text: String) async throws {
         guard let textData = text.data(using: .utf8) else {
             throw AffirmateCryptoError.failedToGetDataRepresentation
         }
         guard let privateKey = try await crypto.getPrivateSigningKey(for: chatId) else {
             throw AffirmateCryptoError.privateKeyNotFound
         }
-        
-        let ourEncryptionKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: currentParticipant.encryptionKey)
-        let encryptedTextDataUsToUs = try await crypto.encrypt(textData, salt: salt, to: ourEncryptionKey, signedBy: privateKey)
-        let newMessageUsToUs = Message.Sealed(
-            ephemeralPublicKeyData: encryptedTextDataUsToUs.ephemeralPublicKeyData,
-            ciphertext: encryptedTextDataUsToUs.ciphertext,
-            signature: encryptedTextDataUsToUs.signature
-        )
-        try write(Message.Create(sealed: newMessageUsToUs, recipient: currentParticipant.id))
-        
-        for theirParticipant in otherParticipants {
-            let theirEncryptionKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: theirParticipant.encryptionKey)
+        for participant in participants {
+            let theirEncryptionKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: participant.encryptionKey)
             let encryptedTextDataUsToThem = try await crypto.encrypt(textData, salt: salt, to: theirEncryptionKey, signedBy: privateKey)
             let newMessageUsToThem = Message.Sealed(
                 ephemeralPublicKeyData: encryptedTextDataUsToThem.ephemeralPublicKeyData,
                 ciphertext: encryptedTextDataUsToThem.ciphertext,
                 signature: encryptedTextDataUsToThem.signature
             )
-            try write(Message.Create(sealed: newMessageUsToThem, recipient: theirParticipant.id))
+            let messageCreate = Message.Create(sealed: newMessageUsToThem, recipient: participant.id)
+            try write(messageCreate)
         }
     }
     

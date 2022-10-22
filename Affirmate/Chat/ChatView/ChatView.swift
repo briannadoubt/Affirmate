@@ -34,11 +34,7 @@ public struct ChatView: View {
             }
             // TODO: Verify (with science) whether there are "not allowed" words in the message.
             do {
-                guard let currentParticipant = chatObserver.participants.first(where: { $0.user.id == chatObserver.currentUserId }) else {
-                    print("Failed to find current participant")
-                    return
-                }
-                try await chatObserver.sendMessage(newMessageText, from: currentParticipant, to: chatObserver.participants)
+                try await chatObserver.sendMessage(newMessageText)
             } catch {
                 print(error)
             }
