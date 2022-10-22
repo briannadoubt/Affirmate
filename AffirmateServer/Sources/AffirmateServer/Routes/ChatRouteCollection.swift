@@ -18,33 +18,36 @@ struct ChatRouteCollection: RouteCollection {
         chats.post { request async throws -> HTTPStatus in
             try await request.db.transaction { database in
                 let chatCreate = try request.content.decode(Chat.Create.self)
-                let newChat = Chat(id: chatCreate.id, name: chatCreate.name)
+                let newChat = Chat(
+                    id: chatCreate.id,
+                    name: chatCreate.name,
+                    salt: chatCreate.salt
+                )
                 try await newChat.save(on: database)
                 let currentUser = try request.auth.require(AffirmateUser.self)
                 let newPublicKey = try PublicKey(
-                    data: chatCreate.publicKey,
-                    user: currentUser.requireID(),
+                    signingKey: chatCreate.signingKey,
+                    encryptionKey: chatCreate.encryptionKey,
+                    user: try currentUser.requireID(),
                     chat: newChat.requireID()
                 )
-                try await newChat.$publicKeys.create(newPublicKey, on: database)
-                let newPreKeys = try chatCreate.preKeys.map { data in
-                    try PreKey(
-                        data: data,
-                        user: currentUser.requireID(),
-                        chat: newChat.requireID()
-                    )
-                }
-                try await newChat.$preKeys.create(newPreKeys, on: database)
-                for participantCreate in chatCreate.participants {
-                    try await self.invite(participantCreate, from: currentUser.requireID(), to: newChat, on: database)
-                }
-                let currentParticipant = Participant(
+                try await newPublicKey.save(on: database)
+                let newParticipant = Participant(
                     role: .admin,
-                    signedPreKey: chatCreate.signedPreKey,
                     user: try currentUser.requireID(),
-                    chat: try newChat.requireID()
+                    chat: try newChat.requireID(),
+                    publicKey: try newPublicKey.requireID()
                 )
-                try await newChat.$participants.create(currentParticipant, on: database)
+                try await newChat.$participants.create(newParticipant, on: database)
+                for participantCreate in chatCreate.participants {
+                    let invitation = ChatInvitation(
+                        role: participantCreate.role,
+                        user: participantCreate.user,
+                        invitedBy: try newParticipant.requireID(),
+                        chat: try newChat.requireID()
+                    )
+                    try await invitation.save(on: database)
+                }
             }
             return .ok
         }
@@ -56,46 +59,56 @@ struct ChatRouteCollection: RouteCollection {
                 let chats = try await currentUser.$chats.query(on: database)
                     .with(\.$messages) {
                         $0.with(\.$sender) {
-                            $0.with(\.$user)
+                            $0
+                                .with(\.$user)
+                                .with(\.$publicKey)
+                        }
+                        .with(\.$recipient) {
+                            $0
+                                .with(\.$user)
+                                .with(\.$publicKey)
                         }
                     }
                     .with(\.$participants) {
-                        $0.with(\.$user)
-                    }
-                    .with(\.$preKeys) {
                         $0
-                            .with(\.$invitation)
                             .with(\.$user)
+                            .with(\.$publicKey)
                     }
                     .all()
-                return try chats.map { chat in
-                    guard let preKey = try chat.preKeys.first(
-                        where: { preKey in
-                            try preKey.invitation?.user.requireID() == currentUser.requireID() && preKey.chat.requireID() == chat.requireID()
-                        }
-                    ) else {
-                        throw ChatError.preKeyNotFound
-                    }
-                    guard let invitation = preKey.invitation else {
-                        throw ChatError.preKeyDoesNotHaveAssociatedInvitation
-                    }
+                return try chats.compactMap { chat in
                     return Chat.GetResponse(
                         id: try chat.requireID(),
                         name: chat.name,
-                        messages: try chat.messages.map { message in
+                        messages: try chat.messages.filter({ $0.recipient.user.id == currentUser.id }).map { message in
                             Message.GetResponse(
                                 id: try message.requireID(),
-                                text: message.text,
+                                text: Message.Sealed(
+                                    ephemeralPublicKeyData: message.ephemeralPublicKeyData,
+                                    ciphertext: message.ciphertext,
+                                    signature: message.signature
+                                ),
                                 chat: Chat.MessageResponse(id: try chat.requireID()),
                                 sender: Participant.GetResponse(
                                     id: try message.sender.requireID(),
                                     role: message.sender.role,
-                                    user: AffirmateUser.ParticipantReponse(
+                                    user: AffirmateUser.ParticipantResponse(
                                         id: try message.sender.user.requireID(),
                                         username: message.sender.user.username
                                     ),
                                     chat: Chat.ParticipantResponse(id: try chat.requireID()),
-                                    signedPreKey: message.sender.signedPreKey
+                                    signingKey: message.sender.publicKey.signingKey,
+                                    encryptionKey: message.sender.publicKey.encryptionKey
+                                ),
+                                recipient: Participant.GetResponse(
+                                    id: try message.recipient.requireID(),
+                                    role: message.recipient.role,
+                                    user: AffirmateUser.ParticipantResponse(
+                                        id: try message.recipient.user.requireID(),
+                                        username: message.recipient.user.username
+                                    ),
+                                    chat: Chat.ParticipantResponse(id: try chat.requireID()),
+                                    signingKey: message.recipient.publicKey.signingKey,
+                                    encryptionKey: message.recipient.publicKey.encryptionKey
                                 ),
                                 created: message.created
                             )
@@ -104,31 +117,16 @@ struct ChatRouteCollection: RouteCollection {
                             Participant.GetResponse(
                                 id: try participant.requireID(),
                                 role: participant.role,
-                                user: AffirmateUser.ParticipantReponse(
+                                user: AffirmateUser.ParticipantResponse(
                                     id: try participant.user.requireID(),
                                     username: participant.user.username
                                 ),
                                 chat: Chat.ParticipantResponse(id: try chat.requireID()),
-                                signedPreKey: participant.signedPreKey
+                                signingKey: participant.publicKey.signingKey,
+                                encryptionKey: participant.publicKey.encryptionKey
                             )
                         },
-                        preKey: PreKey.ChatGetResponse(
-                            id: try preKey.requireID(),
-                            data: preKey.data,
-                            invitation: ChatInvitation.GetResponse(
-                                id: try invitation.requireID(),
-                                role: invitation.role,
-                                userId: try invitation.user.requireID(),
-                                invitedBy: try invitation.invitedBy.requireID(),
-                                invitedByUsername: invitation.invitedBy.username,
-                                chatId: try invitation.chat.requireID(),
-                                chatParticipantUsernames: invitation.chat.participants.map {
-                                    $0.user.username
-                                },
-                                invitedBySignedPreKey: invitation.invitedBySignedPreKey,
-                                invitedByIdentity: invitation.invitedByIdentity
-                            )
-                        )
+                        salt: chat.salt
                     )
                 }
             }
@@ -141,21 +139,15 @@ struct ChatRouteCollection: RouteCollection {
         invite.post { request async throws -> HTTPStatus in
             try await request.db.transaction { database in
                 let currentUser = try request.auth.require(AffirmateUser.self)
-                let invitation = try request.content.decode(ChatInvitation.Create.self)
-                let (chatId, chat) = try await getChat(request: request, database: database)
-                guard let preKey = try await chat.$preKeys.query(on: database).first() else {
-                    throw Abort(.notFound)
-                }
-                try await self.invite(
-                    invitation.user,
-                    role: invitation.role,
-                    from: currentUser.requireID(),
-                    preKey: preKey,
-                    invitedBySignedPreKey: invitation.invitedBySignedPreKey,
-                    invitedByIdentity: invitation.invitedByIdentity,
-                    chat: chatId,
-                    on: database
+                let invitationCreate = try request.content.decode(ChatInvitation.Create.self)
+                let (chatId, _) = try await getChat(request: request, database: database)
+                let invitation = ChatInvitation(
+                    role: invitationCreate.role,
+                    user: invitationCreate.user,
+                    invitedBy: try currentUser.requireID(),
+                    chat: chatId
                 )
+                try await invitation.save(on: database)
                 return .ok
             }
         }
@@ -169,15 +161,22 @@ struct ChatRouteCollection: RouteCollection {
                 let (chatId, chat) = try await getChat(request: request, database: database)
                 let invitation = try await getInvitation(chat: chat, currentUser: currentUser, database: database)
                 try await invitation.$user.load(on: database)
-                try await chat.$participants.create(
-                    Participant(
-                        role: invitation.role,
-                        signedPreKey: confirmation.signedPreKey,
-                        user: invitation.user.requireID(),
-                        chat: chatId
-                    ),
-                    on: database
+                
+                let newPublicKey = PublicKey(
+                    signingKey: confirmation.signingKey,
+                    encryptionKey: confirmation.encryptionKey,
+                    user: try currentUser.requireID(),
+                    chat: chatId
                 )
+                try await newPublicKey.save(on: database)
+                let newParticipant = Participant(
+                    role: .admin,
+                    user: try currentUser.requireID(),
+                    chat: chatId,
+                    publicKey: try newPublicKey.requireID()
+                )
+                try await chat.$participants.create(newParticipant, on: database)
+                
                 try await deleteInvitation(id: confirmation.id, currentUser: currentUser, chat: chat, database: database)
                 return .ok
             }
@@ -229,55 +228,18 @@ extension ChatRouteCollection {
         return invitation
     }
     
-    func invite(
-        _ participantCreate: Participant.Create,
-        from invitedBy: UUID,
-        to chat: Chat,
-        on database: Database
-    ) async throws {
-        guard let preKey = try await chat.$preKeys.query(on: database).first() else {
-            throw Abort(.notFound)
-        }
-        try await invite(
-            participantCreate.user,
-            role: participantCreate.role,
-            from: invitedBy,
-            preKey: preKey,
-            invitedBySignedPreKey: participantCreate.invitedBySignedPreKey,
-            invitedByIdentity: participantCreate.invitedByIdentity,
-            chat: chat.requireID(),
-            on: database
-        )
-    }
-    
-    func invite(
-        _ user: UUID,
-        role: Participant.Role,
-        from invitedBy: UUID,
-        preKey: PreKey,
-        invitedBySignedPreKey: Data,
-        invitedByIdentity: Data,
-        chat: UUID,
-        on database: Database
-    ) async throws {
-        let chatInvitation = ChatInvitation(
-            role: role,
-            invitedBySignedPreKey: invitedBySignedPreKey,
-            invitedByIdentity: invitedByIdentity,
-            user: user,
-            invitedBy: invitedBy,
-            chat: chat
-        )
-        try await chatInvitation.save(on: database)
-        preKey.$invitation.id = try chatInvitation.requireID()
-        try await preKey.save(on: database)
-    }
+//    func invite(_ participantCreate: Participant.Create, from invitedBy: UUID, to chat: Chat, on database: Database) async throws {
+//        try await invite(participantCreate.user, to: chat.requireID(), from: invitedBy, as: participantCreate.role, on: database)
+//    }
+//
+//    func invite(_ user: UUID, to chat: UUID, from invitedBy: UUID, as role: Participant.Role, on database: Database) async throws {
+//        let chatInvitation = ChatInvitation(role: role, user: user, invitedBy: invitedBy, chat: chat)
+//        try await chatInvitation.save(on: database)
+//    }
     
     func deleteInvitation(id: UUID, currentUser: AffirmateUser, chat: Chat, database: Database) async throws {
         try await currentUser.$chatInvitations.detach(chat, on: database)
         if let chatInvitation = try await ChatInvitation.find(id, on: database) {
-            try await chatInvitation.$preKey.load(on: database)
-            try await chatInvitation.preKey?.delete(on: database)
             try await chatInvitation.delete(on: database)
         }
     }

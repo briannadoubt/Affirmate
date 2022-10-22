@@ -18,19 +18,25 @@ final class Message: Model, Content, Equatable {
     static let schema = "message"
     
     @ID(key: FieldKey.id) var id: UUID?
-    @OptionalField(key: "text") var text: Data?
+    @Field(key: "ephemeralPublicKeyData") var ephemeralPublicKeyData: Data
+    @Field(key: "ciphertext") var ciphertext: Data
+    @Field(key: "signature") var signature: Data
     @Parent(key: "chat_id") var chat: Chat
     @Parent(key: "sender_id") var sender: Participant
-    @Timestamp(key: "created", on: .create) var created: Date?
-    @Timestamp(key: "updated", on: .update) var updated: Date?
+    @Parent(key: "recipient_id") var recipient: Participant
+    @Timestamp(key: "created", on: .create, format: .iso8601) var created: Date?
+    @Timestamp(key: "updated", on: .update, format: .iso8601) var updated: Date?
     
     init() { }
     
-    init(id: UUID? = nil, text: Data? = nil, chat: Chat.IDValue, sender: Participant.IDValue) {
+    init(id: UUID? = nil, ephemeralPublicKeyData: Data, ciphertext: Data, signature: Data, chat: Chat.IDValue, sender: Participant.IDValue, recipient: Participant.IDValue) {
         self.id = id
-        self.text = text
+        self.ephemeralPublicKeyData = ephemeralPublicKeyData
+        self.ciphertext = ciphertext
+        self.signature = signature
         self.$chat.id = chat
         self.$sender.id = sender
+        self.$recipient.id = recipient
     }
 }
 
@@ -43,11 +49,14 @@ extension Message {
         func prepare(on database: Database) async throws {
             try await database.schema(Message.schema)
                 .id()
-                .field("text", .data)
+                .field("ephemeralPublicKeyData", .data)
+                .field("ciphertext", .data)
+                .field("signature", .data)
                 .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
                 .field("sender_id", .uuid, .required, .references(Participant.schema, .id))
-                .field("created", .datetime, .required)
-                .field("updated", .datetime, .required)
+                .field("recipient_id", .uuid, .required, .references(Participant.schema, .id))
+                .field("created", .string)
+                .field("updated", .string)
                 .create()
         }
         /// Destroys the `messages` table
@@ -58,10 +67,12 @@ extension Message {
 }
 
 extension Message {
-    struct Create: Content, Validatable, Equatable, Hashable {
-        var text: Data
+    struct Create: Content, Validatable {
+        var sealed: Sealed
+        var recipient: UUID
         static func validations(_ validations: inout Validations) {
-            validations.add("text", as: Data.self, is: !.empty)
+            validations.add("sealed", as: Sealed.self, required: true)
+            validations.add("recipient", as: UUID.self, required: true)
         }
     }
 }
@@ -69,11 +80,24 @@ extension Message {
 extension Message {
     struct GetResponse: Content {
         var id: UUID
-        var text: Data?
+        var text: Sealed
         var chat: Chat.MessageResponse
         var sender: Participant.GetResponse
+        var recipient: Participant.GetResponse
         var created: Date?
         var updated: Date?
+    }
+    
+    struct Sealed: Codable {
+        internal init(ephemeralPublicKeyData: Data, ciphertext: Data, signature: Data) {
+            self.ephemeralPublicKeyData = ephemeralPublicKeyData
+            self.ciphertext = ciphertext
+            self.signature = signature
+        }
+        
+        var ephemeralPublicKeyData: Data
+        var ciphertext: Data
+        var signature: Data
     }
 }
 

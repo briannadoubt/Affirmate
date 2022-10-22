@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import SignalProtocol
 
-struct Chat: Codable, Equatable, Identifiable {
+struct Chat: Codable, Equatable, Identifiable, Hashable {
     
     static func == (lhs: Chat, rhs: Chat) -> Bool {
         lhs.id == rhs.id
@@ -16,17 +15,17 @@ struct Chat: Codable, Equatable, Identifiable {
     
     var id: UUID
     var name: String?
+    var salt: Data
     var messages: [Message]?
     var participants: [Participant]?
-    var preKey: Data
     
-    struct Create: Codable {
+    struct Create: Object {
         var id: UUID
         var name: String?
+        var salt: Data
         var participants: [Participant.Create]
-        var publicKey: Data
-        var preKeys: [Data]
-        var signedPreKey: Data
+        var signingKey: Data
+        var encryptionKey: Data
     }
     
     struct MessageResponse: Object {

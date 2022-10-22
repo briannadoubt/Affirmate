@@ -87,14 +87,16 @@ extension AffirmateUser {
             .query(on: database)
             .with(\.$openInvitations) {
                 $0
-                    .with(\.$invitedBy)
+                    .with(\.$invitedBy) {
+                        $0.with(\.$publicKey)
+                        $0.with(\.$user)
+                    }
+                    .with(\.$user)
                     .with(\.$chat) {
                         $0.with(\.$participants) {
                             $0.with(\.$user)
                         }
                     }
-                    .with(\.$user)
-                    .with(\.$preKey)
             }
             .all()
             .flatMap { chat in
@@ -115,13 +117,11 @@ extension AffirmateUser {
                     role: $0.role,
                     userId: $0.user.requireID(),
                     invitedBy: $0.invitedBy.requireID(),
-                    invitedByUsername: $0.invitedBy.username,
+                    invitedByUsername: $0.invitedBy.user.username,
                     chatId: $0.chat.requireID(),
                     chatName: $0.chat.name,
                     chatParticipantUsernames: $0.chat.participants.map { $0.user.username },
-                    invitedBySignedPreKey: $0.invitedBySignedPreKey,
-                    invitedByIdentity: $0.invitedByIdentity,
-                    preKey: $0.preKey?.data
+                    chatSalt: $0.chat.salt
                 )
             }
         )

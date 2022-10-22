@@ -434,22 +434,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "12F8273E-7937-46A2-9D5A-BB396F72BC9B"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AffirmateServer/Sources/AffirmateServer/Models/Chat.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
-            landmarkName = "GetResponse"
-            landmarkType = "14">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "5DEF8CCD-73B2-46A7-B160-1977EF6F2265"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -610,22 +594,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F76942B7-2696-470C-B4EF-18C16253B1A2"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Affirmate/Chat/ChatsView/ChatsObserver.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
-            landmarkName = "createChatKeys()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "6F9FCAF8-FCEB-4F2B-BBAF-C0DC491C2757"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -765,6 +733,144 @@
             endingLineNumber = "83"
             landmarkName = "init(serializedData:extensions:partial:options:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A4DE63E0-C62B-4895-8EC0-BE5E2FAB989F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AffirmateServer/Sources/AffirmateServer/Chat/ChatWebSocketManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
+            landmarkName = "handle(chatMessage:request:webSocket:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A4DE63E0-C62B-4895-8EC0-BE5E2FAB989F - 47b65115cff6a759"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(13) suspend resume partial function for closure #1 (FluentKit.Database, AffirmateServer.AffirmateUser, AffirmateServer.Chat, AffirmateServer.Participant) async throws -&gt; () in AffirmateServer.ChatWebSocketManager.handle(chatMessage: AffirmateServer.WebSocketMessage&lt;AffirmateServer.Message.Create&gt;, request: Vapor.Request, webSocket: WebSocketKit.WebSocket) async -&gt; ()"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Chat/ChatWebSocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98"
+                  offsetFromSymbolStart = "1972">
+               </Location>
+               <Location
+                  uuid = "A4DE63E0-C62B-4895-8EC0-BE5E2FAB989F - 50cf067a62b2f8b6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(14) await resume partial function for closure #1 (FluentKit.Database, AffirmateServer.AffirmateUser, AffirmateServer.Chat, AffirmateServer.Participant) async throws -&gt; () in AffirmateServer.ChatWebSocketManager.handle(chatMessage: AffirmateServer.WebSocketMessage&lt;AffirmateServer.Message.Create&gt;, request: Vapor.Request, webSocket: WebSocketKit.WebSocket) async -&gt; ()"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Chat/ChatWebSocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "A4DE63E0-C62B-4895-8EC0-BE5E2FAB989F - 1919dd0ce56a6bc5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(15) suspend resume partial function for closure #1 (FluentKit.Database, AffirmateServer.AffirmateUser, AffirmateServer.Chat, AffirmateServer.Participant) async throws -&gt; () in AffirmateServer.ChatWebSocketManager.handle(chatMessage: AffirmateServer.WebSocketMessage&lt;AffirmateServer.Message.Create&gt;, request: Vapor.Request, webSocket: WebSocketKit.WebSocket) async -&gt; ()"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Chat/ChatWebSocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "48"
+                  endingLineNumber = "48"
+                  offsetFromSymbolStart = "120">
+               </Location>
+               <Location
+                  uuid = "A4DE63E0-C62B-4895-8EC0-BE5E2FAB989F - 1919dd0ce56a6157"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(15) suspend resume partial function for closure #1 (FluentKit.Database, AffirmateServer.AffirmateUser, AffirmateServer.Chat, AffirmateServer.Participant) async throws -&gt; () in AffirmateServer.ChatWebSocketManager.handle(chatMessage: AffirmateServer.WebSocketMessage&lt;AffirmateServer.Message.Create&gt;, request: Vapor.Request, webSocket: WebSocketKit.WebSocket) async -&gt; ()"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Chat/ChatWebSocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98"
+                  offsetFromSymbolStart = "188">
+               </Location>
+               <Location
+                  uuid = "A4DE63E0-C62B-4895-8EC0-BE5E2FAB989F - d8e3592432e13b55"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(17) suspend resume partial function for closure #1 (FluentKit.Database, AffirmateServer.AffirmateUser, AffirmateServer.Chat, AffirmateServer.Participant) async throws -&gt; () in AffirmateServer.ChatWebSocketManager.handle(chatMessage: AffirmateServer.WebSocketMessage&lt;AffirmateServer.Message.Create&gt;, request: Vapor.Request, webSocket: WebSocketKit.WebSocket) async -&gt; ()"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Chat/ChatWebSocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98"
+                  offsetFromSymbolStart = "96">
+               </Location>
+               <Location
+                  uuid = "A4DE63E0-C62B-4895-8EC0-BE5E2FAB989F - 2bdfc0ba5fc968c5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(24) suspend resume partial function for closure #1 (FluentKit.Database, AffirmateServer.AffirmateUser, AffirmateServer.Chat, AffirmateServer.Participant) async throws -&gt; () in AffirmateServer.ChatWebSocketManager.handle(chatMessage: AffirmateServer.WebSocketMessage&lt;AffirmateServer.Message.Create&gt;, request: Vapor.Request, webSocket: WebSocketKit.WebSocket) async -&gt; ()"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Chat/ChatWebSocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "48"
+                  endingLineNumber = "48"
+                  offsetFromSymbolStart = "96">
+               </Location>
+               <Location
+                  uuid = "A4DE63E0-C62B-4895-8EC0-BE5E2FAB989F - 2bdfc0ba5fc96257"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(24) suspend resume partial function for closure #1 (FluentKit.Database, AffirmateServer.AffirmateUser, AffirmateServer.Chat, AffirmateServer.Participant) async throws -&gt; () in AffirmateServer.ChatWebSocketManager.handle(chatMessage: AffirmateServer.WebSocketMessage&lt;AffirmateServer.Message.Create&gt;, request: Vapor.Request, webSocket: WebSocketKit.WebSocket) async -&gt; ()"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Chat/ChatWebSocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98"
+                  offsetFromSymbolStart = "168">
+               </Location>
+               <Location
+                  uuid = "A4DE63E0-C62B-4895-8EC0-BE5E2FAB989F - a8c02adc2029f54"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(25) suspend resume partial function for closure #1 (FluentKit.Database, AffirmateServer.AffirmateUser, AffirmateServer.Chat, AffirmateServer.Participant) async throws -&gt; () in AffirmateServer.ChatWebSocketManager.handle(chatMessage: AffirmateServer.WebSocketMessage&lt;AffirmateServer.Message.Create&gt;, request: Vapor.Request, webSocket: WebSocketKit.WebSocket) async -&gt; ()"
+                  moduleName = "Run"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bri/dev/Affirmate/AffirmateServer/Sources/AffirmateServer/Chat/ChatWebSocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98"
+                  offsetFromSymbolStart = "96">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

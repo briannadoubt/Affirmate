@@ -19,30 +19,22 @@ final class ChatInvitation: Model, Content, Equatable {
     @ID(key: FieldKey.id) var id: UUID?
     
     @Field(key: "role") var role: Participant.Role
-    @Field(key: "invited_by_signed_pre_key") var invitedBySignedPreKey: Data
-    @Field(key: "invited_by_identity") var invitedByIdentity: Data
     
     @Parent(key: "user_id") var user: AffirmateUser
-    @Parent(key: "invited_by_id") var invitedBy: AffirmateUser
+    @Parent(key: "invited_by_id") var invitedBy: Participant
     @Parent(key: "chat_id") var chat: Chat
-    
-    @OptionalChild(for: \.$invitation) var preKey: PreKey?
     
     init() { }
     
     init(
         id: UUID? = nil,
         role: Participant.Role,
-        invitedBySignedPreKey: Data,
-        invitedByIdentity: Data,
         user: AffirmateUser.IDValue,
-        invitedBy: AffirmateUser.IDValue,
+        invitedBy: Participant.IDValue,
         chat: Chat.IDValue
     ) {
         self.id = id
         self.role = role
-        self.invitedBySignedPreKey = invitedBySignedPreKey
-        self.invitedByIdentity = invitedByIdentity
         self.$user.id = user
         self.$invitedBy.id = invitedBy
         self.$chat.id = chat
@@ -53,21 +45,19 @@ extension ChatInvitation {
     struct Create: Content, Validatable {
         var role: Participant.Role
         var user: UUID
-        var invitedBySignedPreKey: Data
-        var invitedByIdentity: Data
         static func validations(_ validations: inout Validations) {
             validations.add("role", as: Participant.Role.self, required: true)
             validations.add("user", as: UUID.self, required: true)
-            validations.add("invitedBySignedPreKey", as: Data.self, required: true)
-            validations.add("invitedByIdentity", as: Data.self, required: true)
         }
     }
     struct Join: Content, Validatable {
         var id: UUID
-        var signedPreKey: Data
+        var signingKey: Data
+        var encryptionKey: Data
         static func validations(_ validations: inout Validations) {
             validations.add("id", as: UUID.self, required: true, customFailureDescription: "The ChatInvitation ID is required.")
-            validations.add("signedPreKey", as: Data.self, required: true)
+            validations.add("signingKey", as: Data.self, required: true)
+            validations.add("encryptionKey", as: Data.self, required: true)
         }
     }
     struct Decline: Content, Validatable {
@@ -88,10 +78,8 @@ extension ChatInvitation {
             try await database.schema(ChatInvitation.schema)
                 .id()
                 .field("role", .string, .required)
-                .field("invited_by_signed_pre_key", .data, .required)
-                .field("invited_by_identity", .data, .required)
                 .field("user_id", .uuid, .required, .references(AffirmateUser.schema, .id))
-                .field("invited_by_id", .uuid, .required, .references(AffirmateUser.schema, .id))
+                .field("invited_by_id", .uuid, .required, .references(Participant.schema, .id))
                 .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
                 .unique(on: "user_id", "chat_id")
                 .create()
@@ -113,8 +101,6 @@ extension ChatInvitation {
         var chatId: UUID
         var chatName: String?
         var chatParticipantUsernames: [String]
-        var invitedBySignedPreKey: Data
-        var invitedByIdentity: Data
-        var preKey: Data?
+        var chatSalt: Data
     }
 }

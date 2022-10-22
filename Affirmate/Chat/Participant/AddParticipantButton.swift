@@ -15,17 +15,10 @@ struct AddParticipantButton: View {
     func addParticipants() {
         Task {
             do {
-                let store = ChatsObserver.store
-                guard let identity = AffirmateKeychain.chat[string: Constants.KeyChain.Chat.identity]?.data(using: .utf8) else {
-                    assertionFailure("Failed to get identity.")
-                    return
-                }
-                let newParticipants = try newParticipantObserver.selectedParticipants.map { user, role in
+                let newParticipants = newParticipantObserver.selectedParticipants.map { user, role in
                     Participant.Create(
                         role: role,
-                        user: user.id,
-                        invitedBySignedPreKey: try store.updateSignedPrekey(),
-                        invitedByIdentity: identity
+                        user: user.id
                     )
                 }
                 try chatObserver.addParticipants(newParticipants)

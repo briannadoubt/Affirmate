@@ -68,17 +68,37 @@ struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
     static let chat = Chat(
         id: UUID(),
         name: "Meow",
+        salt: Data(),
         messages: [
             Message(
                 id: UUID(),
-                text: "Meow meow meow".data(using: .utf8),
+                text: Message.Sealed(
+                    ephemeralPublicKeyData: Data(),
+                    ciphertext: Data(),
+                    signature: Data()
+                ),
                 chat: Chat.MessageResponse(id: UUID(), name: "Meow"),
                 sender: Participant(
                     id: UUID(),
                     role: .admin,
-                    user: AffirmateUser.ParticipantResponse(id: UUID(), username: "meowface"),
+                    user: AffirmateUser.ParticipantResponse(
+                        id: UUID(),
+                        username: "meowface"
+                    ),
                     chat: Chat.ParticipantResponse(id: UUID()),
-                    signedPreKey: Data()
+                    signingKey: Data(),
+                    encryptionKey: Data()
+                ),
+                recipient: Participant(
+                    id: UUID(),
+                    role: .participant,
+                    user: AffirmateUser.ParticipantResponse(
+                        id: UUID(),
+                        username: "barkface"
+                    ),
+                    chat: Chat.ParticipantResponse(id: UUID()),
+                    signingKey: Data(),
+                    encryptionKey: Data()
                 )
             )
         ],
@@ -88,10 +108,10 @@ struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
                 role: .admin,
                 user: AffirmateUser.ParticipantResponse(id: UUID(), username: "meowface"),
                 chat: Chat.ParticipantResponse(id: UUID()),
-                signedPreKey: Data()
+                signingKey: Data(),
+                encryptionKey: Data()
             )
-        ],
-        preKey: Data()
+        ]
     )
     static var previews: some View {
         NewParticipantsUsernameSearchFieldSection(

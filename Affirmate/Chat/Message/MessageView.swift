@@ -28,6 +28,7 @@ public struct MessageView: View {
         return message.sender.id == currentParticipantId ? .rightBottomTrailing : .leftBottomLeading
     }
     
+    @State private var text: String?
     @State private var swipeOffset = CGSize.zero
     @State private var deviceShouldIndicateSwipeAction = false
     @State private var shouldReply = false
@@ -47,13 +48,24 @@ public struct MessageView: View {
             if message.sender.id == currentParticipantId {
                 Spacer(minLength: spacerLength)
             }
-            MessageBubble(
-                text: chatObserver.decrypt(message.text),
-                isSender: isSender,
-                tailPosition: tailPosition
-            )
+            if let text = text {
+                MessageBubble(
+                    text: text,
+                    isSender: isSender,
+                    tailPosition: tailPosition
+                )
+            }
             if message.sender.id != currentParticipantId {
                 Spacer(minLength: spacerLength)
+            }
+        }
+        .task {
+            if text == nil {
+                do {
+                    self.text = try await chatObserver.decrypt(message)
+                } catch {
+                    print("Failed to decrypt message:", error)
+                }
             }
         }
         .animation(.spring(), value: message.sender.id == currentParticipantId)
@@ -68,17 +80,33 @@ struct MessageView_Previews: PreviewProvider {
             currentParticipantId: UUID(),
             message: Message(
                 id: UUID(),
-                text: "Meow".data(using: .utf8),
+                text: Message.Sealed(
+                    ephemeralPublicKeyData: Data(),
+                    ciphertext: Data(),
+                    signature: Data()
+                ),
                 chat: Chat.MessageResponse(id: UUID()),
                 sender: Participant(
                     id: UUID(),
                     role: .participant,
                     user: AffirmateUser.ParticipantResponse(
                         id: UUID(),
-                        username: "Meowface"
+                        username: "meowface"
                     ),
                     chat: Chat.ParticipantResponse(id: UUID()),
-                    signedPreKey: Data()
+                    signingKey: Data(),
+                    encryptionKey: Data()
+                ),
+                recipient: Participant(
+                    id: UUID(),
+                    role: .admin,
+                    user: AffirmateUser.ParticipantResponse(
+                        id: UUID(),
+                        username: "barkface"
+                    ),
+                    chat: Chat.ParticipantResponse(id: UUID()),
+                    signingKey: Data(),
+                    encryptionKey: Data()
                 )
             )
         )

@@ -9,15 +9,22 @@ import SwiftUI
 
 struct ChatsView: View {
     
-    @StateObject var chatsObserver = ChatsObserver()
+    @StateObject var chatsObserver: ChatsObserver
     
     @EnvironmentObject var authenticationObserver: AuthenticationObserver
+    
+    let currentUserId: UUID
+    
+    init(currentUserId: UUID) {
+        self.currentUserId = currentUserId
+        _chatsObserver = StateObject(wrappedValue: ChatsObserver(currentUserId: currentUserId))
+    }
     
     func getChats() async {
         do {
             try await chatsObserver.getChats()
         } catch {
-            print("Failed to get chats:", error.localizedDescription)
+            print("Failed to get chats:", error)
         }
     }
     
@@ -41,9 +48,9 @@ struct ChatsView: View {
                     .environmentObject(authenticationObserver)
                     .environmentObject(chatsObserver)
                 
-                if let selectedChat {
+                if let selectedChat, let chatObserver = chatsObserver.chatObservers[selectedChat] {
                     ChatView()
-                        .environmentObject(ChatObserver(chat: selectedChat))
+                        .environmentObject(chatObserver)
                 } else {
                     Text("👈 Select a chat on the left")
                 }
@@ -95,6 +102,6 @@ struct ChatsView: View {
 
 struct ChatsView_Previews: PreviewProvider {
     static var previews: some View {
-        ChatsView()
+        ChatsView(currentUserId: UUID())
     }
 }

@@ -9,6 +9,19 @@ import SwiftUI
 
 struct HomeView: View {
     var body: some View {
+        #if os(macOS)
+        NavigationView {
+            List {
+                Text("The place for things")
+            }
+            .navigationTitle("Affirmate")
+            
+            List {
+                Text("This is the home page")
+            }
+            .navigationTitle("Home")
+        }
+        #else
         NavigationSplitView {
             List {
                 Text("The place for things")
@@ -20,6 +33,7 @@ struct HomeView: View {
             }
             .navigationTitle("Home")
         }
+        #endif
     }
 }
 

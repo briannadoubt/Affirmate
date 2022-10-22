@@ -7,12 +7,13 @@
 
 import Foundation
 
-struct Participant: Object {
-    var id: UUID
-    var role: Role
-    var user: AffirmateUser.ParticipantResponse
-    var chat: Chat.ParticipantResponse
-    var signedPreKey: Data
+struct Participant: IdentifiableObject {
+    var id: UUID //
+    var role: Role //
+    var user: AffirmateUser.ParticipantResponse //
+    var chat: Chat.ParticipantResponse //
+    var signingKey: Data //
+    var encryptionKey: Data //
     
     enum Role: String, CaseIterable, Codable, Hashable, Equatable, Identifiable {
         case admin
@@ -30,14 +31,12 @@ struct Participant: Object {
         }
     }
     
-    struct Create: Codable, Hashable {
+    struct Create: Codable, Equatable, Hashable {
         var role: Role
         var user: UUID
-        var invitedBySignedPreKey: Data
-        var invitedByIdentity: Data
     }
     
-    struct Draft: Codable, Hashable {
+    struct Draft: Codable, Equatable, Hashable {
         var role: Role
         var user: UUID
     }

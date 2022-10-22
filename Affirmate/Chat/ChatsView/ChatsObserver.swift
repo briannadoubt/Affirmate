@@ -6,24 +6,55 @@
 //
 
 import Foundation
-import SignalProtocol
 import SwiftUI
 
 /// An object that manages a list of `Chat` objects updated from the REST API.
 final class ChatsObserver: ObservableObject {
     
-    static var store = ChatKeyStore()
-    
     /// The chats to appear on the view.
     @Published var chats: [Chat] = []
+    
+    /// Format: `[chatId: ChatObserver]
+    var chatObservers: [UUID: ChatObserver] = [:]
     
     /// The actor that manages the requests for managing a chat.
     let actor = ChatActor()
     
+    /// The actor responsible for generating and signing keys for secure chats.
+    let crypto = AffirmateCrypto()
+    
+    let currentUserId: UUID
+    
+    init(currentUserId: UUID) {
+        self.currentUserId = currentUserId
+    }
+    
     /// Update the local chats with the chats that were acquired from an API call.
     @MainActor private func updateChats(with newChats: [Chat]) {
         withAnimation {
-            self.chats = newChats//.sorted(by: { $0.messages?.last?.created ?? Date() > $1.messages?.last?.created ?? Date() })
+            let difference = newChats.difference(from: chats) { element, chat in
+                if let elementMessages = element.messages, let chatMessages = chat.messages {
+                    return elementMessages.elementsEqual(chatMessages)
+                }
+                return false
+            }
+            for change in difference.inferringMoves() {
+                switch change {
+                case .insert(let offset, let newChat, _):
+                    chats.insert(newChat, at: offset)
+                    if chatObservers[newChat.id] == nil {
+                        chatObservers[newChat.id] = ChatObserver(chat: newChat, currentUserId: currentUserId)
+                    }
+                case .remove(let offset, let chat, _):
+                    chats.remove(at: offset)
+                    if
+                        chatObservers[chat.id] != nil,
+                        newChats.contains(chat)
+                    {
+                        chatObservers.removeValue(forKey: chat.id)
+                    }
+                }
+            }
         }
     }
     
@@ -35,36 +66,27 @@ final class ChatsObserver: ObservableObject {
     
     /// Create a new chat.
     func newChat(name: String?, selectedParticipants: [AffirmateUser.Public: Participant.Role]) async throws {
-        var (publicKey, preKeys, signedPreKey) = try createChatKeys()
         let participantsCreate = selectedParticipants.map { index in
             let role = index.value
             let publicUser = index.key
             return Participant.Create(
                 role: role,
-                user: publicUser.id,
-                invitedBySignedPreKey: signedPreKey,
-                invitedByIdentity: publicKey
+                user: publicUser.id
             )
         }
         let chatId = UUID()
-        try Self.store.signedPreKeyStore.store(signedPreKey: signedPreKey, for: Self.store.signedPreKeyStore.lastId + 1)
-        try Self.store.preKeyStore.store(preKey: preKeys[0], for: Self.store.preKeyStore.lastId + 1)
-        preKeys.remove(at: 0)
+        let (signingPublicKey, _) = try await crypto.generateSigningKeyPair(for: chatId)
+        let (encryptionPublicKey, _) = try await crypto.generateKeyAgreementKeyPair(for: chatId)
+        let salt = try await crypto.generateSalt()
         let createChat = Chat.Create(
             id: chatId,
             name: name,
+            salt: salt,
             participants: participantsCreate,
-            publicKey: publicKey,
-            preKeys: preKeys,
-            signedPreKey: signedPreKey
+            signingKey: signingPublicKey,
+            encryptionKey: encryptionPublicKey
         )
+        print(createChat)
         try await actor.create(createChat)
-    }
-    
-    func createChatKeys() throws -> (publicKey: Data, preKeys: [Data], signedPreKey: Data) {
-        let publicKey = try Self.store.identityKeyStore.getIdentityKeyPublicData()
-        let preKeys = try Self.store.createPreKeys(count: 101)
-        let signedPreKey = try Self.store.updateSignedPrekey()
-        return (publicKey, preKeys, signedPreKey)
     }
 }

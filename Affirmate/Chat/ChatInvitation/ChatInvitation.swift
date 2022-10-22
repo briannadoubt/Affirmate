@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ChatInvitation: Object {
+struct ChatInvitation: IdentifiableObject {
     var id: UUID
     var role: Participant.Role
     var userId: UUID
@@ -16,13 +16,12 @@ struct ChatInvitation: Object {
     var chatId: UUID
     var chatName: String?
     var chatParticipantUsernames: [String]
-    var invitedBySignedPreKey: Data
-    var invitedByIdentity: Data
-    var preKey: Data
+    var chatSalt: Data
     
     struct Join: Codable, Identifiable {
         var id: UUID
-        var signedPreKey: Data
+        var signingKey: Data
+        var encryptionKey: Data
     }
     
     struct Decline: Codable, Identifiable {

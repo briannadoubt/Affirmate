@@ -57,9 +57,9 @@ extension ChatActor {
                 return url
             case .chat(let chatId, _):
                 return url.appendingPathComponent(chatId.uuidString)
-            case .join(let chatId, _, _):
+            case .joinChat(let chatId, _, _):
                 return url.appendingPathComponent(chatId.uuidString).appendingPathComponent("join")
-            case .decline(let chatId, _, _):
+            case .declineInvitation(let chatId, _, _):
                 return url.appendingPathComponent(chatId.uuidString).appendingPathComponent("decline")
             }
         }

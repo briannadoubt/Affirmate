@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SignalProtocol
 
 //public struct MessageBubble: View {
 //    

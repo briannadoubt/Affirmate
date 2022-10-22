@@ -10,6 +10,7 @@ import Foundation
 class ChatInvitationObserver: ObservableObject {
     
     let actor = ChatActor()
+    let crypto = AffirmateCrypto()
     
     func joinChat(_ chatId: UUID, confirmation: ChatInvitation.Join) async throws {
         try await actor.joinChat(chatId, confirmation: confirmation)

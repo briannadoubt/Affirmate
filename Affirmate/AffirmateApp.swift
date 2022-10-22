@@ -49,13 +49,17 @@ struct AffirmateApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                #if os(macOS)
+                .frame(minWidth: 600, minHeight: 480, idealHeight: 600)
+                #endif
         }
         .onChange(of: scenePhase) { phase in
             switch phase {
             case .active:
-                if AffirmateKeychain.chat[string: Constants.KeyChain.Chat.deviceIdentifier] == nil {
-                    AffirmateKeychain.chat[string: Constants.KeyChain.Chat.deviceIdentifier] = "\(0)"
-                }
+//                Task {
+//                    let _ = try! await AffirmateCrypto().generateSalt()
+//                }
+                break
             case .background:
                 break
             case .inactive:

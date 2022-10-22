@@ -18,16 +18,20 @@ actor ChatWebSocketManager: WebSocketManager {
     
     func connect(_ request: Request, _ webSocket: WebSocket) {
         webSocket.onBinary { webSocket, buffer async -> () in
-            // MARK: Connect
-            if let connectMessage = self.get(buffer, Connect.self) {
-                await self.handle(connect: connectMessage, request: request, webSocket: webSocket)
-                
-            // MARK: Message
-            } else if let webSocketMessage = self.get(buffer, Message.Create.self) {
-                await self.handle(chatMessage: webSocketMessage, request: request, webSocket: webSocket)
-                
-            } else {
-                self.sendError("Recieved data in an unrecognized format", on: webSocket)
+            do {
+                // MARK: Connect
+                if let connectMessage = try? self.get(buffer, Connect.self) {
+                    await self.handle(connect: connectMessage, request: request, webSocket: webSocket)
+                    
+                    // MARK: Message
+                } else if let webSocketMessage = try self.get(buffer, Message.Create.self) {
+                    await self.handle(chatMessage: webSocketMessage, request: request, webSocket: webSocket)
+                    
+                } else {
+                    self.sendError("Recieved data in an unrecognized format", on: webSocket)
+                }
+            } catch {
+                self.sendError("Decoding failed: \(error)", on: webSocket)
             }
         }
     }
@@ -37,36 +41,61 @@ private extension ChatWebSocketManager {
     
     func handle(chatMessage message: WebSocketMessage<Message.Create>, request: Request, webSocket: WebSocket) async {
         await handle(request: request, webSocket: webSocket) { database, currentUser, chat, currentParticipant in
-            // TODO: Check message content (`create.text`) for moderation or embedded content, etc.
             guard let createString = message.data.json else {
                 throw Abort(.badRequest)
             }
             try Message.Create.validate(json: createString)
+            guard let recipientParticipant = try await Participant.find(message.data.recipient, on: database) else {
+                throw Abort(.notFound)
+            }
+            try await recipientParticipant.$user.load(on: database)
+            try await recipientParticipant.$publicKey.load(on: database)
             let newMessage = try Message(
-                text: message.data.text,
+                ephemeralPublicKeyData: message.data.sealed.ephemeralPublicKeyData,
+                ciphertext: message.data.sealed.ciphertext,
+                signature: message.data.sealed.signature,
                 chat: chat.requireID(),
-                sender: try currentParticipant.requireID()
+                sender: try currentParticipant.requireID(),
+                recipient: message.data.recipient
             )
             try await newMessage.$chat.load(on: database)
             try await chat.$messages.create(newMessage, on: database)
+            try await currentParticipant.$publicKey.load(on: database)
             let newMessageResponse = Message.GetResponse(
                 id: try newMessage.requireID(),
-                text: newMessage.text,
+                text: Message.Sealed(
+                    ephemeralPublicKeyData: newMessage.ephemeralPublicKeyData,
+                    ciphertext: message.data.sealed.ciphertext,
+                    signature: message.data.sealed.signature
+                ),
                 chat: Chat.MessageResponse(id: try chat.requireID()),
                 sender: Participant.GetResponse(
                     id: try currentParticipant.requireID(),
                     role: currentParticipant.role,
-                    user: AffirmateUser.ParticipantReponse(
+                    user: AffirmateUser.ParticipantResponse(
                         id: try currentUser.requireID(),
                         username: currentUser.username
                     ),
                     chat: Chat.ParticipantResponse(id: try chat.requireID()),
-                    signedPreKey: currentParticipant.signedPreKey
+                    signingKey: currentParticipant.publicKey.signingKey,
+                    encryptionKey: currentParticipant.publicKey.encryptionKey
+                ),
+                recipient: Participant.GetResponse(
+                    id: message.data.recipient,
+                    role: recipientParticipant.role,
+                    user: AffirmateUser.ParticipantResponse(
+                        id: try recipientParticipant.user.requireID(),
+                        username: recipientParticipant.user.username
+                    ),
+                    chat: Chat.ParticipantResponse(id: try chat.requireID()),
+                    signingKey: recipientParticipant.publicKey.signingKey,
+                    encryptionKey: recipientParticipant.publicKey.encryptionKey
                 ),
                 created: newMessage.created,
                 updated: newMessage.updated
             )
-            try await self.broadcast(newMessageResponse, to: chat.requireID())
+            // Broadcast to other user
+            try await self.broadcast(newMessageResponse, to: try recipientParticipant.user.requireID(), on: chat.requireID())
         }
     }
     
@@ -74,10 +103,10 @@ private extension ChatWebSocketManager {
         await handle(request: request, webSocket: webSocket) { database, currentUser, chat, currentParticipant in
             let clientId = message.client
             let client = ChatWebSocketClient(id: clientId, chatId: message.data.chatId, socket: webSocket)
-            try await self.clients.add(client, chatId: message.data.chatId)
+            try await self.clients.add(client, chatId: message.data.chatId, userId: try currentUser.requireID())
             print("Added client app: \(clientId)")
             let confirmConnection = ConfirmConnection(connected: true)
-            try await self.broadcast(confirmConnection, to: message.data.chatId)
+            try await self.broadcast(confirmConnection, to: try currentUser.requireID(), on: message.data.chatId)
         }
     }
     
@@ -127,18 +156,21 @@ private extension ChatWebSocketManager {
         try request.auth.require(AffirmateUser.self)	
     }
     
-    func get<T: Codable>(_ buffer: ByteBuffer, _ type: T.Type) -> WebSocketMessage<T>? {
-        try? buffer.decodeWebSocketMessage(type.self)
+    func get<T: Codable>(_ buffer: ByteBuffer, _ type: T.Type) throws -> WebSocketMessage<T>? {
+        try buffer.decodeWebSocketMessage(type.self)
     }
     
-    func broadcast<T: Codable>(_ data: T, to chatId: UUID) async throws {
+    func broadcast<T: Codable>(_ data: T, to userId: UUID, on chatId: UUID) async throws {
         guard
-            let connectedClients = await clients.active()[chatId]?.compactMap({ $0.value as ChatWebSocketClient }),
-            !connectedClients.isEmpty else {
+            let connectedClients = await clients.active(chatId: chatId, userId: userId)[chatId]?[userId]?.compactMap({ $0.value as ChatWebSocketClient }),
+            !connectedClients.isEmpty
+        else {
             return
         }
         try connectedClients.forEach { client in
             let message = WebSocketMessage(client: client.id, data: data)
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
             let data = try JSONEncoder().encode(message)
             client.socket.send(raw: data, opcode: .binary)
         }

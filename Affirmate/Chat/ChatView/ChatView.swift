@@ -27,18 +27,25 @@ public struct ChatView: View {
     @FocusState fileprivate var focused
     
     fileprivate func send() {
-        // Don't send if only whitespaces, or if message was empty
-        guard !newMessageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            return
-        }
-        do {
-            try chatObserver.sendMessage(newMessageText)
-        } catch {
-            print(error)
-        }
-        withAnimation {
-            focused = true
-            newMessageText = ""
+        Task {
+            // Don't send if only whitespaces, or if message was empty
+            guard !newMessageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                return
+            }
+            // TODO: Verify (with science) whether there are "not allowed" words in the message.
+            do {
+                guard let currentParticipant = chatObserver.participants.first(where: { $0.user.id == chatObserver.currentUserId }) else {
+                    print("Failed to find current participant")
+                    return
+                }
+                try await chatObserver.sendMessage(newMessageText, from: currentParticipant, to: chatObserver.participants)
+            } catch {
+                print(error)
+            }
+            withAnimation {
+                focused = true
+                newMessageText = ""
+            }
         }
     }
     
@@ -150,12 +157,20 @@ public struct ChatView: View {
         #if !os(watchOS) && !os(macOS)
         .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
         #endif
-        .task {
+        .onAppear {
+            // MARK: Connect to WebSocket
+            if chatObserver.isConnected {
+                return
+            }
             do {
                 try chatObserver.connect(chatId: chatObserver.chatId)
             } catch {
                 print("Failed to connect:", error)
             }
+        }
+        .onDisappear {
+            // MARK: Disconnect from WebSocket
+            chatObserver.disconnect()
         }
         .toolbar {
             #if !os(watchOS) && !os(macOS)
@@ -187,15 +202,12 @@ public struct ChatView: View {
                 ProfileView(user: presentedParticipant.user)
             }
         }
-        .onAppear {
-            
-        }
     }
 }
 
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
         ChatView()
-            .environmentObject(ChatObserver(chat: Chat(id: UUID(), name: "Meow", preKey: Data()), currentUserId: UUID()))
+            .environmentObject(ChatObserver(chat: Chat(id: UUID(), name: "Meow", salt: Data()), currentUserId: UUID()))
     }
 }

@@ -17,17 +17,19 @@ final class PublicKey: Model, Content, Equatable {
     static let schema = "public_key"
     
     @ID(key: FieldKey.id) var id: UUID?
-    @Field(key: "data") var data: Data
+    @Field(key: "signing_key") var signingKey: Data
+    @Field(key: "encryption_key") var encryptionKey: Data
     @Parent(key: "user_id") var user: AffirmateUser
     @Parent(key: "chat_id") var chat: Chat
     
     init() { }
     
-    init(id: UUID? = nil, data: Data, user: AffirmateUser.IDValue, chat: Chat.IDValue) {
+    init(id: UUID? = nil, signingKey: Data, encryptionKey: Data, user: AffirmateUser.IDValue, chat: Chat.IDValue) {
         self.id = id
-        self.data = data
-        self.$user.id = user
+        self.signingKey = signingKey
+        self.encryptionKey = encryptionKey
         self.$chat.id = chat
+        self.$user.id = user
     }
 }
 
@@ -40,10 +42,11 @@ extension PublicKey {
         func prepare(on database: Database) async throws {
             try await database.schema(PublicKey.schema)
                 .id()
-                .field("data", .data, .required)
-                .field("user_id", .uuid, .required, .references(AffirmateUser.schema, .id))
+                .field("signing_key", .data, .required)
+                .field("encryption_key", .data, .required)
                 .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
-                .unique(on: "user_id", "chat_id")
+                .field("user_id", .uuid, .required, .references(AffirmateUser.schema, .id))
+                .unique(on: "chat_id", "user_id")
                 .create()
         }
         /// Destroys the `public_key` table
@@ -54,12 +57,12 @@ extension PublicKey {
 }
 
 extension PublicKey {
-    struct Create: Content, Validatable {
-        
-        var data: Data
-        
+    struct Create: Content, Validatable, Equatable, Hashable {
+        var signingKey: Data
+        var encryptionKey: Data
         static func validations(_ validations: inout Validations) {
-            validations.add("data", as: Data.self, required: true)
+            validations.add("signingKey", as: Data.self, required: true)
+            validations.add("encryptionKey", as: Data.self, required: true)
         }
     }
 }

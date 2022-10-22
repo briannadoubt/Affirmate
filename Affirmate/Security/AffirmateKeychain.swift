@@ -8,23 +8,26 @@
 import CryptoKit
 import Foundation
 import KeychainAccess
-import SignalProtocol
 import SwiftUI
 
 class AffirmateKeychain: ObservableObject {
     
+    private static let chatService = "LU6454UVH5.org.affirmate.chat"
+    private static let sessionService = "LU6454UVH5.org.affirmate.session"
+    private static let accessGroup = "group.Affirmate"
+    
     static var chat: Keychain {
         Keychain(
-            service: "LU6454UVH5.org.affirmate.chat",
-            accessGroup: "group.Affirmate"
+            service: chatService,
+            accessGroup: accessGroup
         )
         .synchronizable(true)
     }
     
     static var session: Keychain {
         Keychain(
-            service: "LU6454UVH5.org.affirmate.session",
-            accessGroup: "group.Affirmate"
+            service: sessionService,
+            accessGroup: accessGroup
         )
         .synchronizable(true)
     }
@@ -33,7 +36,7 @@ class AffirmateKeychain: ObservableObject {
         Keychain(
             server: "https://affirmate.org/",
             protocolType: .https,
-            accessGroup: "group.Affirmate",
+            accessGroup: accessGroup,
             authenticationType: .httpBasic
         )
         .synchronizable(true)

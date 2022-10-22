@@ -25,6 +25,6 @@ struct ChatLabel: View {
 
 struct ChatLabel_Previews: PreviewProvider {
     static var previews: some View {
-        ChatLabel(chat: Chat(id: UUID(), preKey: Data()))
+        ChatLabel(chat: Chat(id: UUID(), salt: Data()))
     }
 }

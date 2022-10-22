@@ -18,19 +18,19 @@ final class Chat: Model, Content, Equatable {
     
     @ID(key: FieldKey.id) var id: UUID?
     
-    @Field(key: "name") var name: String?
+    @OptionalField(key: "name") var name: String?
+    @Field(key: "salt") var salt: Data
     
     @Children(for: \.$chat) var messages: [Message]
     @Children(for: \.$chat) var participants: [Participant]
     @Children(for: \.$chat) var openInvitations: [ChatInvitation]
-    @Children(for: \.$chat) var publicKeys: [PublicKey]
-    @Children(for: \.$chat) var preKeys: [PreKey]
     
     init() { }
     
-    init(id: UUID? = nil, name: String? = nil) {
+    init(id: UUID, name: String? = nil, salt: Data) {
         self.id = id
         self.name = name
+        self.salt = salt
     }
 }
 
@@ -44,6 +44,7 @@ extension Chat {
             try await database.schema(Chat.schema)
                 .id()
                 .field("name", .string)
+                .field("salt", .data)
                 .create()
         }
         /// Destroys the `chats` table
@@ -58,17 +59,17 @@ extension Chat {
         var id: UUID
         var name: String?
         var participants: [Participant.Create]
-        
-        var publicKey: Data
-        var preKeys: [Data]
-        var signedPreKey: Data
+        var signingKey: Data
+        var encryptionKey: Data
+        var salt: Data
         
         static func validations(_ validations: inout Validations) {
+            validations.add("id", as: UUID.self, required: true)
             validations.add("name", as: String.self)
             validations.add("participants", as: [Participant.Create].self, required: true)
-            validations.add("publicKey", as: Data.self, required: true)
-            validations.add("preKeys", as: [Data].self, required: true)
-            validations.add("signedPreKey", as: Data.self, required: true)
+            validations.add("signingKey", as: Data.self, required: true)
+            validations.add("encryptionKey", as: Data.self, required: true)
+            validations.add("salt", as: Data.self, required: true)
         }
     }
 }
@@ -80,7 +81,7 @@ extension Chat {
         var name: String?
         var messages: [Message.GetResponse]
         var participants: [Participant.GetResponse]
-        var preKey: PreKey.ChatGetResponse?
+        var salt: Data
     }
     
     var participantResponse: ParticipantResponse? {

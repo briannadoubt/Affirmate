@@ -20,15 +20,13 @@ final class AffirmateUser: Model, Content, Codable {
     @Field(key: "email") var email: String
     @Field(key: "password_hash") var passwordHash: String
     
-    @Timestamp(key: "created", on: .create) var created: Date?
-    @Timestamp(key: "updated", on: .update) var updated: Date?
+    @Timestamp(key: "created", on: .create, format: .iso8601) var created: Date?
+    @Timestamp(key: "updated", on: .update, format: .iso8601) var updated: Date?
     
     @OptionalField(key: "apns_id") var apnsId: Data?
     
     @Siblings(through: Participant.self, from: \.$user, to: \.$chat) var chats: [Chat]
     @Siblings(through: ChatInvitation.self, from: \.$user, to: \.$chat) var chatInvitations: [Chat]
-    
-    @Children(for: \.$user) var publicKeys: [PublicKey]
     
     init() { }
     
@@ -58,8 +56,8 @@ extension AffirmateUser {
                 .field("username", .string)
                 .field("password_hash", .string, .required)
                 .field("apns_id", .data)
-                .field("created", .datetime)
-                .field("updated", .datetime)
+                .field("created", .string)
+                .field("updated", .string)
                 .unique(on: "email", "username")
                 .create()
         }
@@ -124,7 +122,7 @@ extension AffirmateUser {
         var chatInvitations: [ChatInvitation.GetResponse]
     }
     
-    struct ParticipantReponse: Content, Equatable, Codable {
+    struct ParticipantResponse: Content, Equatable, Codable {
         var id: UUID
         var username: String
     }

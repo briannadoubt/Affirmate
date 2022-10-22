@@ -8,14 +8,12 @@
 import Alamofire
 import Foundation
 import KeychainAccess
-import SignalProtocol
 import Starscream
 import SwiftUI
+import CryptoKit
 
 /// An object used on the `View` to display and manage a chat.
 class ChatObserver: WebSocketObserver {
-    
-    var session: SessionCipher<ChatKeyStore>
     
     /// Whether or not the WebSocket is connected.
     @Published var isConnected = false
@@ -46,59 +44,21 @@ class ChatObserver: WebSocketObserver {
     /// The chat's Id.
     var chatId: UUID
     
+    let crypto = AffirmateCrypto()
+    
+    let currentUserId: UUID
+    
+    let salt: Data
+    
     /// Create a `ChatObserver` with a an existing `Chat`.
     init(chat: Chat, currentUserId: UUID) {
         self.chatId = chat.id
         self.name = chat.name ?? "Chat"
         self.messages = chat.messages ?? []
         self.participants = chat.participants ?? []
-        self.session = SessionCipher(store: ChatsObserver.store, remoteAddress: AffirmateAddress(identifier: chat.id, deviceId: 0))
-        setUpSession(currentUserId: currentUserId)
+        self.currentUserId = currentUserId
+        self.salt = chat.salt
         start(chat: chat)
-    }
-    
-    func setUpSession(currentUserId: UUID) {
-        if
-            let currentParticipant = self.participants.first(where: { $0.user.id == currentUserId }),
-            let preKey = AffirmateKeychain.chat[data: "preKey." + chatId.uuidString]
-        {
-            processPreKeyBundle(preKey: preKey, signedPreKey: currentParticipant.signedPreKey)
-            if AffirmateKeychain.chat[data: "signedPreKey." + chatId.uuidString] == nil {
-                AffirmateKeychain.chat[data: "signedPreKey." + chatId.uuidString] = currentParticipant.signedPreKey
-            }
-        }
-    }
-    
-    func processPreKeyBundle(preKey: Data, signedPreKey: Data) {
-        do {
-            let preKeyBundle = try SessionPreKeyBundle(
-                preKey: preKey,
-                signedPreKey: signedPreKey,
-                identityKey: ChatsObserver.store.identityKeyStore.getIdentityKeyPublicData()
-            )
-            try session.process(preKeyBundle: preKeyBundle)
-        } catch {
-            print("Failed to precess preKey bundle:", error)
-        }
-    }
-    
-    func encrypt(_ text: String) throws -> Data {
-        guard let messageData = text.data(using: .utf8) else {
-            throw ChatError.failedToConvertMessageContentIntoData
-        }
-        return try session.encrypt(messageData).data
-    }
-    
-    func decrypt(_ encryptedMessageData: Data?) -> String {
-        if
-            let encryptedMessageData = encryptedMessageData,
-            let decryptedMessageData = try? session.decrypt(CipherTextMessage(from: encryptedMessageData)),
-            let message = String(data: decryptedMessageData, encoding: .utf8)
-        {
-            return message
-        } else {
-            return "Failed to decrypt"
-        }
     }
     
     /// Get a chat from a given chat id.
@@ -107,11 +67,46 @@ class ChatObserver: WebSocketObserver {
         await set(chat)
     }
     
+    func decrypt(_ message: Message) async throws -> String {
+        let senderSigningKey = try Curve25519.Signing.PublicKey(rawRepresentation: message.sender.signingKey)
+        guard let ourPrivateKey = try await crypto.getPrivateKeyAgreementKey(for: message.chat.id) else {
+            throw AffirmateCryptoError.privateKeyNotFound
+        }
+        let decryptedData = try await crypto.decrypt(message.text, salt: salt, using: ourPrivateKey, from: senderSigningKey)
+        guard let text = String(data: decryptedData, encoding: .utf8) else {
+            throw AffirmateCryptoError.badUTF8Encoding
+        }
+        return text
+    }
+    
     /// Send a new message to the current chat.
-    func sendMessage(_ text: String) throws {
-        let encryptedText = try encrypt(text)
-        let newMessage = Message.Create(text: encryptedText)
-        try write(newMessage)
+    func sendMessage(_ text: String, from currentParticipant: Participant, to otherParticipants: [Participant]) async throws {
+        guard let textData = text.data(using: .utf8) else {
+            throw AffirmateCryptoError.failedToGetDataRepresentation
+        }
+        guard let privateKey = try await crypto.getPrivateSigningKey(for: chatId) else {
+            throw AffirmateCryptoError.privateKeyNotFound
+        }
+        
+        let ourEncryptionKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: currentParticipant.encryptionKey)
+        let encryptedTextDataUsToUs = try await crypto.encrypt(textData, salt: salt, to: ourEncryptionKey, signedBy: privateKey)
+        let newMessageUsToUs = Message.Sealed(
+            ephemeralPublicKeyData: encryptedTextDataUsToUs.ephemeralPublicKeyData,
+            ciphertext: encryptedTextDataUsToUs.ciphertext,
+            signature: encryptedTextDataUsToUs.signature
+        )
+        try write(Message.Create(sealed: newMessageUsToUs, recipient: currentParticipant.id))
+        
+        for theirParticipant in otherParticipants {
+            let theirEncryptionKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: theirParticipant.encryptionKey)
+            let encryptedTextDataUsToThem = try await crypto.encrypt(textData, salt: salt, to: theirEncryptionKey, signedBy: privateKey)
+            let newMessageUsToThem = Message.Sealed(
+                ephemeralPublicKeyData: encryptedTextDataUsToThem.ephemeralPublicKeyData,
+                ciphertext: encryptedTextDataUsToThem.ciphertext,
+                signature: encryptedTextDataUsToThem.signature
+            )
+            try write(Message.Create(sealed: newMessageUsToThem, recipient: theirParticipant.id))
+        }
     }
     
     /// Add a new participant to the current chat.

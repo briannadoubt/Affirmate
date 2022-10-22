@@ -30,7 +30,7 @@ struct NewChatView: View {
     
     @StateObject var newParticipantsObserver = NewParticipantsObserver()
     
-    @SceneStorage("newChat.name") var name: String = ""
+    @State var name: String = ""
     
     @MainActor func dismiss() {
         withAnimation {
@@ -45,7 +45,7 @@ struct NewChatView: View {
                     throw ChatError.chatWithNoOtherParticipants
                 }
                 try await chatsObserver.newChat(
-                    name: name,
+                    name: name == "" ? nil : name,
                     selectedParticipants: newParticipantsObserver.selectedParticipants
                 )
                 try await chatsObserver.getChats()

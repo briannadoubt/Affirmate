@@ -9,70 +9,12 @@ import Vapor
 
 protocol WebSocketClients: Actor {
     associatedtype Client = WebSocketClient
-    associatedtype Storage = [UUID: [UUID: Client]]
+    /// Format: `[objectId: [userId: [clientId: WebSocketClient]]]
+    associatedtype Storage = [UUID: [UUID: [UUID: Client]]]
+    /// The event loop that manages the processes of the `WebSocketClient` instances.
     var eventLoop: EventLoop { get set }
+    /// Where the instances of our `WebSocketClients` are stored and accessed.
     var storage: Storage { get set }
-    func active() -> Storage
-}
-
-actor ChatWebSocketClients: WebSocketClients {
-    
-    /// Format: `[chatId: [clientId: WebSocketClient]]`
-    typealias Storage = [UUID: [UUID: ChatWebSocketClient]]
-    
-    var eventLoop: EventLoop
-    var storage: Storage
-
-    func active() -> Storage {
-        var activeChats: Storage = Storage()
-        storage.forEach { key, value in
-            let activeClients = value.filter { element in
-                !element.value.socket.isClosed
-            }
-            guard !activeClients.isEmpty else {
-                return
-            }
-            activeChats[key] = activeClients
-        }
-        return activeChats
-    }
-
-    init(eventLoop: EventLoop, clients: Storage = [:]) {
-        self.eventLoop = eventLoop
-        storage = clients
-    }
-
-    func add(_ client: ChatWebSocketClient, chatId: UUID) throws {
-        if storage[chatId] == nil {
-            storage[chatId] = [:]
-        }
-        storage[chatId]?[client.id] = client
-    }
-
-    func remove(_ chatId: UUID, client: ChatWebSocketClient) {
-        storage[chatId]?[client.id] = nil
-        if let clients = storage[chatId], clients.isEmpty {
-            storage[chatId] = nil
-        }
-    }
-
-    func getClient(from chat: UUID, with clientId: UUID) -> ChatWebSocketClient? {
-        storage[chat]?[clientId]
-    }
-
-    deinit {
-        let futures = self.storage.values
-            .map {
-                $0.values.map {
-                    $0.socket.close()
-                }
-            }
-            .flatMap { $0 }
-        do {
-            try self.eventLoop.flatten(futures).wait()
-        } catch {
-            print("Failed to flatten WebSocket futures:", error)
-            assertionFailure("Failed to flatten WebSocket futures")
-        }
-    }
+    /// Calculate the active clients for a given user and chatId
+    func active(chatId: UUID, userId: UUID) -> Storage
 }

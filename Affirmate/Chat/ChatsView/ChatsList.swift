@@ -31,8 +31,10 @@ struct ChatsList: View {
         }
         .populateChatsList(getChats)
         .navigationDestination(for: Chat.self) { chat in
-            ChatView()
-                .environmentObject(ChatObserver(chat: chat))
+            if let chatObserver = chatsObserver.chatObservers[chat.id] {
+                ChatView()
+                    .environmentObject(chatObserver)
+            }
         }
 #endif
     }

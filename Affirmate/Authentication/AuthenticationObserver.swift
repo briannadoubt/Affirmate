@@ -9,6 +9,8 @@ import SwiftUI
 
 final class AuthenticationObserver: ObservableObject {
     
+    static var shared = AuthenticationObserver()
+    
     @Published var state: AuthenticationObserver.State = .initial
     @Published var currentUser: AffirmateUser?
     
@@ -30,7 +32,7 @@ final class AuthenticationObserver: ObservableObject {
             self.currentUser = user
             if user == nil {
                 do {
-                    try authenticationActor.http.interceptor.removeTokens()
+                    try AffirmateKeychain.session.remove(Constants.KeyChain.Session.token)
                 } catch {
                     print("Failed to remove tokens")
                 }
@@ -71,16 +73,23 @@ final class AuthenticationObserver: ObservableObject {
         }
     }
     
-    func signOut() async throws {
+    func signOut(serverHasValidKey: Bool = true) async throws {
         let previousState = state
         do {
             await setState(to: .loading(message: "Logging out..."))
-            try await authenticationActor.logout()
+            try AffirmateKeychain.session.remove(Constants.KeyChain.Session.token)
             await setCurrentUser(to: nil)
             await setState(to: .loggedOut)
         } catch {
             await setState(to: previousState)
             throw error
+        }
+        if serverHasValidKey {
+            do {
+                try await authenticationActor.logout()
+            } catch {
+                print("Log out request failed:", error)
+            }
         }
     }
     
@@ -96,9 +105,9 @@ final class AuthenticationObserver: ObservableObject {
     
     private func store(sessionToken: SessionToken?) throws {
         if let sessionToken {
-            try authenticationActor.interceptor.set(sessionToken)
+            try AffirmateKeychain.session.set(sessionToken.value, key: Constants.KeyChain.Session.token)
         } else {
-            try authenticationActor.interceptor.removeTokens()
+            try AffirmateKeychain.session.remove(Constants.KeyChain.Session.token)
         }
     }
     

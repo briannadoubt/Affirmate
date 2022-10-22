@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AffirmateUser: Object {
+struct AffirmateUser: IdentifiableObject {
     var id: UUID
     var firstName: String
     var lastName: String
@@ -41,7 +41,7 @@ struct AffirmateUser: Object {
         var confirmPassword: String
     }
     
-    struct Public: Object {
+    struct Public: IdentifiableObject {
         var id: UUID
         var username: String
     }
@@ -50,8 +50,8 @@ struct AffirmateUser: Object {
         var id: UUID
     }
     
-    struct ParticipantResponse: Object {
-        var id: UUID
-        var username: String
+    struct ParticipantResponse: IdentifiableObject {
+        var id: UUID //
+        var username: String //
     }
 }

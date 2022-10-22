@@ -18,18 +18,18 @@ final class Participant: Model, Content, Equatable {
     
     @ID(key: FieldKey.id) var id: UUID?
     @Field(key: "role") var role: Role
-    @Field(key: "signed_pre_key") var signedPreKey: Data
     @Parent(key: "user_id") var user: AffirmateUser
     @Parent(key: "chat_id") var chat: Chat
+    @Parent(key: "public_key_id") var publicKey: PublicKey
     
     init() { }
     
-    init(id: UUID? = nil, role: Participant.Role = .participant, signedPreKey: Data, user: AffirmateUser.IDValue, chat: AffirmateUser.IDValue) {
+    init(id: UUID? = nil, role: Participant.Role = .participant, user: AffirmateUser.IDValue, chat: AffirmateUser.IDValue, publicKey: PublicKey.IDValue) {
         self.id = id
         self.role = role
-        self.signedPreKey = signedPreKey
         self.$user.id = user
         self.$chat.id = chat
+        self.$publicKey.id = publicKey
     }
     
     enum Role: String, CaseIterable, Codable, Hashable {
@@ -42,13 +42,9 @@ extension Participant {
     struct Create: Content, Validatable, Equatable, Hashable {
         var role: Role
         var user: UUID
-        var invitedBySignedPreKey: Data
-        var invitedByIdentity: Data
         static func validations(_ validations: inout Validations) {
             validations.add("role", as: String.self, is: !.empty, required: true)
             validations.add("user", as: UUID.self, required: true)
-            validations.add("invitedBySignedPreKey", as: Data.self, required: true)
-            validations.add("invitedByIdentity", as: Data.self, required: true)
         }
     }
 }
@@ -63,9 +59,9 @@ extension Participant {
             try await database.schema(Participant.schema)
                 .id()
                 .field("role", .string, .required)
-                .field("signed_pre_key", .data, .required)
                 .field("user_id", .uuid, .required, .references(AffirmateUser.schema, .id))
                 .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
+                .field("public_key_id", .uuid, .required, .references(PublicKey.schema, .id))
                 .unique(on: "user_id", "chat_id")
                 .create()
         }
@@ -80,8 +76,9 @@ extension Participant {
     struct GetResponse: Content {
         var id: UUID
         var role: Role
-        var user: AffirmateUser.ParticipantReponse
+        var user: AffirmateUser.ParticipantResponse
         var chat: Chat.ParticipantResponse
-        var signedPreKey: Data
+        var signingKey: Data
+        var encryptionKey: Data
     }
 }

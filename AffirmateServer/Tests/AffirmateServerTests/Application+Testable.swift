@@ -5,8 +5,7 @@
 //  Created by Bri on 8/6/22.
 //
 
-import XCTVapor
-import XCTFluent
+@testable import XCTVapor
 @testable import AffirmateServer
 
 extension Application {

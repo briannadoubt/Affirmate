@@ -5,7 +5,6 @@
 //  Created by Bri on 10/12/22.
 //
 
-import SignalProtocol
 import SwiftUI
 
 struct ChatInvitationsView: View {
@@ -18,8 +17,13 @@ struct ChatInvitationsView: View {
     func joinChat(_ chatId: UUID, invitation: ChatInvitation) {
         Task {
             do {
-                AffirmateKeychain.chat[data: "preKey." + chatId.uuidString] = invitation.preKey
-                let confirmation = ChatInvitation.Join(id: invitation.id, signedPreKey: invitation.invitedBySignedPreKey)
+                let (signingPublicKey, _) = try await chatInvitationObserver.crypto.generateSigningKeyPair(for: chatId)
+                let (encryptionPublicKey, _) = try await chatInvitationObserver.crypto.generateKeyAgreementKeyPair(for: chatId)
+                let confirmation = ChatInvitation.Join(
+                    id: invitation.id,
+                    signingKey: signingPublicKey,
+                    encryptionKey: encryptionPublicKey
+                )
                 try await chatInvitationObserver.joinChat(chatId, confirmation: confirmation)
                 try await authentication.getCurrentUser()
             } catch {
