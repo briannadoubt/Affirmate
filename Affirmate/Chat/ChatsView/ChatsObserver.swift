@@ -12,7 +12,7 @@ import SwiftUI
 final class ChatsObserver: ObservableObject {
     
     /// The chats to appear on the view.
-    @Published var chats: [Chat.GetResponse] = []
+//    @Published var chats: [Chat.GetResponse] = []
     
     /// Format: `[chatId: ChatObserver]
     var chatObservers: [UUID: ChatObserver] = [:]
@@ -32,29 +32,29 @@ final class ChatsObserver: ObservableObject {
     /// Update the local chats with the chats that were acquired from an API call.
     @MainActor private func updateChats(with newChats: [Chat.GetResponse]) {
         withAnimation {
-            let difference = newChats.difference(from: chats) { element, chat in
-                if let elementMessages = element.messages, let chatMessages = chat.messages {
-                    return elementMessages.elementsEqual(chatMessages)
-                }
-                return false
-            }
-            for change in difference.inferringMoves() {
-                switch change {
-                case .insert(let offset, let newChat, _):
-                    chats.insert(newChat, at: offset)
-                    if chatObservers[newChat.id] == nil {
-                        chatObservers[newChat.id] = ChatObserver(chat: newChat, currentUserId: currentUserId)
-                    }
-                case .remove(let offset, let chat, _):
-                    chats.remove(at: offset)
-                    if
-                        chatObservers[chat.id] != nil,
-                        newChats.contains(chat)
-                    {
-                        chatObservers.removeValue(forKey: chat.id)
-                    }
-                }
-            }
+//            let difference = newChats.difference(from: chats) { element, chat in
+//                if let elementMessages = element.messages, let chatMessages = chat.messages {
+//                    return elementMessages.elementsEqual(chatMessages)
+//                }
+//                return false
+//            }
+//            for change in difference.inferringMoves() {
+//                switch change {
+//                case .insert(let offset, let newChat, _):
+//                    chats.insert(newChat, at: offset)
+//                    if chatObservers[newChat.id] == nil {
+//                        chatObservers[newChat.id] = ChatObserver(chat: newChat, currentUserId: currentUserId)
+//                    }
+//                case .remove(let offset, let chat, _):
+//                    chats.remove(at: offset)
+//                    if
+//                        chatObservers[chat.id] != nil,
+//                        newChats.contains(chat)
+//                    {
+//                        chatObservers.removeValue(forKey: chat.id)
+//                    }
+//                }
+//            }
         }
     }
     

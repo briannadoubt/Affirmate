@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct Chats: View {
-    @EnvironmentObject var chatsObserver: ChatsObserver
+    var chats: [Chat]
     var body: some View {
-        ForEach(chatsObserver.chats) { chat in
+        ForEach(chats.lazy) { chat in
 #if !os(watchOS)
             ChatLabel(chat: chat)
 #else
@@ -24,6 +24,6 @@ struct Chats: View {
 
 struct Chats_Previews: PreviewProvider {
     static var previews: some View {
-        Chats()
+        Chats(chats: [])
     }
 }

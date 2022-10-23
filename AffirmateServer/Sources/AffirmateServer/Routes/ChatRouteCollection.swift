@@ -75,7 +75,7 @@ struct ChatRouteCollection: RouteCollection {
                             .with(\.$publicKey)
                     }
                     .all()
-                return try chats.compactMap { chat in
+                let chatsResponse = try chats.compactMap { chat in
                     return Chat.GetResponse(
                         id: try chat.requireID(),
                         name: chat.name,
@@ -129,6 +129,12 @@ struct ChatRouteCollection: RouteCollection {
                         salt: chat.salt
                     )
                 }
+                for chat in chats {
+                    for message in chat.messages {
+                        try await message.delete(on: database)
+                    }
+                }
+                return chatsResponse
             }
         }
         

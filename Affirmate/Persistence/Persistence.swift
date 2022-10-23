@@ -8,6 +8,15 @@
 import CoreData
 import Foundation
 
-class DataController: ObservableObject {
-    let container = NSPers
+class Persistence: ObservableObject {
+    
+    let container = NSPersistentCloudKitContainer(name: "iCloud.Affirmate")
+    
+    init() {
+        container.loadPersistentStores { description, error in
+            if let error = error {
+                print("Core Data failed to load: \(error)")
+            }
+        }
+    }
 }

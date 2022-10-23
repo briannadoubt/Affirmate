@@ -72,7 +72,7 @@ final class AffirmateCryptoTests: XCTestCase {
     
     func test_getPrivateEncryptionKey() async throws {
         let (_, _ /*privateEncryptionKeyData*/) = try await crypto.generateEncryptionKeyPair(for: chatId)
-        let wrappedPrivateEncryptionKey = try await crypto.getPrivateEncryptionKey(for: chatId)
+        let _ /*wrappedPrivateEncryptionKey*/ = try await crypto.getPrivateEncryptionKey(for: chatId)
         throw XCTSkip("Keychain doesn't store value.")
 //        let privateEncryptionKey = try XCTUnwrap(wrappedPrivateEncryptionKey)
 //        let expectedOutput = try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privateEncryptionKeyData)
@@ -82,7 +82,7 @@ final class AffirmateCryptoTests: XCTestCase {
     
     func test_getPrivateSigningKey() async throws {
         let (_, _ /*privateSigningKeyData*/) = try await crypto.generateSigningKeyPair(for: chatId)
-        let wrappedPrivateSigningKey = try await crypto.getPrivateSigningKey(for: chatId)
+        let _ /*wrappedPrivateSigningKey*/ = try await crypto.getPrivateSigningKey(for: chatId)
         throw XCTSkip("Keychain doesn't store value in test environment.")
 //        let privateEncryptionKey = try XCTUnwrap(wrappedPrivateSigningKey)
 //        let expectedOutput = try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privateSigningKeyData)

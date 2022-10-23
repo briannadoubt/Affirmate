@@ -9,6 +9,10 @@ import SwiftUI
 
 struct ChatsView: View {
     
+    @FetchRequest(sortDescriptors: []) var fetchedChats: FetchedResults<Chat>
+    
+    var chats: [Chat] { Array(fetchedChats) }
+    
     @StateObject var chatsObserver: ChatsObserver
     
     @EnvironmentObject var authenticationObserver: AuthenticationObserver
@@ -36,6 +40,14 @@ struct ChatsView: View {
     
     var body: some View {
         Group {
+            let chat = Group {
+                if let selectedChat, let chatObserver = chatsObserver.chatObservers[selectedChat] {
+                    ChatView()
+                        .environmentObject(chatObserver)
+                } else {
+                    Text("👈 Select a chat on the left")
+                }
+            }
             #if os(watchOS)
             NavigationStack {
                 ChatsList(getChats: getChats)
@@ -47,31 +59,16 @@ struct ChatsView: View {
                 ChatsList(selectedChat: $selectedChat, getChats: getChats)
                     .environmentObject(authenticationObserver)
                     .environmentObject(chatsObserver)
-                
-                if let selectedChat, let chatObserver = chatsObserver.chatObservers[selectedChat] {
-                    ChatView()
-                        .environmentObject(chatObserver)
-                } else {
-                    Text("👈 Select a chat on the left")
-                }
+                chat
             }
             #else
             NavigationSplitView(columnVisibility: $navigationSplitViewVisibility) {
-                ChatsList(selectedChat: $selectedChat, getChats: getChats)
+                ChatsList(chats: chats, selectedChat: $selectedChat, getChats: getChats)
                     .environmentObject(authenticationObserver)
                     .environmentObject(chatsObserver)
                     .navigationSplitViewColumnWidth(ideal: 320)
             } detail: {
-                if
-                    let selectedChat = selectedChat,
-                    let chat = chatsObserver.chats.first(where: { $0.id == selectedChat }),
-                    let currentUserId = authenticationObserver.currentUser?.id
-                {
-                    ChatView()
-                        .environmentObject(ChatObserver(chat: chat, currentUserId: currentUserId))
-                } else {
-                    Text("👈 Select a chat on the left")
-                }
+                chat
             }
             .navigationSplitViewStyle(.automatic)
             #endif

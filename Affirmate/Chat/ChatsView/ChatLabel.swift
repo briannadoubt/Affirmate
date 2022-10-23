@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct ChatLabel: View {
-    var chat: Chat.GetResponse
+    var chat: Chat
     var body: some View {
         VStack(alignment: .leading) {
-            if let lastMessage = chat.messages?.last {
-                Text((lastMessage.sender.user.username) + ": ").bold()
+            if let lastMessage = Array(chat.messages ?? []).last as? Message {
+                Text((lastMessage.sender?.username ?? "") + ": ").bold()
 //                Text(lastMessage.text ?? "")
 //                    .lineLimit(2)
             } else {
@@ -25,6 +25,6 @@ struct ChatLabel: View {
 
 struct ChatLabel_Previews: PreviewProvider {
     static var previews: some View {
-        ChatLabel(chat: Chat.GetResponse(id: UUID(), salt: Data()))
+        ChatLabel(chat: Chat())
     }
 }

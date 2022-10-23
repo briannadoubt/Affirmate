@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ChatsList: View {
+    
+    var chats: [Chat]
+    
 #if !os(watchOS)
     @Binding var selectedChat: UUID?
 #endif
@@ -22,7 +25,7 @@ struct ChatsList: View {
     var body: some View {
 #if !os(watchOS)
         List(selection: $selectedChat) {
-            Chats()
+            Chats(chats: chats)
         }
         .populateChatsList(getChats)
 #else
@@ -43,9 +46,9 @@ struct ChatsList: View {
 struct ChatsList_Previews: PreviewProvider {
     static var previews: some View {
 #if !os(watchOS)
-        ChatsList(selectedChat: .constant(UUID()), getChats: {})
+        ChatsList(chats: [], selectedChat: .constant(UUID()), getChats: {})
 #else
-        ChatsList(getChats: {})
+        ChatsList(chats: [], getChats: {})
 #endif
     }
 }

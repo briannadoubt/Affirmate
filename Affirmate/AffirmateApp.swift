@@ -14,6 +14,8 @@ struct AffirmateApp: App {
     
     @AppStorage(Constants.UserDefaults.isFirstLaunch) var isFirstLaunch = true
     
+    @StateObject var persistence = Persistence()
+    
     #if os(iOS) || os(tvOS)
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
     #elseif os(macOS)
@@ -47,6 +49,7 @@ struct AffirmateApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.managedObjectContext, persistence.container.viewContext)
                 #if os(macOS)
                 .frame(minWidth: 600, minHeight: 480, idealHeight: 600)
                 #endif
