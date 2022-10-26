@@ -10,14 +10,15 @@ import SwiftUI
 struct Chats: View {
     var chats: [Chat]
     var body: some View {
-        ForEach(chats.lazy) { chat in
-#if !os(watchOS)
+        ForEach(chats) { chat in
+            #if !os(watchOS)
             ChatLabel(chat: chat)
-#else
+                .tag(chat)
+            #else
             NavigationLink(value: chat) {
                 ChatLabel(chat: chat)
             }
-#endif
+            #endif
         }
     }
 }

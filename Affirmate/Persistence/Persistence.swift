@@ -10,13 +10,29 @@ import Foundation
 
 class Persistence: ObservableObject {
     
-    let container = NSPersistentCloudKitContainer(name: "iCloud.Affirmate")
+    var container = NSPersistentCloudKitContainer(name: "Affirmate")
     
     init() {
+        load()
+    }
+    
+    private func load() {
         container.loadPersistentStores { description, error in
             if let error = error {
                 print("Core Data failed to load: \(error)")
             }
         }
+    }
+    
+    func deleteEverything() throws {
+        let storeCoordinator = container.persistentStoreCoordinator
+        for store in storeCoordinator.persistentStores {
+            guard let url = store.url else {
+                continue
+            }
+            try storeCoordinator.destroyPersistentStore(at: url, ofType: store.type, options: nil)
+        }
+        container = NSPersistentCloudKitContainer(name: "Affirmate")
+        load()
     }
 }

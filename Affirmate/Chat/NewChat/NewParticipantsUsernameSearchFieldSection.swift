@@ -64,65 +64,67 @@ struct NewParticipantsUsernameSearchFieldSection: View {
     }
 }
 
-struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
-    static let chat = Chat.GetResponse(
-        id: UUID(),
-        name: "Meow",
-        salt: Data(),
-        messages: [
-            Message.GetResponse(
-                id: UUID(),
-                text: Message.Sealed(
-                    ephemeralPublicKeyData: Data(),
-                    ciphertext: Data(),
-                    signature: Data()
-                ),
-                chat: Chat.MessageResponse(id: UUID(), name: "Meow"),
-                sender: Participant.GetResponse(
-                    id: UUID(),
-                    role: .admin,
-                    user: AffirmateUser.ParticipantResponse(
-                        id: UUID(),
-                        username: "meowface"
-                    ),
-                    chat: Chat.ParticipantResponse(id: UUID()),
-                    signingKey: Data(),
-                    encryptionKey: Data()
-                ),
-                recipient: Participant.GetResponse(
-                    id: UUID(),
-                    role: .participant,
-                    user: AffirmateUser.ParticipantResponse(
-                        id: UUID(),
-                        username: "barkface"
-                    ),
-                    chat: Chat.ParticipantResponse(id: UUID()),
-                    signingKey: Data(),
-                    encryptionKey: Data()
-                )
-            )
-        ],
-        participants: [
-            Participant.GetResponse(
-                id: UUID(),
-                role: .admin,
-                user: AffirmateUser.ParticipantResponse(id: UUID(), username: "meowface"),
-                chat: Chat.ParticipantResponse(id: UUID()),
-                signingKey: Data(),
-                encryptionKey: Data()
-            )
-        ]
-    )
-    static var previews: some View {
-        NewParticipantsUsernameSearchFieldSection(
-            newPublicUsers: [
-                AffirmateUser.Public(
-                    id: UUID(),
-                    username: "meowface"
-                )
-            ]
-        )
-        .environmentObject(ChatObserver(chat: chat, currentUserId: UUID()))
-        .environmentObject(NewParticipantsObserver())
-    }
-}
+// TODO: Fix previews
+//struct NewParticipantsUsernameSearchFieldSection_Previews: PreviewProvider {
+//    static let chat = Chat.GetResponse(
+//        id: UUID(),
+//        name: "Meow",
+//        salt: Data(),
+//        messages: [
+//            Message.GetResponse(
+//                id: UUID(),
+//                text: Message.Sealed(
+//                    ephemeralPublicKeyData: Data(),
+//                    ciphertext: Data(),
+//                    signature: Data()
+//                ),
+//                chat: Chat.MessageResponse(id: UUID(), name: "Meow"),
+//                sender: Participant.GetResponse(
+//                    id: UUID(),
+//                    role: .admin,
+//                    user: AffirmateUser.ParticipantResponse(
+//                        id: UUID(),
+//                        username: "meowface"
+//                    ),
+//                    chat: Chat.ParticipantResponse(id: UUID()),
+//                    signingKey: Data(),
+//                    encryptionKey: Data()
+//                ),
+//                recipient: Participant.GetResponse(
+//                    id: UUID(),
+//                    role: .participant,
+//                    user: AffirmateUser.ParticipantResponse(
+//                        id: UUID(),
+//                        username: "barkface"
+//                    ),
+//                    chat: Chat.ParticipantResponse(id: UUID()),
+//                    signingKey: Data(),
+//                    encryptionKey: Data()
+//                )
+//            )
+//        ],
+//        participants: [
+//            Participant.GetResponse(
+//                id: UUID(),
+//                role: .admin,
+//                user: AffirmateUser.ParticipantResponse(id: UUID(), username: "meowface"),
+//                chat: Chat.ParticipantResponse(id: UUID()),
+//                signingKey: Data(),
+//                encryptionKey: Data()
+//            )
+//        ]
+//    )
+//
+//    static var previews: some View {
+//        NewParticipantsUsernameSearchFieldSection(
+//            newPublicUsers: [
+//                AffirmateUser.Public(
+//                    id: UUID(),
+//                    username: "meowface"
+//                )
+//            ]
+//        )
+//        .environmentObject(ChatObserver(chat: chat, currentUserId: UUID()))
+//        .environmentObject(NewParticipantsObserver())
+//    }
+//}

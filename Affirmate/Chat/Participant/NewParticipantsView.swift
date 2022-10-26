@@ -12,9 +12,11 @@ struct NewParticipantsView: View {
     @EnvironmentObject var chatObserver: ChatObserver
     @StateObject var newParticipantsObserver = NewParticipantsObserver()
     
+    var participants: Set<Participant>
+    
     var newPublicUsers: [AffirmateUser.Public] {
         newParticipantsObserver.searchResults.filter { publicUser in
-            !chatObserver.participants.contains { user in
+            !participants.contains { user in
                 publicUser.id == user.id
             }
         }
@@ -37,6 +39,6 @@ struct NewParticipantsView: View {
 
 struct NewParticipantsView_Previews: PreviewProvider {
     static var previews: some View {
-        NewParticipantsView()
+        NewParticipantsView(participants: [])
     }
 }

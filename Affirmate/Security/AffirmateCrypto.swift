@@ -8,7 +8,7 @@
 import CryptoKit
 import Foundation
 
-enum AffirmateCryptoError: LocalizedError {
+enum EncryptionError: LocalizedError {
     case failedToGenerateRandomBytes
     case unableToStorePrivateKey(_ message: String)
     case failedToGetDataRepresentation
@@ -17,10 +17,15 @@ enum AffirmateCryptoError: LocalizedError {
     case privateKeyNotFound
     case publicKeyNotFound
     case badUTF8Encoding
+    case saltNotFound
 }
 
-enum DecryptionErrors: Error {
+enum DecryptionError: Error {
     case authenticationError
+    case saltNotFound
+    case privateKeyNotFound
+    case senderSigningKeyDataNotFound
+    case failedToBuildSealedMessage
 }
 
 protocol GenericPasswordConvertible: CustomStringConvertible {
@@ -53,7 +58,7 @@ actor AffirmateCrypto {
         var bytes = [UInt8](repeating: 0, count: 32)
         let status = SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
         guard status == errSecSuccess else {
-            throw AffirmateCryptoError.failedToGenerateRandomBytes
+            throw EncryptionError.failedToGenerateRandomBytes
         }
         let data = Data(bytes)
         return data
@@ -199,7 +204,7 @@ actor AffirmateCrypto {
         let data = sealedMessage.ciphertext + sealedMessage.ephemeralPublicKeyData + encryptionKey.publicKey.rawRepresentation
         // 2. Verify the signature on the data is valid.
         guard signingKey.isValidSignature(sealedMessage.signature, for: data) else {
-            throw DecryptionErrors.authenticationError
+            throw DecryptionError.authenticationError
         }
         // 3. Extract the ephemeral key from the sealed message.
         let ephemeralKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: sealedMessage.ephemeralPublicKeyData)

@@ -12,13 +12,19 @@ enum DeepLink: String {
 }
 
 struct AffirmateTabView: View {
-    @SceneStorage("tabSelection") var tabSelection: TabSelection = .home
+    
     @EnvironmentObject var authentication: AuthenticationObserver
+    
+    @Environment(\.managedObjectContext) var managedObjectContext
+    
+    @SceneStorage("tabSelection") var tabSelection: TabSelection = .home
+    
     enum TabSelection: String {
         case home
         case chat
         case me
     }
+    
     var body: some View {
         TabView(selection: $tabSelection) {
             HomeView()
@@ -27,7 +33,7 @@ struct AffirmateTabView: View {
                     Label("Home", systemImage: tabSelection == .home ? "house.fill" : "house")
                 }
             if let currentUserId = authentication.currentUser?.id {
-                ChatsView(currentUserId: currentUserId)
+                ChatsView(currentUserId: currentUserId, managedObjectContext: managedObjectContext)
                     .tag(TabSelection.chat)
                     .tabItem {
                         Label("Chat", systemImage: tabSelection == .chat ? "message.fill" : "message")

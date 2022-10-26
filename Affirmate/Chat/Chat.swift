@@ -18,8 +18,8 @@ extension Chat {
         var id: UUID
         var name: String?
         var salt: Data
-        var messages: [Message.GetResponse]?
-        var participants: [Participant.GetResponse]?
+        var messages: [Message.GetResponse]
+        var participants: [Participant.GetResponse]
         
     }
     

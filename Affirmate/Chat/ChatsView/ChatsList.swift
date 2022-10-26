@@ -12,7 +12,7 @@ struct ChatsList: View {
     var chats: [Chat]
     
 #if !os(watchOS)
-    @Binding var selectedChat: UUID?
+    @Binding var selectedChat: Chat?
 #endif
     
     @EnvironmentObject var chatsObserver: ChatsObserver
@@ -30,12 +30,12 @@ struct ChatsList: View {
         .populateChatsList(getChats)
 #else
         List {
-            Chats()
+            Chats(chats: chats)
         }
         .populateChatsList(getChats)
         .navigationDestination(for: Chat.self) { chat in
-            if let chatObserver = chatsObserver.chatObservers[chat.id] {
-                ChatView()
+            if let chatId = chat.id, let chatObserver = chatsObserver.chatObservers[chatId] {
+                ChatView(chatId: chatId)
                     .environmentObject(chatObserver)
             }
         }
@@ -43,12 +43,13 @@ struct ChatsList: View {
     }
 }
 
-struct ChatsList_Previews: PreviewProvider {
-    static var previews: some View {
-#if !os(watchOS)
-        ChatsList(chats: [], selectedChat: .constant(UUID()), getChats: {})
-#else
-        ChatsList(chats: [], getChats: {})
-#endif
-    }
-}
+// TODO: Fix previews
+//struct ChatsList_Previews: PreviewProvider {
+//    static var previews: some View {
+//#if !os(watchOS)
+//        ChatsList(chats: [], selectedChat: .constant(UUID()), getChats: {})
+//#else
+//        ChatsList(chats: [], getChats: {})
+//#endif
+//    }
+//}

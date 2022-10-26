@@ -11,6 +11,9 @@ import UniformTypeIdentifiers
 
 public struct ChatView: View {
     
+    @FetchRequest var messages: FetchedResults<Message>
+    @FetchRequest var participants: FetchedResults<Participant>
+    
     @EnvironmentObject var authentication: AuthenticationObserver
     @EnvironmentObject var chatObserver: ChatObserver
     
@@ -26,6 +29,11 @@ public struct ChatView: View {
     
     @FocusState fileprivate var focused
     
+    init(chatId: UUID) {
+        _messages = FetchRequest(sortDescriptors: [SortDescriptor(\.createdAt)], predicate: NSPredicate(format: "chat.id == %@", chatId as CVarArg))
+        _participants = FetchRequest(sortDescriptors: [SortDescriptor(\.role), SortDescriptor(\.username)], predicate: NSPredicate(format: "chat.id == %@", chatId as CVarArg))
+    }
+    
     fileprivate func send() {
         Task {
             // Don't send if only whitespaces, or if message was empty
@@ -34,7 +42,7 @@ public struct ChatView: View {
             }
             // TODO: Verify (with science) whether there are "not allowed" words in the message.
             do {
-                try await chatObserver.sendMessage(newMessageText)
+                try await chatObserver.sendMessage(newMessageText, to: Set(participants))
             } catch {
                 print(error)
             }
@@ -52,20 +60,20 @@ public struct ChatView: View {
     }
     
     fileprivate func scrollToLastMessage(scrollProxy: ScrollViewProxy) {
-        if let message = chatObserver.messages.last {
+        if let message = messages.last {
             scrollToMessage(message.id, scrollProxy: scrollProxy)
         }
     }
     
-    fileprivate func shouldHaveTail(_ message: Message.GetResponse) -> Bool {
-        let messages = chatObserver.messages
+    fileprivate func shouldHaveTail(_ message: Message) -> Bool {
+        let messages = messages
         if let index = messages.firstIndex(of: message) {
             let nextMessageIndex = messages.index(after: index)
             if nextMessageIndex >= messages.count {
                 return true
             }
             let nextMessage = messages[nextMessageIndex]
-            if nextMessage.sender.id != message.sender.id {
+            if nextMessage.sender?.id != message.sender?.id {
                 return true
             }
         }
@@ -74,9 +82,7 @@ public struct ChatView: View {
     
     var currentParticipantId: UUID? {
         guard
-            let currentParticipant = chatObserver
-                .participants
-                .first(where: { $0.user.id == authentication.currentUser?.id })
+            let currentParticipant = participants.first(where: { $0.userId == authentication.currentUser?.id })
         else {
             return nil
         }
@@ -84,6 +90,7 @@ public struct ChatView: View {
     }
     
     public var body: some View {
+        let sortedMessages = messages.sorted(by: { $0.createdAt ?? Date() < $1.createdAt ?? Date() })
         ScrollViewReader { scrollView in
             ReversedScrollView(.vertical, showsIndicator: true) {
                 LazyVStack(
@@ -92,7 +99,7 @@ public struct ChatView: View {
                     pinnedViews: [.sectionHeaders, .sectionFooters]
                 ) {
                     if let currentParticipantId = currentParticipantId {
-                        ForEach(chatObserver.messages) { message in
+                        ForEach(sortedMessages) { message in
                             MessageView(
                                 currentParticipantId: currentParticipantId,
                                 withTail: shouldHaveTail(message),
@@ -100,7 +107,7 @@ public struct ChatView: View {
                             )
                         }
                         #if os(watchOS)
-                        ChatInputBar(send: send)
+                        ChatInputBar(messages: sortedMessages, send: send)
                             .environmentObject(chatObserver)
                         #endif
                     } else {
@@ -116,7 +123,7 @@ public struct ChatView: View {
             }
             #if !os(watchOS)
             .safeAreaInset(edge: .bottom) {
-                ChatInputBar(send: send)
+                ChatInputBar(messages: sortedMessages, send: send)
                     .environmentObject(chatObserver)
             }
             #endif
@@ -125,7 +132,7 @@ public struct ChatView: View {
                     scrollToLastMessage(scrollProxy: scrollView)
                 }
             }
-            .onChange(of: chatObserver.messages.count) { _ in
+            .onChange(of: messages.count) { _ in
                 scrollToLastMessage(scrollProxy: scrollView)
             }
             #if os(iOS)
@@ -135,16 +142,16 @@ public struct ChatView: View {
             #endif
             #if !os(watchOS) && !os(macOS)
             .toolbarTitleMenu {
-                ForEach(chatObserver.participants) { participant in
+                ForEach(participants) { participant in
                     HStack {
                         Circle().frame(width: 44, height: 44)
-                        Text("@" + participant.user.username)
+                        Text("@" + (participant.username ?? ""))
                     }
                 }
                 ShowNewParticipantsButton(showingNewParticipants: $showingNewParticipants)
             }
             .sheet(isPresented: $showingNewParticipants) {
-                NewParticipantsView()
+                NewParticipantsView(participants: Set(participants))
                     .environmentObject(chatObserver)
             }
             #endif
@@ -201,9 +208,10 @@ public struct ChatView: View {
     }
 }
 
-struct ChatView_Previews: PreviewProvider {
-    static var previews: some View {
-        ChatView()
-            .environmentObject(ChatObserver(chat: Chat.GetResponse(id: UUID(), name: "Meow", salt: Data()), currentUserId: UUID()))
-    }
-}
+// TODO: Fix preview
+//struct ChatView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ChatView()
+//            .environmentObject(ChatObserver(chat: Chat.GetResponse(id: UUID(), name: "Meow", salt: Data()), currentUserId: UUID()))
+//    }
+//}

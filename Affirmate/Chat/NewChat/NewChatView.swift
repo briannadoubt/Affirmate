@@ -51,7 +51,7 @@ struct NewChatView: View {
                 try await chatsObserver.getChats()
                 dismiss()
             } catch {
-                print("Failed to create new chat:", error.localizedDescription)
+                print("Failed to create new chat:", error)
             }
         }
     }

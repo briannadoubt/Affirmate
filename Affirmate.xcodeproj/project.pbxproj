@@ -40,6 +40,8 @@
 		036A2F4328F5E2A8000B8DA4 /* ChatInvitation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036A2F4228F5E2A8000B8DA4 /* ChatInvitation.swift */; };
 		036A2F4428F5E2AB000B8DA4 /* ChatInvitation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036A2F4228F5E2A8000B8DA4 /* ChatInvitation.swift */; };
 		036A2F4628F5E2D5000B8DA4 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 036A2F4528F5E2D5000B8DA4 /* Launch Screen.storyboard */; platformFilter = ios; };
+		036C17132906FEBB0008016C /* NSManagedObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C17122906FEBB0008016C /* NSManagedObject+.swift */; };
+		036C17142906FEBB0008016C /* NSManagedObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036C17122906FEBB0008016C /* NSManagedObject+.swift */; };
 		037430A828CAC83F002DE8AA /* NewParticipantPublicUserRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037430A728CAC83F002DE8AA /* NewParticipantPublicUserRow.swift */; };
 		037430AA28CAC86C002DE8AA /* NewParticipantRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037430A928CAC86C002DE8AA /* NewParticipantRow.swift */; };
 		037430AC28CAC899002DE8AA /* NewParticipantsUsernameSearchFieldSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037430AB28CAC899002DE8AA /* NewParticipantsUsernameSearchFieldSection.swift */; };
@@ -78,8 +80,8 @@
 		0397774F29046EDB00246260 /* HTTPActorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397774E29046EDB00246260 /* HTTPActorTests.swift */; };
 		039777522904713800246260 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039777512904713800246260 /* MockURLProtocol.swift */; };
 		0397775429049F5B00246260 /* MockAuthenticationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397775329049F5B00246260 /* MockAuthenticationObserver.swift */; };
-		039777582904B06700246260 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 039777562904B06700246260 /* Model.xcdatamodeld */; };
-		039777592904B06700246260 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 039777562904B06700246260 /* Model.xcdatamodeld */; };
+		039777582904B06700246260 /* Affirmate.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 039777562904B06700246260 /* Affirmate.xcdatamodeld */; };
+		039777592904B06700246260 /* Affirmate.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 039777562904B06700246260 /* Affirmate.xcdatamodeld */; };
 		0397775C2904B84C00246260 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397775B2904B84C00246260 /* Persistence.swift */; };
 		0397775D2904B84C00246260 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397775B2904B84C00246260 /* Persistence.swift */; };
 		0397C7C328FA89F800FE8693 /* EncodedMessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397C7C228FA89F800FE8693 /* EncodedMessageBubble.swift */; };
@@ -210,6 +212,7 @@
 		036A2F3A28F22E6A000B8DA4 /* Relation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relation.swift; sourceTree = "<group>"; };
 		036A2F4228F5E2A8000B8DA4 /* ChatInvitation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInvitation.swift; sourceTree = "<group>"; };
 		036A2F4528F5E2D5000B8DA4 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		036C17122906FEBB0008016C /* NSManagedObject+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+.swift"; sourceTree = "<group>"; };
 		037430A728CAC83F002DE8AA /* NewParticipantPublicUserRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewParticipantPublicUserRow.swift; sourceTree = "<group>"; };
 		037430A928CAC86C002DE8AA /* NewParticipantRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewParticipantRow.swift; sourceTree = "<group>"; };
 		037430AB28CAC899002DE8AA /* NewParticipantsUsernameSearchFieldSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewParticipantsUsernameSearchFieldSection.swift; sourceTree = "<group>"; };
@@ -533,7 +536,6 @@
 				0389BC8F286FAB2A00CBDC3B /* Assets.xcassets */,
 				0389BC91286FAB2A00CBDC3B /* Affirmate.entitlements */,
 				036A2F4528F5E2D5000B8DA4 /* Launch Screen.storyboard */,
-				039777562904B06700246260 /* Model.xcdatamodeld */,
 				0389BC8B286FAB2A00CBDC3B /* AffirmateApp.swift */,
 				0358D0F928B2C4BA005FA999 /* AppDelegate.swift */,
 				0389BC8D286FAB2A00CBDC3B /* ContentView.swift */,
@@ -642,7 +644,9 @@
 		0397775A2904B83300246260 /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
+				039777562904B06700246260 /* Affirmate.xcdatamodeld */,
 				0397775B2904B84C00246260 /* Persistence.swift */,
+				036C17122906FEBB0008016C /* NSManagedObject+.swift */,
 			);
 			path = Persistence;
 			sourceTree = "<group>";
@@ -914,6 +918,7 @@
 				037430AE28CACA1F002DE8AA /* NewParticipantsSelectionSection.swift in Sources */,
 				03772C9428975965001DAE4B /* TaskButton.swift in Sources */,
 				03C366C428C8E9CE0027CA1F /* AuthenticationActor.swift in Sources */,
+				036C17132906FEBB0008016C /* NSManagedObject+.swift in Sources */,
 				03AE007F28B96AA8000C2FE0 /* ProfileView.swift in Sources */,
 				03E1923E28AEAB0300876C5D /* AffirmateUserActor.swift in Sources */,
 				0376F5C828A102490040CB40 /* NewChatView.swift in Sources */,
@@ -957,7 +962,7 @@
 				03498A6428701EED0081A221 /* Repository.swift in Sources */,
 				03584BB228F894B40068D612 /* LoginView.swift in Sources */,
 				0376F5C428A0EBE90040CB40 /* ChatsObserver.swift in Sources */,
-				039777582904B06700246260 /* Model.xcdatamodeld in Sources */,
+				039777582904B06700246260 /* Affirmate.xcdatamodeld in Sources */,
 				03FE3BBE2897220F00208D5D /* MeView.swift in Sources */,
 				03772C8E2897580C001DAE4B /* Message.swift in Sources */,
 				03AE207B28FF719800B4C392 /* AffirmateCrypto.swift in Sources */,
@@ -1026,7 +1031,7 @@
 				03D9C90928F12DBB00FCFAE7 /* ContentView.swift in Sources */,
 				03D9C8FE28F12DBA00FCFAE7 /* ChatInputBar.swift in Sources */,
 				03D9C91528F12DBB00FCFAE7 /* AffirmateUser.swift in Sources */,
-				039777592904B06700246260 /* Model.xcdatamodeld in Sources */,
+				039777592904B06700246260 /* Affirmate.xcdatamodeld in Sources */,
 				03D9C92D28F12DBB00FCFAE7 /* ThrowingTaskButton.swift in Sources */,
 				03D9C91428F12DBB00FCFAE7 /* LocalizedContent.swift in Sources */,
 				03D9C90228F12DBA00FCFAE7 /* HTTPActor.swift in Sources */,
@@ -1035,6 +1040,7 @@
 				03D9C92228F12DBB00FCFAE7 /* AuthenticationView.swift in Sources */,
 				036A2F3E28F22EFB000B8DA4 /* KeyboardHeightObserver.swift in Sources */,
 				03D9C92F28F12DBB00FCFAE7 /* SessionToken.swift in Sources */,
+				036C17142906FEBB0008016C /* NSManagedObject+.swift in Sources */,
 				03D9C91128F12DBB00FCFAE7 /* AuthenticationObserver.swift in Sources */,
 				03D9C90F28F12DBB00FCFAE7 /* Data+Extensions.swift in Sources */,
 				03D9C92B28F12DBB00FCFAE7 /* Constants.swift in Sources */,
@@ -1688,13 +1694,13 @@
 /* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
-		039777562904B06700246260 /* Model.xcdatamodeld */ = {
+		039777562904B06700246260 /* Affirmate.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
 				039777572904B06700246260 /* Model.xcdatamodel */,
 			);
 			currentVersion = 039777572904B06700246260 /* Model.xcdatamodel */;
-			path = Model.xcdatamodeld;
+			path = Affirmate.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

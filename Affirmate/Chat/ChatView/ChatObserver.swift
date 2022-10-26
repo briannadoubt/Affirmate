@@ -6,11 +6,12 @@
 //
 
 import Alamofire
+import CoreData
+import CryptoKit
 import Foundation
 import KeychainAccess
 import Starscream
 import SwiftUI
-import CryptoKit
 
 /// An object used on the `View` to display and manage a chat.
 class ChatObserver: WebSocketObserver {
@@ -27,11 +28,7 @@ class ChatObserver: WebSocketObserver {
     /// The name of the chat.
     @Published var name: String
     
-    /// The messages stored on the chat.
-    @Published var messages: [Message.GetResponse]
-    
-    /// The participants of the chat.
-    @Published var participants: [Participant.GetResponse]
+//    @ObservedObject var chat: Chat
     
     /// The url that opens this chat in the app.
     var shareableUrl: URL {
@@ -48,74 +45,99 @@ class ChatObserver: WebSocketObserver {
     
     let currentUserId: UUID
     
-    let salt: Data
+    let salt: Data?
+    
+    var managedObjectContext: NSManagedObjectContext
     
     /// Create a `ChatObserver` with a an existing `Chat`.
-    init(chat: Chat.GetResponse, currentUserId: UUID) {
-        self.chatId = chat.id
+    /// - Parameters:
+    ///   - chat: The chat to observe
+    ///   - currentUserId: <#currentUserId description#>
+    ///   - managedObjectContext: <#managedObjectContext description#>
+    init(chat: Chat, currentUserId: UUID, managedObjectContext: NSManagedObjectContext) {
+//        self.chat = chat
+        self.chatId = chat.id!
         self.name = chat.name ?? "Chat"
-        self.messages = chat.messages ?? []
-        self.participants = chat.participants ?? []
         self.currentUserId = currentUserId
         self.salt = chat.salt
-        start(chat: chat)
+        self.managedObjectContext = managedObjectContext
+        start()
     }
     
-    /// Get a chat from a given chat id.
-    func getChat(chatId: UUID) async throws {
-        let chat = try await chatActor.get(chatId)
-        await set(chat)
-    }
-    
-    func decrypt(_ message: Message.GetResponse) async throws -> String {
-        let senderSigningKey = try Curve25519.Signing.PublicKey(rawRepresentation: message.sender.signingKey)
-        guard let ourPrivateKey = try await crypto.getPrivateEncryptionKey(for: message.chat.id) else {
-            throw AffirmateCryptoError.privateKeyNotFound
+    /// Decrypt a message
+    /// - Parameter message: The message to decrypt
+    /// - Returns: The decrypted message as a `String`.
+    func decrypt(_ message: Message) async throws -> String {
+        guard let senderSigningKeyData = message.sender?.signingKey else {
+            throw DecryptionError.senderSigningKeyDataNotFound
         }
-        let decryptedData = try await crypto.decrypt(message.text, salt: salt, using: ourPrivateKey, from: senderSigningKey)
+        let senderSigningKey = try Curve25519.Signing.PublicKey(rawRepresentation: senderSigningKeyData)
+        guard let salt = salt else {
+            throw DecryptionError.saltNotFound
+        }
+        guard let ourPrivateKey = try await crypto.getPrivateEncryptionKey(for: chatId) else {
+            throw DecryptionError.privateKeyNotFound
+        }
+        guard let ephemeralPublicKeyData = message.ephemeralPublicKeyData, let ciphertext = message.ciphertext, let signature = message.signature else {
+            throw DecryptionError.failedToBuildSealedMessage
+        }
+        let sealedMessage = Message.Sealed(
+            ephemeralPublicKeyData: ephemeralPublicKeyData,
+            ciphertext: ciphertext,
+            signature: signature
+        )
+        let decryptedData = try await crypto.decrypt(sealedMessage, salt: salt, using: ourPrivateKey, from: senderSigningKey)
         guard let text = String(data: decryptedData, encoding: .utf8) else {
-            throw AffirmateCryptoError.badUTF8Encoding
+            throw EncryptionError.badUTF8Encoding
         }
         return text
     }
     
     /// Send a new message to the current chat.
-    func sendMessage(_ text: String) async throws {
+    func sendMessage(_ text: String, to participants: Set<Participant>) async throws {
         guard let textData = text.data(using: .utf8) else {
-            throw AffirmateCryptoError.failedToGetDataRepresentation
+            throw EncryptionError.failedToGetDataRepresentation
+        }
+        guard let salt = salt else {
+            throw EncryptionError.saltNotFound
         }
         guard let privateKey = try await crypto.getPrivateSigningKey(for: chatId) else {
-            throw AffirmateCryptoError.privateKeyNotFound
+            throw EncryptionError.privateKeyNotFound
         }
         for participant in participants {
-            let theirEncryptionKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: participant.encryptionKey)
+            guard let participantId = participant.id else {
+                throw ChatError.participantIdNotFound
+            }
+            guard let encryptionKey = participant.encryptionKey else {
+                throw EncryptionError.publicKeyNotFound
+            }
+            let theirEncryptionKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: encryptionKey)
             let encryptedTextDataUsToThem = try await crypto.encrypt(textData, salt: salt, to: theirEncryptionKey, signedBy: privateKey)
             let newMessageUsToThem = Message.Sealed(
                 ephemeralPublicKeyData: encryptedTextDataUsToThem.ephemeralPublicKeyData,
                 ciphertext: encryptedTextDataUsToThem.ciphertext,
                 signature: encryptedTextDataUsToThem.signature
             )
-            let messageCreate = Message.Create(sealed: newMessageUsToThem, recipient: participant.id)
+            let messageCreate = Message.Create(sealed: newMessageUsToThem, recipient: participantId)
             try write(messageCreate)
         }
     }
     
-    /// Add a new participant to the current chat.
-    func addParticipants(_ newParticipants: [Participant.Create]) throws {
-        
+    /// Invite new participants to the current chat.
+    func inviteParticipants(_ newParticipants: [Participant.Create]) throws {
+        print(newParticipants)
     }
     
     /// Handle new data recieved from the `WebSocket` connection.
     func recieved(_ data: Data) {
         if let newMessage = try? data.decodeWebSocketMessage(Message.GetResponse.self) {
             Task {
-                await self.insert(newMessage.data)
+                do {
+                    try await self.insert(newMessage.data)
+                } catch {
+                    print("Chat: Failed to cache message:", error)
+                }
                 print("Chat: Recieved message:", newMessage)
-            }
-        } else if let newParticipants = try? data.decodeWebSocketMessage([Participant.GetResponse].self) {
-            Task {
-                await self.add(newParticipants.data)
-                print("Chat: Did add new participant:", newParticipants)
             }
         } else {
             print("Chat: Received unrecognized data:", (try? JSONSerialization.jsonObject(with: data) as Any) as? [String: Any] as Any)
@@ -129,9 +151,9 @@ class ChatObserver: WebSocketObserver {
 private extension ChatObserver {
     
     /// Start a new chat.
-    func start(chat: Chat.GetResponse) {
+    func start() {
         let sessionToken = chatActor.http.interceptor.sessionToken
-        let request = ChatActor.Request.chat(chatId: chat.id, sessionToken: sessionToken)
+        let request = ChatActor.Request.chat(chatId: chatId, sessionToken: sessionToken)
         guard let urlRequest = try? request.asURLRequest() else {
             assertionFailure()
             return
@@ -141,24 +163,56 @@ private extension ChatObserver {
     }
     
     /// Insert a new message into the local chat, updating the view.
-    @MainActor func insert(_ newMessage: Message.GetResponse) {
-        withAnimation {
-            self.messages.append(newMessage)
+    @MainActor func insert(_ messageContent: Message.GetResponse) throws {
+        try withAnimation {
+            if try managedObjectContext.doesNotExist(Message.self, id: messageContent.id) {
+                let message = Message(context: managedObjectContext)
+                message.ciphertext = messageContent.text.ciphertext
+                message.createdAt = messageContent.created ?? Date()
+                message.updatedAt = messageContent.updated ?? Date()
+                message.ephemeralPublicKeyData = messageContent.text.ephemeralPublicKeyData
+                message.id = messageContent.id
+                message.signature = messageContent.text.signature
+                guard let chat = try managedObjectContext.entity(Chat.self, for: messageContent.chat.id) else {
+                    throw ChatError.chatIdNotFound
+                }
+                message.chat = chat
+                
+                guard let participants = chat.participants as? Set<Participant> else {
+                    throw ChatError.chatWithNoOtherParticipants
+                }
+                
+                if let sender = participants.first(where: { $0.id == messageContent.sender.id }) {
+                    message.sender = sender
+                }
+                
+                if let recipient = participants.first(where: { $0.id == messageContent.recipient.id}) {
+                    message.recipient = recipient
+                }
+                
+                try managedObjectContext.save()
+            }
         }
     }
     
     /// Add a new participant to the local chat, updating the view.
-    @MainActor func add(_ participants: [Participant.GetResponse]) {
-        withAnimation {
-            self.participants.append(contentsOf: participants)
-        }
-    }
-    
-    /// Set the current chat from another chat instance. Used when the chat is requested from the REST API.
-    @MainActor func set(_ chat: Chat.GetResponse) {
-        withAnimation {
-            self.messages = chat.messages ?? []
-            self.participants = chat.participants ?? []
-        }
-    }
+//    @MainActor func add(_ participantsContent: [Participant.GetResponse]) throws {
+//        try withAnimation {
+//            for participantContent in participantsContent {
+//
+//                if try managedObjectContext.doesNotExist(Participant.self, id: participantContent.id) {
+//
+//                    let participant = Participant(context: managedObjectContext)
+//                    participant.id = participantContent.id
+//                    participant.role = participantContent.role.rawValue
+//                    participant.userId = participantContent.user.id
+//                    participant.username = participantContent.user.username
+//                    participant.signingKey = participantContent.signingKey
+//                    participant.encryptionKey = participantContent.encryptionKey
+//                    participant.chat = chat
+//                }
+//            }
+//            try managedObjectContext.save()
+//        }
+//    }
 }

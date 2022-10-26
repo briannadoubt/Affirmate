@@ -30,7 +30,7 @@ actor ChatWebSocketManager: WebSocketManager {
                 if let connectMessage = try? self.get(buffer, Connect.self) {
                     await self.handle(connect: connectMessage, request: request, webSocket: webSocket)
                     
-                    // MARK: Message
+                // MARK: Message
                 } else if let webSocketMessage = try self.get(buffer, Message.Create.self) {
                     await self.handle(chatMessage: webSocketMessage, request: request, webSocket: webSocket)
                     
@@ -62,7 +62,10 @@ extension ChatWebSocketManager {
             try Message.Create.validate(json: createString)
             
             // Create the new message.
-            let newMessage = Message(ephemeralPublicKeyData: webSocketMessage.data.sealed.ephemeralPublicKeyData, ciphertext: webSocketMessage.data.sealed.ciphertext, signature: webSocketMessage.data.sealed.signature, chat: try chat.requireID(), sender: try sender.requireID(), recipient: webSocketMessage.data.recipient)
+            let messageId = UUID()
+            let newMessage = Message(id: messageId, ephemeralPublicKeyData: webSocketMessage.data.sealed.ephemeralPublicKeyData, ciphertext: webSocketMessage.data.sealed.ciphertext, signature: webSocketMessage.data.sealed.signature, chat: try chat.requireID(), sender: try sender.requireID(), recipient: webSocketMessage.data.recipient)
+            
+            try await newMessage.$recipient.load(on: database)
             
             // Find the recipient
             guard
@@ -77,17 +80,17 @@ extension ChatWebSocketManager {
                 throw Abort(.notFound)
             }
             
-            // Create the response
-            let newMessageResponse = try self.createChatMessageResponse(webSocketMessage: webSocketMessage, currentUser: currentUser, chat: chat, newMessage: newMessage, sender: sender, recipient: recipient)
-            
+            // If there are no connected clients for this chat/user, cache the encrypted message on the database until it is retrieved.
             let connectedClientsForChat = await self.connectedClients(userId: try recipient.user.requireID(), chatId: try chat.requireID())
             
-            // If there are no connected clients for this chat/user, cache the encrypted message on the database until it is retrieved.
             guard !connectedClientsForChat.isEmpty else {
                 // Save the message to the chat
                 try await chat.$messages.create(newMessage, on: database)
                 return
             }
+            
+            // Create the response
+            let newMessageResponse = try self.createChatMessageResponse(messageId: messageId, webSocketMessage: webSocketMessage, currentUser: currentUser, chat: chat, newMessage: newMessage, sender: sender, recipient: recipient)
             
             // Broadcast to connected clients.
             try await self.broadcast(message: newMessageResponse, to: connectedClientsForChat, database: database)
@@ -138,6 +141,7 @@ extension ChatWebSocketManager {
     
     /// Create a `GetRequest` for a `Message`.
     /// - Parameters:
+    ///   - messageId: The id of the new message.
     ///   - webSocketMessage: The message from the WebSocket connection.
     ///   - currentUser: The currently signed in user.
     ///   - chat: The chat that the new message was recieved from.
@@ -145,9 +149,9 @@ extension ChatWebSocketManager {
     ///   - currentParticipant: The participant sending the message.
     ///   - recipientParticipant: The participant recieving the message.
     /// - Returns: A response object representing a new chat message.
-    func createChatMessageResponse(webSocketMessage: WebSocketMessage<Message.Create>, currentUser: AffirmateUser, chat: Chat, newMessage: Message, sender: Participant, recipient: Participant) throws -> Message.GetResponse {
+    func createChatMessageResponse(messageId: UUID, webSocketMessage: WebSocketMessage<Message.Create>, currentUser: AffirmateUser, chat: Chat, newMessage: Message, sender: Participant, recipient: Participant) throws -> Message.GetResponse {
         Message.GetResponse(
-            id: try newMessage.requireID(),
+            id: messageId,
             text: Message.Sealed(
                 ephemeralPublicKeyData: newMessage.ephemeralPublicKeyData,
                 ciphertext: webSocketMessage.data.sealed.ciphertext,

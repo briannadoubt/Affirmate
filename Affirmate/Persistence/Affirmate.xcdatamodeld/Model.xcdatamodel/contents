@@ -4,8 +4,8 @@
         <attribute name="id" optional="YES" attributeType="UUID" allowsCloudEncryption="YES" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <attribute name="salt" optional="YES" attributeType="Binary" allowsCloudEncryption="YES"/>
-        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Chat" inverseName="messages" inverseEntity="Chat"/>
-        <relationship name="paticipants" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Participant" inverseName="chat" inverseEntity="Participant"/>
+        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Message" inverseName="chat" inverseEntity="Message"/>
+        <relationship name="participants" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Participant" inverseName="chat" inverseEntity="Participant"/>
     </entity>
     <entity name="Message" representedClassName="Message" syncable="YES" codeGenerationType="class">
         <attribute name="ciphertext" optional="YES" attributeType="Binary" allowsCloudEncryption="YES"/>
@@ -13,8 +13,8 @@
         <attribute name="ephemeralPublicKeyData" optional="YES" attributeType="Binary" allowsCloudEncryption="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" allowsCloudEncryption="YES" usesScalarValueType="NO"/>
         <attribute name="signature" optional="YES" attributeType="Binary" allowsCloudEncryption="YES"/>
-        <attribute name="updatedAt" optional="YES" attributeType="Binary" allowsCloudEncryption="YES"/>
-        <relationship name="chat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="chat" inverseEntity="Message"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" allowsCloudEncryption="YES" usesScalarValueType="NO"/>
+        <relationship name="chat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Chat" inverseName="messages" inverseEntity="Chat"/>
         <relationship name="recipient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Participant" inverseName="recieved" inverseEntity="Participant"/>
         <relationship name="sender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Participant" inverseName="sent" inverseEntity="Participant"/>
     </entity>
@@ -25,7 +25,7 @@
         <attribute name="signingKey" optional="YES" attributeType="Binary"/>
         <attribute name="userId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="username" optional="YES" attributeType="String"/>
-        <relationship name="chat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Chat" inverseName="paticipants" inverseEntity="Chat"/>
+        <relationship name="chat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Chat" inverseName="participants" inverseEntity="Chat"/>
         <relationship name="recieved" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="recipient" inverseEntity="Message"/>
         <relationship name="sent" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="sender" inverseEntity="Message"/>
     </entity>

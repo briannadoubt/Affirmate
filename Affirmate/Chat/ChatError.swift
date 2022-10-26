@@ -15,6 +15,10 @@ enum ChatError: LocalizedError {
     case clientIdHasNotBeenSet
     case chatWithNoOtherParticipants
     case failedToConvertMessageContentIntoData
+    case nonexistentEntityName
+    case participantIdNotFound
+    case entityNotFound
+    case messageIdNotFound
     
     var errorDescription: String? {
         switch self {
@@ -32,6 +36,14 @@ enum ChatError: LocalizedError {
             return "Chat with no other participants."
         case .failedToConvertMessageContentIntoData:
             return "Failed to convert message content into data."
+        case .nonexistentEntityName:
+            return "The requested entity name does not exist."
+        case .participantIdNotFound:
+            return "The cached participant doesn't have an associated id."
+        case .entityNotFound:
+            return "The entity was not found when querying CoreData."
+        case .messageIdNotFound:
+            return "Message ID not found."
         }
     }
     
@@ -49,6 +61,14 @@ enum ChatError: LocalizedError {
             return "You cannot start a chat without another participant."
         case .failedToConvertMessageContentIntoData:
             return "Failed to encrypt message."
+        case .nonexistentEntityName:
+            return "Oops, we had an issue loading data from the local cache."
+        case .participantIdNotFound:
+            return "Oops, looks like there's some corrupted data. Reloading the chat and try again."
+        case .entityNotFound:
+            return "Looks like that doesn't exist on your device."
+        case .messageIdNotFound:
+            return "Message not found."
         }
     }
 }

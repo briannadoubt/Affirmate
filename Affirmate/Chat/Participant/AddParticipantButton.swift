@@ -10,6 +10,7 @@ import SwiftUI
 struct AddParticipantButton: View {
     
     @EnvironmentObject var newParticipantObserver: NewParticipantsObserver
+    
     @EnvironmentObject var chatObserver: ChatObserver
     
     func addParticipants() {
@@ -21,9 +22,9 @@ struct AddParticipantButton: View {
                         user: user.id
                     )
                 }
-                try chatObserver.addParticipants(newParticipants)
+                try chatObserver.inviteParticipants(newParticipants)
             } catch {
-                print("Failed to add participant:", error)
+                print("Failed to invite participants:", error)
             }
         }
     }

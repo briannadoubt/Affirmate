@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ChatInputBar: View {
     
-    @EnvironmentObject var chatObserver: ChatObserver
+    var messages: [Message]
     
     @SceneStorage("chat_newMessageText") var newMessageText = ""
     
@@ -24,7 +24,7 @@ struct ChatInputBar: View {
     }
     
     fileprivate func scrollToLastMessage(scrollProxy: ScrollViewProxy) {
-        if let message = chatObserver.messages.last {
+        if let message = messages.last {
             scrollToMessage(message.id, scrollProxy: scrollProxy)
         }
     }
@@ -78,6 +78,6 @@ struct ChatInputBar: View {
 
 struct ChatInputBar_Previews: PreviewProvider {
     static var previews: some View {
-        ChatInputBar(send: { })
+        ChatInputBar(messages: [], send: { })
     }
 }

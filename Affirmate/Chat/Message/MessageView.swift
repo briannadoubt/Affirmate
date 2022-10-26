@@ -11,21 +11,21 @@ public struct MessageView: View {
     
     @EnvironmentObject var chatObserver: ChatObserver
     
-    init(currentParticipantId: UUID, withTail: Bool = false, message: Message.GetResponse) {
+    init(currentParticipantId: UUID, withTail: Bool = false, message: Message) {
         self.currentParticipantId = currentParticipantId
         self.message = message
         self.hasTail = withTail
     }
     
     let currentParticipantId: UUID
-    let message: Message.GetResponse
+    let message: Message
     let hasTail: Bool
     
     var tailPosition: MessageBubbleTailPosition {
         if !hasTail {
             return .none
         }
-        return message.sender.id == currentParticipantId ? .rightBottomTrailing : .leftBottomLeading
+        return message.sender?.id == currentParticipantId ? .rightBottomTrailing : .leftBottomLeading
     }
     
     @State private var text: String?
@@ -40,12 +40,12 @@ public struct MessageView: View {
     #endif
     
     var isSender: Bool {
-        message.sender.id == currentParticipantId
+        message.sender?.id == currentParticipantId
     }
     
     public var body: some View {
         HStack {
-            if message.sender.id == currentParticipantId {
+            if message.sender?.id == currentParticipantId {
                 Spacer(minLength: spacerLength)
             }
             if let text = text {
@@ -55,7 +55,7 @@ public struct MessageView: View {
                     tailPosition: tailPosition
                 )
             }
-            if message.sender.id != currentParticipantId {
+            if message.sender?.id != currentParticipantId {
                 Spacer(minLength: spacerLength)
             }
         }
@@ -68,47 +68,48 @@ public struct MessageView: View {
                 }
             }
         }
-        .animation(.spring(), value: message.sender.id == currentParticipantId)
-        .transition(.move(edge: message.sender.id == currentParticipantId ? .leading : .trailing).combined(with: .opacity))
+        .animation(.spring(), value: message.sender?.id == currentParticipantId)
+        .transition(.move(edge: message.sender?.id == currentParticipantId ? .leading : .trailing).combined(with: .opacity))
         .flipsForRightToLeftLayoutDirection(true)
     }
 }
 
-struct MessageView_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageView(
-            currentParticipantId: UUID(),
-            message: Message.GetResponse(
-                id: UUID(),
-                text: Message.Sealed(
-                    ephemeralPublicKeyData: Data(),
-                    ciphertext: Data(),
-                    signature: Data()
-                ),
-                chat: Chat.MessageResponse(id: UUID()),
-                sender: Participant.GetResponse(
-                    id: UUID(),
-                    role: .participant,
-                    user: AffirmateUser.ParticipantResponse(
-                        id: UUID(),
-                        username: "meowface"
-                    ),
-                    chat: Chat.ParticipantResponse(id: UUID()),
-                    signingKey: Data(),
-                    encryptionKey: Data()
-                ),
-                recipient: Participant.GetResponse(
-                    id: UUID(),
-                    role: .admin,
-                    user: AffirmateUser.ParticipantResponse(
-                        id: UUID(),
-                        username: "barkface"
-                    ),
-                    chat: Chat.ParticipantResponse(id: UUID()),
-                    signingKey: Data(),
-                    encryptionKey: Data()
-                )
-            )
-        )
-    }
-}
+// TODO: Fix previews
+//struct MessageView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MessageView(
+//            currentParticipantId: UUID(),
+//            message: Message(
+//                id: UUID(),
+//                text: Message.Sealed(
+//                    ephemeralPublicKeyData: Data(),
+//                    ciphertext: Data(),
+//                    signature: Data()
+//                ),
+//                chat: Chat.MessageResponse(id: UUID()),
+//                sender: Participant.GetResponse(
+//                    id: UUID(),
+//                    role: .participant,
+//                    user: AffirmateUser.ParticipantResponse(
+//                        id: UUID(),
+//                        username: "meowface"
+//                    ),
+//                    chat: Chat.ParticipantResponse(id: UUID()),
+//                    signingKey: Data(),
+//                    encryptionKey: Data()
+//                ),
+//                recipient: Participant.GetResponse(
+//                    id: UUID(),
+//                    role: .admin,
+//                    user: AffirmateUser.ParticipantResponse(
+//                        id: UUID(),
+//                        username: "barkface"
+//                    ),
+//                    chat: Chat.ParticipantResponse(id: UUID()),
+//                    signingKey: Data(),
+//                    encryptionKey: Data()
+//                )
+//            )
+//        )
+//    }
+//}
