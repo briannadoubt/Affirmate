@@ -18,8 +18,6 @@
 	<string>NSFileProtectionComplete</string>
 	<key>com.apple.developer.maps</key>
 	<true/>
-	<key>com.apple.developer.shared-with-you</key>
-	<true/>
 	<key>com.apple.developer.siri</key>
 	<true/>
 	<key>com.apple.developer.usernotifications.communication</key>
