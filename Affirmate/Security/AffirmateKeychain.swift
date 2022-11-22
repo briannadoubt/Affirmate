@@ -13,13 +13,8 @@ import SwiftUI
 class AffirmateKeychain: ObservableObject {
     
     static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
-    #if os(macOS)
-    static let chatService = "\(appIdentifierPrefix).org.affirmate.chat"
-    static let sessionService = "\(appIdentifierPrefix).org.affirmate.session"
-    #else
     static let chatService = "\(appIdentifierPrefix)org.affirmate.chat"
     static let sessionService = "\(appIdentifierPrefix)org.affirmate.session"
-    #endif
     static let accessGroup = "group.Affirmate"
     
     static var chat: Keychain {
