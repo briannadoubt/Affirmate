@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import Affirmate_Watch_Watch_App
+@testable import AffirmateWatch
 
 final class Affirmate_Watch_Watch_AppTests: XCTestCase {
 
