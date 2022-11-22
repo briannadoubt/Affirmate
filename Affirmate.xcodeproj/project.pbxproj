@@ -23,7 +23,6 @@
 		03584BBB28F8E3FF0068D612 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03584BB928F8E3FF0068D612 /* Log.swift */; };
 		0358D0FA28B2C4BA005FA999 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0358D0F928B2C4BA005FA999 /* AppDelegate.swift */; };
 		035CE65A289F47D400B8C7A5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 035CE659289F47D400B8C7A5 /* Alamofire */; };
-		035DE94228B560080026FA55 /* ConfirmConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035DE94128B560080026FA55 /* ConfirmConnection.swift */; };
 		036A2F1A28F1554C000B8DA4 /* ChatsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036A2F1928F1554C000B8DA4 /* ChatsList.swift */; };
 		036A2F1B28F15551000B8DA4 /* ChatsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036A2F1928F1554C000B8DA4 /* ChatsList.swift */; };
 		036A2F1F28F1591B000B8DA4 /* PopulateChatsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036A2F1E28F15918000B8DA4 /* PopulateChatsList.swift */; };
@@ -88,11 +87,8 @@
 		0397C7C928FA953400FE8693 /* AffirmateKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397C7C828FA953400FE8693 /* AffirmateKeychain.swift */; };
 		0397C7CA28FA953400FE8693 /* AffirmateKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397C7C828FA953400FE8693 /* AffirmateKeychain.swift */; };
 		03A2017028A6D62200573848 /* HTTPActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A2016F28A6D62200573848 /* HTTPActor.swift */; };
-		03A2017228A6D6A100573848 /* JWTToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A2017128A6D6A100573848 /* JWTToken.swift */; };
-		03AE007D28B95D1C000C2FE0 /* Connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE007C28B95D1C000C2FE0 /* Connect.swift */; };
 		03AE007F28B96AA8000C2FE0 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE007E28B96AA8000C2FE0 /* ProfileView.swift */; };
 		03AE008128B972B6000C2FE0 /* NewParticipantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008028B972B6000C2FE0 /* NewParticipantsView.swift */; };
-		03AE008328B9B9A8000C2FE0 /* WebSocketMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008228B9B9A8000C2FE0 /* WebSocketMessage.swift */; };
 		03AE008628B9B9C6000C2FE0 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008528B9B9C6000C2FE0 /* Data+Extensions.swift */; };
 		03AE207B28FF719800B4C392 /* AffirmateCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE207A28FF719800B4C392 /* AffirmateCrypto.swift */; };
 		03AE207C28FF719800B4C392 /* AffirmateCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE207A28FF719800B4C392 /* AffirmateCrypto.swift */; };
@@ -101,7 +97,6 @@
 		03D9C8EC28F12D2E00FCFAE7 /* AffirmateWatchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D9C8EB28F12D2E00FCFAE7 /* AffirmateWatchUITests.swift */; };
 		03D9C8EE28F12D2E00FCFAE7 /* AffirmateWatchUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D9C8ED28F12D2E00FCFAE7 /* AffirmateWatchUITestsLaunchTests.swift */; };
 		03D9C8FE28F12DBA00FCFAE7 /* ChatInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037430B528CD21B1002DE8AA /* ChatInputBar.swift */; };
-		03D9C90028F12DBA00FCFAE7 /* ConfirmConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035DE94128B560080026FA55 /* ConfirmConnection.swift */; };
 		03D9C90128F12DBA00FCFAE7 /* MessageBubbleShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923528AEA60D00876C5D /* MessageBubbleShape.swift */; };
 		03D9C90228F12DBA00FCFAE7 /* HTTPActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A2016F28A6D62200573848 /* HTTPActor.swift */; };
 		03D9C90328F12DBA00FCFAE7 /* ChatSendButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923B28AEA88B00876C5D /* ChatSendButton.swift */; };
@@ -111,7 +106,6 @@
 		03D9C90928F12DBB00FCFAE7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BC8D286FAB2A00CBDC3B /* ContentView.swift */; };
 		03D9C90B28F12DBB00FCFAE7 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C8A289757CA001DAE4B /* Message.swift */; };
 		03D9C90C28F12DBB00FCFAE7 /* MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923628AEA60E00876C5D /* MessageBubble.swift */; };
-		03D9C90D28F12DBB00FCFAE7 /* JWTToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A2017128A6D6A100573848 /* JWTToken.swift */; };
 		03D9C90E28F12DBB00FCFAE7 /* ChatObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1922F28AEA49000876C5D /* ChatObserver.swift */; };
 		03D9C90F28F12DBB00FCFAE7 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008528B9B9C6000C2FE0 /* Data+Extensions.swift */; };
 		03D9C91128F12DBB00FCFAE7 /* AuthenticationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BC12897273A00208D5D /* AuthenticationObserver.swift */; };
@@ -123,13 +117,11 @@
 		03D9C91928F12DBB00FCFAE7 /* MessageBubbleTailPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923728AEA60E00876C5D /* MessageBubbleTailPosition.swift */; };
 		03D9C91A28F12DBB00FCFAE7 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BB92897214700208D5D /* HomeView.swift */; };
 		03D9C91C28F12DBB00FCFAE7 /* UserActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923D28AEAB0300876C5D /* UserActor.swift */; };
-		03D9C91D28F12DBB00FCFAE7 /* Connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE007C28B95D1C000C2FE0 /* Connect.swift */; };
 		03D9C91F28F12DBB00FCFAE7 /* AffirmateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BC8B286FAB2A00CBDC3B /* AffirmateApp.swift */; };
 		03D9C92028F12DBB00FCFAE7 /* AffirmateTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBF2897222D00208D5D /* AffirmateTabView.swift */; };
 		03D9C92228F12DBB00FCFAE7 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C9828975B04001DAE4B /* AuthenticationView.swift */; };
 		03D9C92528F12DBB00FCFAE7 /* MeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBD2897220F00208D5D /* MeView.swift */; };
 		03D9C92628F12DBB00FCFAE7 /* ChatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037430B128CACD82002DE8AA /* ChatError.swift */; };
-		03D9C92828F12DBB00FCFAE7 /* WebSocketMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE008228B9B9A8000C2FE0 /* WebSocketMessage.swift */; };
 		03D9C92928F12DBB00FCFAE7 /* TaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C9328975965001DAE4B /* TaskButton.swift */; };
 		03D9C92A28F12DBB00FCFAE7 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1922828AEA2B600876C5D /* ChatView.swift */; };
 		03D9C92B28F12DBB00FCFAE7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C9A28975CAB001DAE4B /* Constants.swift */; };
@@ -138,6 +130,24 @@
 		03D9C93328F12E0400FCFAE7 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 03D9C93228F12E0400FCFAE7 /* Alamofire */; };
 		03D9C93528F12E0400FCFAE7 /* ReversedScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = 03D9C93428F12E0400FCFAE7 /* ReversedScrollView */; };
 		03D9C93728F12E0400FCFAE7 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 03D9C93628F12E0400FCFAE7 /* Starscream */; };
+		03DEF15A292CDF31009AA00E /* AuthenticationScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF159292CDF31009AA00E /* AuthenticationScrollView.swift */; };
+		03DEF15B292CDF31009AA00E /* AuthenticationScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF159292CDF31009AA00E /* AuthenticationScrollView.swift */; };
+		03DEF15D292CE3A7009AA00E /* AuthenticationContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF15C292CE3A7009AA00E /* AuthenticationContent.swift */; };
+		03DEF15E292CE3A7009AA00E /* AuthenticationContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF15C292CE3A7009AA00E /* AuthenticationContent.swift */; };
+		03DEF160292CE3BE009AA00E /* AuthenticationConfirmationButtonSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF15F292CE3BE009AA00E /* AuthenticationConfirmationButtonSection.swift */; };
+		03DEF161292CE3BE009AA00E /* AuthenticationConfirmationButtonSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF15F292CE3BE009AA00E /* AuthenticationConfirmationButtonSection.swift */; };
+		03DEF163292CE3D6009AA00E /* AuthenticationFlowSelectionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF162292CE3D6009AA00E /* AuthenticationFlowSelectionSection.swift */; };
+		03DEF164292CE3D6009AA00E /* AuthenticationFlowSelectionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF162292CE3D6009AA00E /* AuthenticationFlowSelectionSection.swift */; };
+		03DEF166292CE3EB009AA00E /* SignUpButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF165292CE3EB009AA00E /* SignUpButton.swift */; };
+		03DEF167292CE3EB009AA00E /* SignUpButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF165292CE3EB009AA00E /* SignUpButton.swift */; };
+		03DEF169292CE3FF009AA00E /* LoginButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF168292CE3FF009AA00E /* LoginButton.swift */; };
+		03DEF16A292CE3FF009AA00E /* LoginButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF168292CE3FF009AA00E /* LoginButton.swift */; };
+		03DEF16C292CE412009AA00E /* AuthenticationFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF16B292CE412009AA00E /* AuthenticationFields.swift */; };
+		03DEF16D292CE412009AA00E /* AuthenticationFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF16B292CE412009AA00E /* AuthenticationFields.swift */; };
+		03DEF16F292CE426009AA00E /* AuthenticationTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF16E292CE426009AA00E /* AuthenticationTitle.swift */; };
+		03DEF170292CE426009AA00E /* AuthenticationTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF16E292CE426009AA00E /* AuthenticationTitle.swift */; };
+		03DEF172292CE43A009AA00E /* AffirmateLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF171292CE43A009AA00E /* AffirmateLogo.swift */; };
+		03DEF173292CE43A009AA00E /* AffirmateLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF171292CE43A009AA00E /* AffirmateLogo.swift */; };
 		03E1922928AEA2B600876C5D /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1922828AEA2B600876C5D /* ChatView.swift */; };
 		03E1922C28AEA30B00876C5D /* ReversedScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = 03E1922B28AEA30B00876C5D /* ReversedScrollView */; };
 		03E1922E28AEA3B000876C5D /* KeyboardHeightObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1922D28AEA3B000876C5D /* KeyboardHeightObserver.swift */; };
@@ -202,7 +212,6 @@
 		03584BB428F895500068D612 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		03584BB928F8E3FF0068D612 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		0358D0F928B2C4BA005FA999 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		035DE94128B560080026FA55 /* ConfirmConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmConnection.swift; sourceTree = "<group>"; };
 		036A2F1928F1554C000B8DA4 /* ChatsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsList.swift; sourceTree = "<group>"; };
 		036A2F1E28F15918000B8DA4 /* PopulateChatsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopulateChatsList.swift; sourceTree = "<group>"; };
 		036A2F2128F159E9000B8DA4 /* NewChatButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChatButton.swift; sourceTree = "<group>"; };
@@ -251,11 +260,8 @@
 		0397C7C228FA89F800FE8693 /* EncodedMessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncodedMessageBubble.swift; sourceTree = "<group>"; };
 		0397C7C828FA953400FE8693 /* AffirmateKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateKeychain.swift; sourceTree = "<group>"; };
 		03A2016F28A6D62200573848 /* HTTPActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPActor.swift; sourceTree = "<group>"; };
-		03A2017128A6D6A100573848 /* JWTToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTToken.swift; sourceTree = "<group>"; };
-		03AE007C28B95D1C000C2FE0 /* Connect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connect.swift; sourceTree = "<group>"; };
 		03AE007E28B96AA8000C2FE0 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		03AE008028B972B6000C2FE0 /* NewParticipantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewParticipantsView.swift; sourceTree = "<group>"; };
-		03AE008228B9B9A8000C2FE0 /* WebSocketMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketMessage.swift; sourceTree = "<group>"; };
 		03AE008528B9B9C6000C2FE0 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		03AE207A28FF719800B4C392 /* AffirmateCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateCrypto.swift; sourceTree = "<group>"; };
 		03C366C328C8E9CE0027CA1F /* AuthenticationActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationActor.swift; sourceTree = "<group>"; };
@@ -266,6 +272,15 @@
 		03D9C8E728F12D2E00FCFAE7 /* AffirmateWatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateWatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D9C8EB28F12D2E00FCFAE7 /* AffirmateWatchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateWatchUITests.swift; sourceTree = "<group>"; };
 		03D9C8ED28F12D2E00FCFAE7 /* AffirmateWatchUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateWatchUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		03DEF159292CDF31009AA00E /* AuthenticationScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationScrollView.swift; sourceTree = "<group>"; };
+		03DEF15C292CE3A7009AA00E /* AuthenticationContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationContent.swift; sourceTree = "<group>"; };
+		03DEF15F292CE3BE009AA00E /* AuthenticationConfirmationButtonSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationConfirmationButtonSection.swift; sourceTree = "<group>"; };
+		03DEF162292CE3D6009AA00E /* AuthenticationFlowSelectionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationFlowSelectionSection.swift; sourceTree = "<group>"; };
+		03DEF165292CE3EB009AA00E /* SignUpButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpButton.swift; sourceTree = "<group>"; };
+		03DEF168292CE3FF009AA00E /* LoginButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginButton.swift; sourceTree = "<group>"; };
+		03DEF16B292CE412009AA00E /* AuthenticationFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationFields.swift; sourceTree = "<group>"; };
+		03DEF16E292CE426009AA00E /* AuthenticationTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationTitle.swift; sourceTree = "<group>"; };
+		03DEF171292CE43A009AA00E /* AffirmateLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateLogo.swift; sourceTree = "<group>"; };
 		03E1922828AEA2B600876C5D /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		03E1922D28AEA3B000876C5D /* KeyboardHeightObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardHeightObserver.swift; sourceTree = "<group>"; };
 		03E1922F28AEA49000876C5D /* ChatObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatObserver.swift; sourceTree = "<group>"; };
@@ -414,12 +429,20 @@
 		036A2F3528F1F452000B8DA4 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				03A2017128A6D6A100573848 /* JWTToken.swift */,
+				03C366C328C8E9CE0027CA1F /* AuthenticationActor.swift */,
+				03FE3BC12897273A00208D5D /* AuthenticationObserver.swift */,
 				03772C9828975B04001DAE4B /* AuthenticationView.swift */,
+				03DEF159292CDF31009AA00E /* AuthenticationScrollView.swift */,
+				03DEF171292CE43A009AA00E /* AffirmateLogo.swift */,
+				03DEF16E292CE426009AA00E /* AuthenticationTitle.swift */,
+				03DEF16B292CE412009AA00E /* AuthenticationFields.swift */,
+				03DEF168292CE3FF009AA00E /* LoginButton.swift */,
+				03DEF165292CE3EB009AA00E /* SignUpButton.swift */,
+				03DEF162292CE3D6009AA00E /* AuthenticationFlowSelectionSection.swift */,
+				03DEF15F292CE3BE009AA00E /* AuthenticationConfirmationButtonSection.swift */,
+				03DEF15C292CE3A7009AA00E /* AuthenticationContent.swift */,
 				03584BB128F894B40068D612 /* LoginView.swift */,
 				03584BB428F895500068D612 /* SignUpView.swift */,
-				03FE3BC12897273A00208D5D /* AuthenticationObserver.swift */,
-				03C366C328C8E9CE0027CA1F /* AuthenticationActor.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -437,11 +460,8 @@
 		036A2F3928F22C7A000B8DA4 /* WebSocket */ = {
 			isa = PBXGroup;
 			children = (
-				035DE94128B560080026FA55 /* ConfirmConnection.swift */,
 				037430B328CC2622002DE8AA /* WebSocketObserver.swift */,
-				03AE008228B9B9A8000C2FE0 /* WebSocketMessage.swift */,
 				03AE008528B9B9C6000C2FE0 /* Data+Extensions.swift */,
-				03AE007C28B95D1C000C2FE0 /* Connect.swift */,
 			);
 			path = WebSocket;
 			sourceTree = "<group>";
@@ -556,8 +576,8 @@
 		0389BC9C286FAB2A00CBDC3B /* AffirmateTests */ = {
 			isa = PBXGroup;
 			children = (
-				039777472903C82C00246260 /* Security */,
 				039777442903C6C300246260 /* Authentication */,
+				039777472903C82C00246260 /* Security */,
 				0397774C29046E3A00246260 /* Network */,
 				0389BC9D286FAB2B00CBDC3B /* AffirmateAppTests.swift */,
 				039777402903BDC200246260 /* AppDelegateTests.swift */,
@@ -921,7 +941,6 @@
 				0376F5C828A102490040CB40 /* NewChatView.swift in Sources */,
 				03E1923228AEA5AC00876C5D /* MessageView.swift in Sources */,
 				03FE3BC02897222D00208D5D /* AffirmateTabView.swift in Sources */,
-				03AE008328B9B9A8000C2FE0 /* WebSocketMessage.swift in Sources */,
 				036A2F1A28F1554C000B8DA4 /* ChatsList.swift in Sources */,
 				037430B428CC2622002DE8AA /* WebSocketObserver.swift in Sources */,
 				037430B628CD21B1002DE8AA /* ChatInputBar.swift in Sources */,
@@ -932,25 +951,30 @@
 				03E1922928AEA2B600876C5D /* ChatView.swift in Sources */,
 				03AE008128B972B6000C2FE0 /* NewParticipantsView.swift in Sources */,
 				036A2F2B28F15A7D000B8DA4 /* Chats.swift in Sources */,
+				03DEF166292CE3EB009AA00E /* SignUpButton.swift in Sources */,
 				03772C97289759A3001DAE4B /* ThrowingTaskButton.swift in Sources */,
 				031FF1F328A08015008343CA /* ServerError.swift in Sources */,
+				03DEF15D292CE3A7009AA00E /* AuthenticationContent.swift in Sources */,
+				03DEF163292CE3D6009AA00E /* AuthenticationFlowSelectionSection.swift in Sources */,
 				036A2F3B28F22E6A000B8DA4 /* Relation.swift in Sources */,
 				03AE008628B9B9C6000C2FE0 /* Data+Extensions.swift in Sources */,
 				038B3A0128F7531200C7AC0A /* ChatInvitationsView.swift in Sources */,
 				037430B828CD2358002DE8AA /* ShowNewParticipantsButton.swift in Sources */,
-				035DE94228B560080026FA55 /* ConfirmConnection.swift in Sources */,
+				03DEF16C292CE412009AA00E /* AuthenticationFields.swift in Sources */,
 				03584BBA28F8E3FF0068D612 /* Log.swift in Sources */,
 				0358D0FA28B2C4BA005FA999 /* AppDelegate.swift in Sources */,
 				03FE3BBC289721A500208D5D /* ChatsView.swift in Sources */,
 				037430B028CACA4B002DE8AA /* AddParticipantButton.swift in Sources */,
-				03A2017228A6D6A100573848 /* JWTToken.swift in Sources */,
 				036A2F2228F159E9000B8DA4 /* NewChatButton.swift in Sources */,
 				03FE3BBA2897214700208D5D /* HomeView.swift in Sources */,
 				03498A6728702E270081A221 /* LocalizedContent.swift in Sources */,
 				037430B228CACD82002DE8AA /* ChatError.swift in Sources */,
+				03DEF160292CE3BE009AA00E /* AuthenticationConfirmationButtonSection.swift in Sources */,
+				03DEF16F292CE426009AA00E /* AuthenticationTitle.swift in Sources */,
 				03E1923828AEA60E00876C5D /* MessageBubbleShape.swift in Sources */,
 				03FE3BC22897273A00208D5D /* AuthenticationObserver.swift in Sources */,
 				036A2F1F28F1591B000B8DA4 /* PopulateChatsList.swift in Sources */,
+				03DEF15A292CDF31009AA00E /* AuthenticationScrollView.swift in Sources */,
 				038B3A0428F7633600C7AC0A /* ChatInvitationsObserver.swift in Sources */,
 				03498A6428701EED0081A221 /* Repository.swift in Sources */,
 				03584BB228F894B40068D612 /* LoginView.swift in Sources */,
@@ -963,15 +987,16 @@
 				037430AA28CAC86C002DE8AA /* NewParticipantRow.swift in Sources */,
 				034FFC8728BB3F89003724FF /* NewParticipantsObserver.swift in Sources */,
 				0397775C2904B84C00246260 /* Persistence.swift in Sources */,
+				03DEF172292CE43A009AA00E /* AffirmateLogo.swift in Sources */,
 				03E1922E28AEA3B000876C5D /* KeyboardHeightObserver.swift in Sources */,
 				0389BC8E286FAB2A00CBDC3B /* ContentView.swift in Sources */,
+				03DEF169292CE3FF009AA00E /* LoginButton.swift in Sources */,
 				037430AC28CAC899002DE8AA /* NewParticipantsUsernameSearchFieldSection.swift in Sources */,
 				0397C7C928FA953400FE8693 /* AffirmateKeychain.swift in Sources */,
 				03A2017028A6D62200573848 /* HTTPActor.swift in Sources */,
 				0389BC8C286FAB2A00CBDC3B /* AffirmateApp.swift in Sources */,
 				0397C7C328FA89F800FE8693 /* EncodedMessageBubble.swift in Sources */,
 				03E1923A28AEA60E00876C5D /* MessageBubbleTailPosition.swift in Sources */,
-				03AE007D28B95D1C000C2FE0 /* Connect.swift in Sources */,
 				03E1923C28AEA88B00876C5D /* ChatSendButton.swift in Sources */,
 				037430A828CAC83F002DE8AA /* NewParticipantPublicUserRow.swift in Sources */,
 				03772C9B28975CAB001DAE4B /* Constants.swift in Sources */,
@@ -1014,20 +1039,23 @@
 				03D9C90E28F12DBB00FCFAE7 /* ChatObserver.swift in Sources */,
 				036A2F3428F16462000B8DA4 /* ShowNewParticipantsButton.swift in Sources */,
 				03D9C90628F12DBA00FCFAE7 /* WebSocketObserver.swift in Sources */,
-				03D9C91D28F12DBB00FCFAE7 /* Connect.swift in Sources */,
 				03D9C91C28F12DBB00FCFAE7 /* UserActor.swift in Sources */,
 				036A2F3C28F22E6A000B8DA4 /* Relation.swift in Sources */,
 				03584BB628F895500068D612 /* SignUpView.swift in Sources */,
 				036A2F2028F1591B000B8DA4 /* PopulateChatsList.swift in Sources */,
+				03DEF16A292CE3FF009AA00E /* LoginButton.swift in Sources */,
 				03D9C91328F12DBB00FCFAE7 /* ChatActor.swift in Sources */,
 				036A2F2A28F15A6E000B8DA4 /* ChatLabel.swift in Sources */,
 				036A2F1B28F15551000B8DA4 /* ChatsList.swift in Sources */,
 				03D9C90928F12DBB00FCFAE7 /* ContentView.swift in Sources */,
 				03D9C8FE28F12DBA00FCFAE7 /* ChatInputBar.swift in Sources */,
+				03DEF173292CE43A009AA00E /* AffirmateLogo.swift in Sources */,
+				03DEF16D292CE412009AA00E /* AuthenticationFields.swift in Sources */,
 				039777592904B06700246260 /* Affirmate.xcdatamodeld in Sources */,
 				03D9C92D28F12DBB00FCFAE7 /* ThrowingTaskButton.swift in Sources */,
 				03D9C91428F12DBB00FCFAE7 /* LocalizedContent.swift in Sources */,
 				03D9C90228F12DBA00FCFAE7 /* HTTPActor.swift in Sources */,
+				03DEF170292CE426009AA00E /* AuthenticationTitle.swift in Sources */,
 				038B3A0628F7680E00C7AC0A /* ChatInvitationsView.swift in Sources */,
 				03D9C90828F12DBB00FCFAE7 /* MessageView.swift in Sources */,
 				03D9C92228F12DBB00FCFAE7 /* AuthenticationView.swift in Sources */,
@@ -1035,34 +1063,36 @@
 				036C17142906FEBB0008016C /* NSManagedObject+.swift in Sources */,
 				03D9C91128F12DBB00FCFAE7 /* AuthenticationObserver.swift in Sources */,
 				03D9C90F28F12DBB00FCFAE7 /* Data+Extensions.swift in Sources */,
+				03DEF161292CE3BE009AA00E /* AuthenticationConfirmationButtonSection.swift in Sources */,
 				03D9C92B28F12DBB00FCFAE7 /* Constants.swift in Sources */,
 				03584BB328F894B40068D612 /* LoginView.swift in Sources */,
 				03D9C92E28F12DBB00FCFAE7 /* ServerError.swift in Sources */,
 				03D9C92028F12DBB00FCFAE7 /* AffirmateTabView.swift in Sources */,
 				03D9C91A28F12DBB00FCFAE7 /* HomeView.swift in Sources */,
+				03DEF15B292CDF31009AA00E /* AuthenticationScrollView.swift in Sources */,
+				03DEF164292CE3D6009AA00E /* AuthenticationFlowSelectionSection.swift in Sources */,
 				038B3A0728F7851A00C7AC0A /* ChatInvitationsObserver.swift in Sources */,
 				03D9C92628F12DBB00FCFAE7 /* ChatError.swift in Sources */,
 				03AE207C28FF719800B4C392 /* AffirmateCrypto.swift in Sources */,
 				03D9C91728F12DBB00FCFAE7 /* ChatsObserver.swift in Sources */,
 				03D9C90C28F12DBB00FCFAE7 /* MessageBubble.swift in Sources */,
 				03D9C91228F12DBB00FCFAE7 /* AuthenticationActor.swift in Sources */,
+				03DEF15E292CE3A7009AA00E /* AuthenticationContent.swift in Sources */,
 				03D9C90328F12DBA00FCFAE7 /* ChatSendButton.swift in Sources */,
 				03D9C91928F12DBB00FCFAE7 /* MessageBubbleTailPosition.swift in Sources */,
 				03D9C92A28F12DBB00FCFAE7 /* ChatView.swift in Sources */,
 				0397C7C428FA89F800FE8693 /* EncodedMessageBubble.swift in Sources */,
-				03D9C90028F12DBA00FCFAE7 /* ConfirmConnection.swift in Sources */,
 				03D9C90B28F12DBB00FCFAE7 /* Message.swift in Sources */,
 				03584BBB28F8E3FF0068D612 /* Log.swift in Sources */,
 				036A2F3728F22BD4000B8DA4 /* ProfileView.swift in Sources */,
 				03D9C90128F12DBA00FCFAE7 /* MessageBubbleShape.swift in Sources */,
 				03D9C90728F12DBA00FCFAE7 /* Repository.swift in Sources */,
 				0397C7CA28FA953400FE8693 /* AffirmateKeychain.swift in Sources */,
-				03D9C92828F12DBB00FCFAE7 /* WebSocketMessage.swift in Sources */,
 				03D9C92928F12DBB00FCFAE7 /* TaskButton.swift in Sources */,
 				03D9C91F28F12DBB00FCFAE7 /* AffirmateApp.swift in Sources */,
-				03D9C90D28F12DBB00FCFAE7 /* JWTToken.swift in Sources */,
 				036A2F2C28F15A7E000B8DA4 /* Chats.swift in Sources */,
 				0397775D2904B84C00246260 /* Persistence.swift in Sources */,
+				03DEF167292CE3EB009AA00E /* SignUpButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

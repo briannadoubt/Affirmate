@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct LoginView: View {
-    
     @Binding var username: String
     @Binding var password: String
     

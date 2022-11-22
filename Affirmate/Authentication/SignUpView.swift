@@ -14,6 +14,7 @@ struct SignUpView: View {
     @Binding var username: String
     @Binding var password: String
     @Binding var confirmPassword: String
+    
     var body: some View {
         Section {
             TextField("First Name", text: $firstName)

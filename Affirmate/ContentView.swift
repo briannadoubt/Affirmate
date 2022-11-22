@@ -32,18 +32,18 @@ struct ContentView: View {
         case .loggedIn:
             AffirmateTabView()
                 .environmentObject(authentication)
-                #if !os(watchOS)
-                .task {
-                    await AffirmateApp.requestNotificationPermissions()
-                    if let token = AppDelegate.deviceToken {
-                        do {
-                            try await authentication.update(deviceToken: token)
-                        } catch {
-                            print("Failed to update device token:", error)
-                        }
-                    }
-                }
-                #endif
+//                #if !os(watchOS)
+//                .task {
+//                    await AffirmateApp.requestNotificationPermissions()
+//                    if let token = AppDelegate.deviceToken {
+//                        do {
+//                            try await authentication.update(deviceToken: token)
+//                        } catch {
+//                            print("Failed to update device token:", error)
+//                        }
+//                    }
+//                }
+//                #endif
                 .task {
                     do {
                         try await authentication.getCurrentUser()

@@ -14,7 +14,7 @@ protocol UserActable: Repository, Actor {
     func find(username: String?) async throws -> [UserPublic]
 }
 
-actor UserActor {
+actor UserActor: UserActable {
     
     private let http = HTTPActor()
     

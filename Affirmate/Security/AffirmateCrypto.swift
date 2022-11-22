@@ -8,6 +8,7 @@
 import AffirmateShared
 import CryptoKit
 import Foundation
+import KeychainAccess
 
 enum EncryptionError: LocalizedError {
     case failedToGenerateRandomBytes
@@ -42,6 +43,7 @@ extension Curve25519.KeyAgreement.PrivateKey: GenericPasswordConvertible {
         String(data: rawRepresentation, encoding: .utf8)!
     }
 }
+
 extension Curve25519.Signing.PrivateKey: GenericPasswordConvertible {
     public var description: String {
         String(data: rawRepresentation, encoding: .utf8)!
@@ -51,7 +53,11 @@ extension Curve25519.Signing.PrivateKey: GenericPasswordConvertible {
 /// A collection of functions for encrypting and decrypting messages.
 actor AffirmateCrypto {
     
-    let keychain = AffirmateKeychain.chat
+    let keychain: Keychain
+    
+    init(keychain: Keychain = AffirmateKeychain.chat) {
+        self.keychain = keychain
+    }
     
     /// Create a salt for key derivation. Stored on the server.
     /// - Returns: A ` Data` blob containing 32 random bytes.

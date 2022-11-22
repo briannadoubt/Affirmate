@@ -5,8 +5,26 @@
 //  Created by Bri on 8/21/22.
 //
 
-#if !os(macOS)
 import SwiftUI
+
+#if os(macOS)
+import AppKit
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    static var deviceToken: Data?
+    func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Self.deviceToken = deviceToken
+    }
+    func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print(error)
+    }
+    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
+        print(userInfo)
+    }
+}
+
+#else
+
 import UIKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
@@ -16,11 +34,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         return true
     }
+    
     // No callback in simulator
     // -- must use device to get valid push token
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Self.deviceToken = deviceToken
     }
+    
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print(error)
     }
@@ -38,27 +58,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             else {
                 return .noData
             }
+            // TODO: Handle background notification
         case .inactive:
             break
         @unknown default:
             assertionFailure()
         }
         return .noData
-    }
-}
-#else
-import SwiftUI
-import AppKit
-class AppDelegate: NSObject, NSApplicationDelegate {
-    static var deviceToken: Data?
-    func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        Self.deviceToken = deviceToken
-    }
-    func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print(error)
-    }
-    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-        print(userInfo)
     }
 }
 #endif

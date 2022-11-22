@@ -5,6 +5,7 @@
 //  Created by Bri on 9/9/22.
 //
 
+import AffirmateShared
 import Foundation
 import Starscream
 import SwiftUI
@@ -75,7 +76,7 @@ extension WebSocketObserver {
         self.chatId = chatId
         if let socket {
             socket.connect()
-            let connect = Connect(connect: true, chatId: chatId)
+            let connect = Connect(chatId: chatId)
             try write(connect)
         }
     }
@@ -104,7 +105,7 @@ extension WebSocketObserver {
             print("WebSocket: did connect: \(headers)")
             
             do {
-                let connect = Connect(connect: true, chatId: chatId)
+                let connect = Connect(chatId: chatId)
                 try write(connect)
             } catch {
                 print("Connection message failed to send:", error)

@@ -5,6 +5,7 @@
 //  Created by Bri on 8/26/22.
 //
 
+import AffirmateShared
 import Foundation
 
 extension Data {

@@ -7,6 +7,7 @@
 
 import AffirmateShared
 import SwiftUI
+import KeychainAccess
 
 protocol AuthenticationObservable: ObservableObject {
     associatedtype _AuthenticationObservable
@@ -24,7 +25,7 @@ protocol AuthenticationObservable: ObservableObject {
     func signUp(user create: UserCreate) async throws
     func login(username: String, password: String) async throws
     func signOut(serverHasValidKey: Bool) async throws
-    func update(deviceToken token: Data?) async throws
+//    func update(deviceToken token: Data?) async throws
     func refesh(sessionToken: SessionTokenResponse) async throws
     func store(sessionToken: SessionTokenResponse?) throws
 }
@@ -37,14 +38,17 @@ final class AuthenticationObserver: AuthenticationObservable {
     @Published var currentUser: UserResponse?
     
     let authenticationActor: AuthenticationActable
-    let meActor: UserActor
+    let meActor: UserActable
+    let sessionKeychain: Keychain
     
     init(
         authenticationActor: AuthenticationActable = AuthenticationActor(),
-        meActor: UserActor = UserActor()
+        meActor: UserActable = UserActor(),
+        sessionKeychain: Keychain = AffirmateKeychain.session
     ) {
         self.authenticationActor = authenticationActor
         self.meActor = meActor
+        self.sessionKeychain = sessionKeychain
     }
     
     func setCurrentAuthenticationState() async {
@@ -62,7 +66,7 @@ final class AuthenticationObserver: AuthenticationObservable {
             self.currentUser = user
             if user == nil {
                 do {
-                    try AffirmateKeychain.session.remove(Constants.KeyChain.Session.token)
+                    try sessionKeychain.remove(Constants.KeyChain.Session.token)
                 } catch {
                     print("Failed to remove tokens")
                 }
@@ -76,6 +80,8 @@ final class AuthenticationObserver: AuthenticationObservable {
             await setCurrentUser(to: me)
         } catch {
             await setCurrentUser(to: nil)
+            try sessionKeychain.remove(Constants.KeyChain.Session.token)
+            throw error
         }
     }
     
@@ -98,6 +104,8 @@ final class AuthenticationObserver: AuthenticationObservable {
             await setCurrentUser(to: loginResponse.user)
             await setState(to: .loggedIn)
         } catch {
+            try store(sessionToken: nil)
+            await setCurrentUser(to: nil)
             await setState(to: .loggedOut)
             throw error
         }
@@ -107,7 +115,7 @@ final class AuthenticationObserver: AuthenticationObservable {
         let previousState = state
         do {
             await setState(to: .loading(message: "Logging out..."))
-            try AffirmateKeychain.session.remove(Constants.KeyChain.Session.token)
+            try store(sessionToken: nil)
             await setCurrentUser(to: nil)
             await setState(to: .loggedOut)
         } catch {
@@ -115,16 +123,8 @@ final class AuthenticationObserver: AuthenticationObservable {
             throw error
         }
         if serverHasValidKey {
-            do {
-                try await authenticationActor.logout()
-            } catch {
-                print("Log out request failed:", error)
-            }
+            try await authenticationActor.logout()
         }
-    }
-    
-    func update(deviceToken token: Data?) async throws {
-        try await authenticationActor.update(deviceToken: token)
     }
     
     func refesh(sessionToken: SessionTokenResponse) async throws {
@@ -135,13 +135,16 @@ final class AuthenticationObserver: AuthenticationObservable {
     
     func store(sessionToken: SessionTokenResponse?) throws {
         if let sessionToken {
-            try AffirmateKeychain.session.set(sessionToken.value, key: Constants.KeyChain.Session.token)
+            try sessionKeychain.set(sessionToken.value, key: Constants.KeyChain.Session.token)
         } else {
-            try AffirmateKeychain.session.remove(Constants.KeyChain.Session.token)
+            try sessionKeychain.remove(Constants.KeyChain.Session.token)
         }
     }
+}
+
+extension AuthenticationObserver {
     
-    enum State {
+    enum State: Equatable {
         case initial
         case loading(message: String)
         case loggedOut
@@ -155,6 +158,17 @@ final class AuthenticationObserver: AuthenticationObservable {
                 return "Loading: " + message
             default:
                 return nil
+            }
+        }
+        
+        static func ==(lhs: Self, rhs: Self) -> Bool {
+            switch (lhs, rhs) {
+            case (.initial, .initial), (.loggedOut, .loggedOut), (.loggedIn, .loggedIn):
+                return true
+            case (.loading(let lhsMessage), .loading(let rhsMessage)):
+                return lhsMessage == rhsMessage
+            default:
+                return false
             }
         }
     }

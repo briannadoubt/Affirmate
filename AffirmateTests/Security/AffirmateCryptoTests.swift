@@ -7,6 +7,7 @@
 
 @testable import Affirmate
 import CryptoKit
+import KeychainAccess
 import XCTest
 
 final class AffirmateCryptoTests: XCTestCase {
@@ -14,14 +15,19 @@ final class AffirmateCryptoTests: XCTestCase {
     var crypto: AffirmateCrypto!
     let chatId = UUID()
     let messageText = "Test message"
+    var keychain: Keychain!
 
     override func setUpWithError() throws {
-        self.crypto = AffirmateCrypto()
+        self.keychain = Keychain()
+        do { try keychain.removeAll() } catch { }
+        self.crypto = AffirmateCrypto(keychain: keychain)
         try super.setUpWithError()
     }
 
     override func tearDownWithError() throws {
+        do { try keychain.removeAll() } catch { }
         self.crypto = nil
+        self.keychain = nil
         try super.tearDownWithError()
     }
 
@@ -36,7 +42,6 @@ final class AffirmateCryptoTests: XCTestCase {
         XCTAssertEqual(signingPrivateKey.count, 32)
         XCTAssertNoThrow(try Curve25519.Signing.PublicKey(rawRepresentation: signingPublicKey))
         XCTAssertNoThrow(try Curve25519.Signing.PrivateKey(rawRepresentation: signingPrivateKey))
-        try await crypto.keychain.removeAll()
     }
     
     func test_generateEncryptionKeyPair() async throws {
@@ -45,7 +50,6 @@ final class AffirmateCryptoTests: XCTestCase {
         XCTAssertEqual(encryptionPrivateKey.count, 32)
         XCTAssertNoThrow(try Curve25519.KeyAgreement.PublicKey(rawRepresentation: encryptionPublicKey))
         XCTAssertNoThrow(try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: encryptionPrivateKey))
-        try await crypto.keychain.removeAll()
     }
     
     func test_signingKey_for_chatId() async throws {
@@ -61,33 +65,27 @@ final class AffirmateCryptoTests: XCTestCase {
     func test_store_signingKey() async throws {
         let (_, privateKey) = try await crypto.generateSigningKeyPair(for: chatId)
         XCTAssertNoThrow(try Curve25519.Signing.PrivateKey(rawRepresentation: privateKey))
-        try await crypto.keychain.removeAll()
     }
     
     func test_store_encryptionKey() async throws {
         let (_, privateEncryptionKey) = try await crypto.generateEncryptionKeyPair(for: chatId)
         XCTAssertNoThrow(try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privateEncryptionKey))
-        try await crypto.keychain.removeAll()
     }
     
     func test_getPrivateEncryptionKey() async throws {
-        let (_, _ /*privateEncryptionKeyData*/) = try await crypto.generateEncryptionKeyPair(for: chatId)
-        let _ /*wrappedPrivateEncryptionKey*/ = try await crypto.getPrivateEncryptionKey(for: chatId)
-        throw XCTSkip("Keychain doesn't store value.")
-//        let privateEncryptionKey = try XCTUnwrap(wrappedPrivateEncryptionKey)
-//        let expectedOutput = try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privateEncryptionKeyData)
-//        XCTAssertEqual(privateEncryptionKey.description, expectedOutput.description)
-//        try await crypto.keychain.removeAll()
+        let (_, privateEncryptionKeyData) = try await crypto.generateEncryptionKeyPair(for: chatId)
+        let wrappedPrivateEncryptionKey = try await crypto.getPrivateEncryptionKey(for: chatId)
+        let privateEncryptionKey = try XCTUnwrap(wrappedPrivateEncryptionKey)
+        let expectedOutput = try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privateEncryptionKeyData)
+        XCTAssertEqual(privateEncryptionKey.rawRepresentation.base64EncodedString(), expectedOutput.rawRepresentation.base64EncodedString())
     }
     
     func test_getPrivateSigningKey() async throws {
-        let (_, _ /*privateSigningKeyData*/) = try await crypto.generateSigningKeyPair(for: chatId)
-        let _ /*wrappedPrivateSigningKey*/ = try await crypto.getPrivateSigningKey(for: chatId)
-        throw XCTSkip("Keychain doesn't store value in test environment.")
-//        let privateEncryptionKey = try XCTUnwrap(wrappedPrivateSigningKey)
-//        let expectedOutput = try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privateSigningKeyData)
-//        XCTAssertEqual(privateEncryptionKey.description, expectedOutput.description)
-//        try await crypto.keychain.removeAll()
+        let (_, privateSigningKeyData) = try await crypto.generateSigningKeyPair(for: chatId)
+        let wrappedPrivateSigningKey = try await crypto.getPrivateSigningKey(for: chatId)
+        let privateEncryptionKey = try XCTUnwrap(wrappedPrivateSigningKey)
+        let expectedOutput = try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privateSigningKeyData)
+        XCTAssertEqual(privateEncryptionKey.rawRepresentation.base64EncodedString(), expectedOutput.rawRepresentation.base64EncodedString())
     }
     
     func test_encrypt() async throws {

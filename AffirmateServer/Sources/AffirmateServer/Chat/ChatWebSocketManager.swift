@@ -10,7 +10,6 @@ import Vapor
 import FluentKit
 
 actor ChatWebSocketManager: WebSocketManager {
-    
     /// The connected WebSocketClients
     var clients: ChatWebSocketClients
     
@@ -46,7 +45,6 @@ actor ChatWebSocketManager: WebSocketManager {
 }
 
 extension ChatWebSocketManager {
-    
     /// Handle a `WebSocketMessage<Message.Create>` from an open `WebSocket` connection.
     /// - Parameters:
     ///   - webSocketMessage: The message from the `WebSocket` connection.
