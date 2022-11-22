@@ -155,7 +155,6 @@
 		03DEF17A292D8F52009AA00E /* MockAffirmateUserActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033A92CC292AFED8001FCB1E /* MockAffirmateUserActor.swift */; };
 		03DEF17B292D8F52009AA00E /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039777512904713800246260 /* MockURLProtocol.swift */; };
 		03DEF17C292D8F52009AA00E /* AffirmateAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BC9D286FAB2B00CBDC3B /* AffirmateAppTests.swift */; };
-		03DEF17D292D8F52009AA00E /* AppDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039777402903BDC200246260 /* AppDelegateTests.swift */; };
 		03DEF17E292D8F52009AA00E /* AffirmateCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397774A2903CE8300246260 /* AffirmateCryptoTests.swift */; };
 		03DEF17F292D8F52009AA00E /* AuthenticationActorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF174292D45A1009AA00E /* AuthenticationActorTests.swift */; };
 		03DEF180292D8F52009AA00E /* MockAuthenticationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397775329049F5B00246260 /* MockAuthenticationObserver.swift */; };
@@ -1131,7 +1130,6 @@
 				03DEF182292D8F52009AA00E /* MockAuthenticationActor.swift in Sources */,
 				03DEF17B292D8F52009AA00E /* MockURLProtocol.swift in Sources */,
 				03D9C8E228F12D2E00FCFAE7 /* WatchTests.swift in Sources */,
-				03DEF17D292D8F52009AA00E /* AppDelegateTests.swift in Sources */,
 				03DEF178292D8F52009AA00E /* AuthenticationObserverTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

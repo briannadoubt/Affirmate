@@ -5,7 +5,11 @@
 //  Created by Bri on 10/22/22.
 //
 
+#if os(watchOS)
+@testable import AffirmateWatch
+#else
 @testable import Affirmate
+#endif
 import AffirmateShared
 import Alamofire
 import Foundation

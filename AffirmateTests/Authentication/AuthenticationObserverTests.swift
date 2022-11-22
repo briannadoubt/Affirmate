@@ -5,8 +5,12 @@
 //  Created by Bri on 11/20/22.
 //
 
-import AffirmateShared
+#if os(watchOS)
+@testable import AffirmateWatch
+#else
 @testable import Affirmate
+#endif
+import AffirmateShared
 import XCTest
 import KeychainAccess
 
