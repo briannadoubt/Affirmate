@@ -5,6 +5,7 @@
 //  Created by Bri on 8/8/22.
 //
 
+import AffirmateShared
 import SwiftUI
 
 struct CreateNewChatButton: View {
@@ -56,18 +57,18 @@ struct NewChatView: View {
         }
     }
     
-    var newDraftParticipants: [Participant.Draft] {
+    var newDraftParticipants: [ParticipantDraft] {
         return newParticipantsObserver.selectedParticipants.map { index in
-            let role = index.value
-            let publicUser = index.key
-            return Participant.Draft(
+            let role = index.value.role
+            let publicUser = index.value.user
+            return ParticipantDraft(
                 role: role,
                 user: publicUser.id
             )
         }
     }
     
-    var newPublicUsers: [AffirmateUser.Public] {
+    var newPublicUsers: [UserPublic] {
         newParticipantsObserver.searchResults.filter { publicUser in
             authenticationObserver.currentUser?.id != publicUser.id
         }

@@ -90,7 +90,7 @@ public struct MessageView: View {
 //                sender: Participant.GetResponse(
 //                    id: UUID(),
 //                    role: .participant,
-//                    user: AffirmateUser.ParticipantResponse(
+//                    user: User.ParticipantResponse(
 //                        id: UUID(),
 //                        username: "meowface"
 //                    ),
@@ -101,7 +101,7 @@ public struct MessageView: View {
 //                recipient: Participant.GetResponse(
 //                    id: UUID(),
 //                    role: .admin,
-//                    user: AffirmateUser.ParticipantResponse(
+//                    user: User.ParticipantResponse(
 //                        id: UUID(),
 //                        username: "barkface"
 //                    ),

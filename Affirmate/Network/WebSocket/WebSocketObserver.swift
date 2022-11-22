@@ -48,14 +48,12 @@ extension WebSocketObserver {
     func start(_ urlRequest: URLRequest) {
         socket = WebSocket(request: urlRequest)
         socket?.delegate = self
-        isConnected = true
     }
     
     /// Disconnect from the server and sever the connection.
     func disconnect() {
         socket?.disconnect()
         socket = nil
-        isConnected = false
     }
     
     /// Write a codable object to the server via the active `WebSocket` connection.

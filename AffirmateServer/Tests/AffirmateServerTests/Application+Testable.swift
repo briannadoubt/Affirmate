@@ -23,7 +23,7 @@ extension Application {
 
 extension XCTApplicationTester {
     
-    public func login(user: AffirmateUser) throws -> SessionToken {
+    public func login(user: User) throws -> SessionToken {
         var request = XCTHTTPRequest(
             method: .POST,
             url: .init(path: "/auth/login"),
@@ -42,7 +42,7 @@ extension XCTApplicationTester {
 //        headers: HTTPHeaders = [:],
 //        body: ByteBuffer? = nil,
 //        loggedInRequest: Bool = false,
-//        loggedInUser: AffirmateUser? = nil,
+//        loggedInUser: User? = nil,
 //        file: StaticString = #file,
 //        line: UInt = #line,
 //        beforeRequest: (inout XCTHTTPRequest) throws -> () = { _ in },
@@ -56,11 +56,11 @@ extension XCTApplicationTester {
 //        )
 //
 //        if (loggedInRequest || loggedInUser != nil) {
-//            let userToLogin: AffirmateUser
+//            let userToLogin: User
 //            if let user = loggedInUser {
 //                userToLogin = user
 //            } else {
-//                userToLogin = AffirmateUser(firstName: "Meow", lastName: "Face", username: "mewoface", email: "meowface@fake.com", passwordHash: try Bcrypt.hash("Test123$"))
+//                userToLogin = User(firstName: "Meow", lastName: "Face", username: "mewoface", email: "meowface@fake.com", passwordHash: try Bcrypt.hash("Test123$"))
 //            }
 //
 //            let token = try login(user: userToLogin)

@@ -5,6 +5,7 @@
 //  Created by Bri on 7/1/22.
 //
 
+import AffirmateShared
 import Fluent
 import Vapor
 
@@ -18,13 +19,13 @@ struct AuthenticationRouteCollection: RouteCollection {
         // "/new" is an open endpoint with no security validation. In the future, work in some middleware to handle denying requests based on the rate of requests, end-user's IP address, variability in account information, and other suspicious activity.
         auth.post("new") { request async throws -> HTTPStatus in
             try await request.db.transaction { database in
-                try AffirmateUser.Create.validate(content: request)
-                let create = try request.content.decode(AffirmateUser.Create.self)
+                try UserCreate.validate(content: request)
+                let create = try request.content.decode(UserCreate.self)
                 guard create.password == create.confirmPassword else {
                     throw Abort(.badRequest, reason: "Passwords do not match")
                 }
                 let passwordHash = try Bcrypt.hash(create.password)
-                let user = AffirmateUser(
+                let user = User(
                     firstName: create.firstName,
                     lastName: create.lastName,
                     username: create.username,
@@ -36,18 +37,18 @@ struct AuthenticationRouteCollection: RouteCollection {
             }
         }
         
-        let passwordProtected = auth.grouped(AffirmateUser.authenticator())
+        let passwordProtected = auth.grouped(User.authenticator())
         
         // MARK: - GET: /auth/login
         // "/login" requires Basic Authentication data containing the username and password
-        passwordProtected.get("login") { request async throws -> AffirmateUser.LoginResponse in
+        passwordProtected.get("login") { request async throws -> UserLoginResponse in
             try await request.db.transaction { database in
-                let currentUser = try request.auth.require(AffirmateUser.self)
+                let currentUser = try request.auth.require(User.self)
                 let sessionToken = try currentUser.generateToken()
                 try await sessionToken.save(on: database)
-                let loginResponse = AffirmateUser.LoginResponse(
-                    sessionToken: sessionToken,
-                    user: try await AffirmateUser.getCurrentUserResponse(currentUser, database: database)
+                let loginResponse = UserLoginResponse(
+                    sessionToken: SessionTokenResponse(id: try sessionToken.requireID(), value: sessionToken.value),
+                    user: try await User.getCurrentUserResponse(currentUser, database: database)
                 )
                 return loginResponse
             }
@@ -75,56 +76,7 @@ struct AuthenticationRouteCollection: RouteCollection {
         // NOTE: This route requires no prior authentication since it is used for sign up.
 //        auth.get("apple") { request async throws -> Token.Response in
 //            let appleIdentityToken = try await request.jwt.apple.verify()
-//            let payload = Token(user: <#T##AffirmateUser#>)
+//            let payload = Token(user: <#T##User#>)
 //        }
-    }
-}
-
-extension AffirmateUser {
-    
-    static func getCurrentUserResponse(_ currentUser: AffirmateUser, database: Database) async throws -> AffirmateUser.GetResponse {
-        let chatInvitations = try await currentUser.$chatInvitations
-            .query(on: database)
-            .with(\.$openInvitations) {
-                $0
-                    .with(\.$invitedBy) {
-                        $0.with(\.$publicKey)
-                        $0.with(\.$user)
-                    }
-                    .with(\.$user)
-                    .with(\.$chat) {
-                        $0.with(\.$participants) {
-                            $0.with(\.$user)
-                        }
-                    }
-            }
-            .all()
-            .flatMap { chat in
-                chat.openInvitations
-            }
-            .filter {
-                try $0.user.requireID() == currentUser.requireID()
-            }
-        let getResponse = try AffirmateUser.GetResponse(
-            id: currentUser.requireID(),
-            firstName: currentUser.firstName,
-            lastName: currentUser.lastName,
-            username: currentUser.username,
-            email: currentUser.email,
-            chatInvitations: chatInvitations.map {
-                return try ChatInvitation.GetResponse(
-                    id: $0.requireID(),
-                    role: $0.role,
-                    userId: $0.user.requireID(),
-                    invitedBy: $0.invitedBy.requireID(),
-                    invitedByUsername: $0.invitedBy.user.username,
-                    chatId: $0.chat.requireID(),
-                    chatName: $0.chat.name,
-                    chatParticipantUsernames: $0.chat.participants.map { $0.user.username },
-                    chatSalt: $0.chat.salt
-                )
-            }
-        )
-        return getResponse
     }
 }

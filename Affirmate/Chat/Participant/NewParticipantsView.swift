@@ -5,6 +5,7 @@
 //  Created by Bri on 8/26/22.
 //
 
+import AffirmateShared
 import SwiftUI
 
 struct NewParticipantsView: View {
@@ -14,7 +15,7 @@ struct NewParticipantsView: View {
     
     var participants: Set<Participant>
     
-    var newPublicUsers: [AffirmateUser.Public] {
+    var newPublicUsers: [UserPublic] {
         newParticipantsObserver.searchResults.filter { publicUser in
             !participants.contains { user in
                 publicUser.id == user.id

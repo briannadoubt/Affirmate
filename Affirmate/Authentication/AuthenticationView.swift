@@ -5,6 +5,7 @@
 //  Created by Bri on 7/31/22.
 //
 
+import AffirmateShared
 import SwiftUI
 
 struct AuthenticationView: View {
@@ -46,7 +47,7 @@ struct AuthenticationView: View {
     func signUp() {
         Task {
             do {
-                let newUser = AffirmateUser.Create(
+                let newUser = UserCreate(
                     firstName: firstName,
                     lastName: lastName,
                     username: username,

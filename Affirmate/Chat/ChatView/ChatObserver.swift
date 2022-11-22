@@ -5,6 +5,7 @@
 //  Created by Bri on 8/18/22.
 //
 
+import AffirmateShared
 import Alamofire
 import CoreData
 import CryptoKit
@@ -28,8 +29,6 @@ class ChatObserver: WebSocketObserver {
     /// The name of the chat.
     @Published var name: String
     
-//    @ObservedObject var chat: Chat
-    
     /// The url that opens this chat in the app.
     var shareableUrl: URL {
         URL(string: "affirmate://chat?chatId:" + chatId.uuidString)!
@@ -52,10 +51,9 @@ class ChatObserver: WebSocketObserver {
     /// Create a `ChatObserver` with a an existing `Chat`.
     /// - Parameters:
     ///   - chat: The chat to observe
-    ///   - currentUserId: <#currentUserId description#>
-    ///   - managedObjectContext: <#managedObjectContext description#>
+    ///   - currentUserId: The userId of the currently signed in user
+    ///   - managedObjectContext: The context for the user's private icloud core data store.
     init(chat: Chat, currentUserId: UUID, managedObjectContext: NSManagedObjectContext) {
-//        self.chat = chat
         self.chatId = chat.id!
         self.name = chat.name ?? "Chat"
         self.currentUserId = currentUserId
@@ -81,7 +79,7 @@ class ChatObserver: WebSocketObserver {
         guard let ephemeralPublicKeyData = message.ephemeralPublicKeyData, let ciphertext = message.ciphertext, let signature = message.signature else {
             throw DecryptionError.failedToBuildSealedMessage
         }
-        let sealedMessage = Message.Sealed(
+        let sealedMessage = MessageSealed(
             ephemeralPublicKeyData: ephemeralPublicKeyData,
             ciphertext: ciphertext,
             signature: signature
@@ -94,7 +92,7 @@ class ChatObserver: WebSocketObserver {
     }
     
     /// Send a new message to the current chat.
-    func sendMessage(_ text: String, to participants: Set<Participant>) async throws {
+    func sendMessage(_ text: String, to participants: Array<Participant>) async throws {
         guard let textData = text.data(using: .utf8) else {
             throw EncryptionError.failedToGetDataRepresentation
         }
@@ -113,24 +111,24 @@ class ChatObserver: WebSocketObserver {
             }
             let theirEncryptionKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: encryptionKey)
             let encryptedTextDataUsToThem = try await crypto.encrypt(textData, salt: salt, to: theirEncryptionKey, signedBy: privateKey)
-            let newMessageUsToThem = Message.Sealed(
+            let newMessageUsToThem = MessageSealed(
                 ephemeralPublicKeyData: encryptedTextDataUsToThem.ephemeralPublicKeyData,
                 ciphertext: encryptedTextDataUsToThem.ciphertext,
                 signature: encryptedTextDataUsToThem.signature
             )
-            let messageCreate = Message.Create(sealed: newMessageUsToThem, recipient: participantId)
+            let messageCreate = MessageCreate(sealed: newMessageUsToThem, recipient: participantId)
             try write(messageCreate)
         }
     }
     
     /// Invite new participants to the current chat.
-    func inviteParticipants(_ newParticipants: [Participant.Create]) throws {
+    func inviteParticipants(_ newParticipants: [ParticipantCreate]) throws {
         print(newParticipants)
     }
     
     /// Handle new data recieved from the `WebSocket` connection.
     func recieved(_ data: Data) {
-        if let newMessage = try? data.decodeWebSocketMessage(Message.GetResponse.self) {
+        if let newMessage = try? data.decodeWebSocketMessage(MessageResponse.self) {
             Task {
                 do {
                     try await self.insert(newMessage.data)
@@ -163,7 +161,7 @@ private extension ChatObserver {
     }
     
     /// Insert a new message into the local chat, updating the view.
-    @MainActor func insert(_ messageContent: Message.GetResponse) throws {
+    @MainActor func insert(_ messageContent: MessageResponse) throws {
         try withAnimation {
             if try managedObjectContext.doesNotExist(Message.self, id: messageContent.id) {
                 let message = Message(context: managedObjectContext)

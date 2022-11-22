@@ -5,6 +5,7 @@ import Vapor
 import APNS
 import APNSwift
 import JWT
+import Redis
 
 // configures your application
 public func configure(_ app: Application) throws {
@@ -23,7 +24,7 @@ public func configure(_ app: Application) throws {
     }
 
     // Configure migrations
-    app.migrations.add(AffirmateUser.Migration())
+    app.migrations.add(User.Migration())
     app.migrations.add(Chat.Migration())
     app.migrations.add(PublicKey.Migration())
     app.migrations.add(Participant.Migration())

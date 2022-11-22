@@ -1,32 +1,33 @@
 //
-//  AffirmateUserActor.swift
+//  UserActor.swift
 //  Affirmate
 //
 //  Created by Bri on 8/18/22.
 //
 
-import SwiftUI
+import AffirmateShared
 import Alamofire
+import SwiftUI
 
-protocol AffirmateUserActable: Repository, Actor {
-    func me() async throws -> AffirmateUser
-    func find(username: String?) async throws -> [AffirmateUser.Public]
+protocol UserActable: Repository, Actor {
+    func me() async throws -> UserResponse
+    func find(username: String?) async throws -> [UserPublic]
 }
 
-actor AffirmateUserActor {
+actor UserActor {
     
     private let http = HTTPActor()
     
-    func me() async throws -> AffirmateUser {
-        try await http.requestDecodable(Request.me, to: AffirmateUser.self)
+    func me() async throws -> UserResponse {
+        try await http.requestDecodable(Request.me, to: UserResponse.self)
     }
     
-    func find(username: String?) async throws -> [AffirmateUser.Public] {
-        try await http.requestDecodable(Request.find(username: username), to: [AffirmateUser.Public].self)
+    func find(username: String?) async throws -> [UserPublic] {
+        try await http.requestDecodable(Request.find(username: username), to: [UserPublic].self)
     }
 }
 
-extension AffirmateUserActor {
+extension UserActor {
     
     enum Request: URLRequestConvertible {
         

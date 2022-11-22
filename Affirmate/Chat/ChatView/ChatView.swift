@@ -5,6 +5,7 @@
 //  Created by Bri on 8/18/22.
 //
 
+import AffirmateShared
 import SwiftUI
 import ReversedScrollView
 import UniformTypeIdentifiers
@@ -20,7 +21,7 @@ public struct ChatView: View {
     @SceneStorage("chat_newMessageText") var newMessageText = ""
     @SceneStorage("chat_showingNewParticipants") var showingNewParticipants = false
     
-    @State var presentedParticipant: Participant.GetResponse?
+    @State var presentedParticipant: ParticipantResponse?
     @State var presentedCopiedUrl = false
     
     #if os(iOS)
@@ -42,7 +43,7 @@ public struct ChatView: View {
             }
             // TODO: Verify (with science) whether there are "not allowed" words in the message.
             do {
-                try await chatObserver.sendMessage(newMessageText, to: Set(participants))
+                try await chatObserver.sendMessage(newMessageText, to: Array(participants))
             } catch {
                 print(error)
             }

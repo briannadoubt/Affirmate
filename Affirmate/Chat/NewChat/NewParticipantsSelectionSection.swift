@@ -14,7 +14,7 @@ struct NewParticipantsSelectionSection: View {
     var body: some View {
         if !newParticipantObserver.selectedParticipants.isEmpty {
             Section {
-                ForEach(Array(newParticipantObserver.selectedParticipants.keys), id: \.id) { user in
+                ForEach(newParticipantObserver.selectedParticipants.map { $1.user }, id: \.id) { user in
                     NewParticipantRow(publicUser: user)
                 }
             } header: {

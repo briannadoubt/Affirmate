@@ -25,7 +25,7 @@ final class AuthenticationRouteCollectionTests: XCTestCase {
         let username = "meowface"
         let email = "meow@fake.com"
         let password = "Test123$"
-        let userCreate = AffirmateUser.Create(firstName: firstName, lastName: lastName, username: username, email: email, password: password, confirmPassword: password)
+        let userCreate = User.Create(firstName: firstName, lastName: lastName, username: username, email: email, password: password, confirmPassword: password)
         
         try app.test(.POST, "/auth/new/") { request in
             request.headers.contentType = .json
@@ -33,7 +33,7 @@ final class AuthenticationRouteCollectionTests: XCTestCase {
             print(request)
         } afterResponse: { response in
             print(try JSONSerialization.jsonObject(with: response.body) as? [String: Any] ?? ["reason": "No error", "error": -1])
-            let getResponse = try response.content.decode(AffirmateUser.GetResponse.self)
+            let getResponse = try response.content.decode(User.GetResponse.self)
             XCTAssertEqual(getResponse.firstName, firstName)
             XCTAssertEqual(getResponse.lastName, lastName)
             XCTAssertEqual(getResponse.username, username)

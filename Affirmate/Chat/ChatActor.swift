@@ -5,31 +5,32 @@
 //  Created by Bri on 8/9/22.
 //
 
+import AffirmateShared
 import Foundation
 import Alamofire
 
 actor ChatActor: Repository {
-    func get() async throws -> [Chat.GetResponse] {
-        let chatResponses = try await http.requestDecodable(Request.chats, to: [Chat.GetResponse].self)
+    func get() async throws -> [ChatResponse] {
+        let chatResponses = try await http.requestDecodable(Request.chats, to: [ChatResponse].self)
         return chatResponses
     }
     
-    func get(_ id: UUID) async throws -> Chat.GetResponse {
-        let chatResponse = try await http.requestDecodable(Request.chat(chatId: id, sessionToken: http.interceptor.sessionToken), to: Chat.GetResponse.self)
+    func get(_ id: UUID) async throws -> ChatResponse {
+        let chatResponse = try await http.requestDecodable(Request.chat(chatId: id, sessionToken: http.interceptor.sessionToken), to: ChatResponse.self)
         return chatResponse
     }
     
-    func create(_ object: Chat.Create) async throws {
+    func create(_ object: ChatCreate) async throws {
         try await http.request(Request.newChat(object))
     }
     
 //    func invite(_ )
     
-    func joinChat(_ chatId: UUID, confirmation: ChatInvitation.Join) async throws {
+    func joinChat(_ chatId: UUID, confirmation: ChatInvitationJoin) async throws {
         try await http.request(Request.joinChat(chatId: chatId, confirmation: confirmation, sessionToken: http.interceptor.sessionToken))
     }
     
-    func declineInvitation(_ chatId: UUID, declination: ChatInvitation.Decline) async throws {
+    func declineInvitation(_ chatId: UUID, declination: ChatInvitationDecline) async throws {
         try await http.request(Request.declineInvitation(chatId: chatId, declination: declination, sessionToken: http.interceptor.sessionToken))
     }
 }
@@ -37,12 +38,12 @@ actor ChatActor: Repository {
 extension ChatActor {
     
     enum Request: URLRequestConvertible {
-        case newChat(Chat.Create)
+        case newChat(ChatCreate)
         case chats
         case chat(chatId: UUID, sessionToken: String?)
         
-        case joinChat(chatId: UUID, confirmation: ChatInvitation.Join, sessionToken: String?)
-        case declineInvitation(chatId: UUID, declination: ChatInvitation.Decline, sessionToken: String?)
+        case joinChat(chatId: UUID, confirmation: ChatInvitationJoin, sessionToken: String?)
+        case declineInvitation(chatId: UUID, declination: ChatInvitationDecline, sessionToken: String?)
         
         #if os(macOS)
         var url: URL { Constants.baseURL.appendingPathComponent("chats") }

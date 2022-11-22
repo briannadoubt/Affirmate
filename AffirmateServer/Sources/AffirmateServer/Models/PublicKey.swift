@@ -5,6 +5,7 @@
 //  Created by Bri on 10/15/22.
 //
 
+import AffirmateShared
 import Fluent
 import Vapor
 
@@ -23,7 +24,7 @@ final class PublicKey: Model, Content {
     @Field(key: "encryption_key") var encryptionKey: Data
     
     /// The user who owns thess public keys
-    @Parent(key: "user_id") var user: AffirmateUser
+    @Parent(key: "user_id") var user: User
     
     /// The chat for which these keys encrypt/decrypt.
     @Parent(key: "chat_id") var chat: Chat
@@ -38,7 +39,7 @@ final class PublicKey: Model, Content {
     ///   - encryptionKey: The public encryption key data.
     ///   - user: The id of the user who owns thess public keys
     ///   - chat: The id of the chat for which these keys encrypt/decrypt.
-    init(id: UUID? = nil, signingKey: Data, encryptionKey: Data, user: AffirmateUser.IDValue, chat: Chat.IDValue) {
+    init(id: UUID? = nil, signingKey: Data, encryptionKey: Data, user: User.IDValue, chat: Chat.IDValue) {
         self.id = id
         self.signingKey = signingKey
         self.encryptionKey = encryptionKey
@@ -59,7 +60,7 @@ final class PublicKey: Model, Content {
                 .field("signing_key", .data, .required)
                 .field("encryption_key", .data, .required)
                 .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
-                .field("user_id", .uuid, .required, .references(AffirmateUser.schema, .id))
+                .field("user_id", .uuid, .required, .references(User.schema, .id))
                 .unique(on: "chat_id", "user_id")
                 .create()
         }
@@ -69,21 +70,13 @@ final class PublicKey: Model, Content {
             try await database.schema(PublicKey.schema).delete()
         }
     }
-    
-    /// Create a new public key
-    struct Create: Content, Validatable, Equatable, Hashable {
-        
-        /// The public signing key data.
-        var signingKey: Data
-        
-        /// The public encryption key data.
-        var encryptionKey: Data
-        
-        /// Conform to `Validatable`
-        /// - Parameter validations: The validations to validate.
-        static func validations(_ validations: inout Validations) {
-            validations.add("signingKey", as: Data.self, required: true)
-            validations.add("encryptionKey", as: Data.self, required: true)
-        }
+}
+
+extension PublicKeyCreate: Content, Validatable {
+    /// Conform to `Validatable`
+    /// - Parameter validations: The validations to validate.
+    public static func validations(_ validations: inout Validations) {
+        validations.add("signingKey", as: Data.self, required: true)
+        validations.add("encryptionKey", as: Data.self, required: true)
     }
 }

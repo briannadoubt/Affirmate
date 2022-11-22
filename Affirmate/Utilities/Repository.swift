@@ -8,10 +8,6 @@
 import Foundation
 import Alamofire
 
-protocol Object: Codable, Equatable, Hashable { }
-
-protocol IdentifiableObject: Object, Identifiable { }
-
 protocol Repository { }
 
 extension Repository {

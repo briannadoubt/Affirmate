@@ -5,15 +5,16 @@
 //  Created by Bri on 9/8/22.
 //
 
+import AffirmateShared
 import SwiftUI
 
 struct NewParticipantsUsernameSearchFieldSection: View {
     
     @EnvironmentObject var newParticipantsObserver: NewParticipantsObserver
     
-    var newPublicUsers: [AffirmateUser.Public]
+    var newPublicUsers: [UserPublic]
     
-    @MainActor func didSelect(publicUser: AffirmateUser.Public) {
+    @MainActor func didSelect(publicUser: UserPublic) {
         withAnimation {
             newParticipantsObserver.select(user: publicUser)
             newParticipantsObserver.set(searchResults: [])
@@ -82,7 +83,7 @@ struct NewParticipantsUsernameSearchFieldSection: View {
 //                sender: Participant.GetResponse(
 //                    id: UUID(),
 //                    role: .admin,
-//                    user: AffirmateUser.ParticipantResponse(
+//                    user: User.ParticipantResponse(
 //                        id: UUID(),
 //                        username: "meowface"
 //                    ),
@@ -93,7 +94,7 @@ struct NewParticipantsUsernameSearchFieldSection: View {
 //                recipient: Participant.GetResponse(
 //                    id: UUID(),
 //                    role: .participant,
-//                    user: AffirmateUser.ParticipantResponse(
+//                    user: User.ParticipantResponse(
 //                        id: UUID(),
 //                        username: "barkface"
 //                    ),
@@ -107,7 +108,7 @@ struct NewParticipantsUsernameSearchFieldSection: View {
 //            Participant.GetResponse(
 //                id: UUID(),
 //                role: .admin,
-//                user: AffirmateUser.ParticipantResponse(id: UUID(), username: "meowface"),
+//                user: User.ParticipantResponse(id: UUID(), username: "meowface"),
 //                chat: Chat.ParticipantResponse(id: UUID()),
 //                signingKey: Data(),
 //                encryptionKey: Data()
@@ -118,7 +119,7 @@ struct NewParticipantsUsernameSearchFieldSection: View {
 //    static var previews: some View {
 //        NewParticipantsUsernameSearchFieldSection(
 //            newPublicUsers: [
-//                AffirmateUser.Public(
+//                User.Public(
 //                    id: UUID(),
 //                    username: "meowface"
 //                )

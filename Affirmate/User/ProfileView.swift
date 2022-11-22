@@ -5,19 +5,20 @@
 //  Created by Bri on 8/26/22.
 //
 
+import AffirmateShared
 import SwiftUI
 
 struct ProfileView: View {
 
     @EnvironmentObject var chatObserver: ChatObserver
 
-    let user: AffirmateUser.ParticipantResponse
+    let user: UserParticipantResponse
     
-    init(user: AffirmateUser.ParticipantResponse) {
+    init(user: UserParticipantResponse) {
         self.user = user
     }
     
-    init(participant: Participant.GetResponse) {
+    init(participant: ParticipantResponse) {
         self.user = participant.user
     }
 
@@ -56,6 +57,6 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView(user: AffirmateUser.ParticipantResponse(id: UUID(), username: "meowface"))
+        ProfileView(user: UserParticipantResponse(id: UUID(), username: "meowface"))
     }
 }

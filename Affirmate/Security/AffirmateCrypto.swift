@@ -5,6 +5,7 @@
 //  Created by Bri on 10/18/22.
 //
 
+import AffirmateShared
 import CryptoKit
 import Foundation
 
@@ -155,7 +156,7 @@ actor AffirmateCrypto {
     ///   - signingKey: The private signing key.
     ///
     /// - Returns: A sealed message to be sent to the other user.
-    func encrypt(_ data: Data, salt: Data, to encryptionKey: Curve25519.KeyAgreement.PublicKey, signedBy signingKey: Curve25519.Signing.PrivateKey) throws -> Message.Sealed {
+    func encrypt(_ data: Data, salt: Data, to encryptionKey: Curve25519.KeyAgreement.PublicKey, signedBy signingKey: Curve25519.Signing.PrivateKey) throws -> MessageSealed {
         // 1. Create ephemeral key for forward secrecy.
         let ephemeralKey = Curve25519.KeyAgreement.PrivateKey()
         // 2. Extract the ephemeral public key.
@@ -174,7 +175,7 @@ actor AffirmateCrypto {
         // 6. Create a signature to verify later.
         let signature = try signingKey.signature(for: ciphertext + ephemeralPublicKey + encryptionKey.rawRepresentation)
         // 7. Return the sealed message
-        return Message.Sealed(
+        return MessageSealed(
             ephemeralPublicKeyData: ephemeralPublicKey,
             ciphertext: ciphertext,
             signature: signature
@@ -199,7 +200,7 @@ actor AffirmateCrypto {
     ///   - signingKey:The public signing key.
     ///
     /// - Returns: A decrypted message to be decoded and utilized.
-    func decrypt(_ sealedMessage: Message.Sealed, salt: Data, using encryptionKey: Curve25519.KeyAgreement.PrivateKey, from signingKey: Curve25519.Signing.PublicKey) throws -> Data {
+    func decrypt(_ sealedMessage: MessageSealed, salt: Data, using encryptionKey: Curve25519.KeyAgreement.PrivateKey, from signingKey: Curve25519.Signing.PublicKey) throws -> Data {
         // 1. Construct the encrypted data from known elements
         let data = sealedMessage.ciphertext + sealedMessage.ephemeralPublicKeyData + encryptionKey.publicKey.rawRepresentation
         // 2. Verify the signature on the data is valid.

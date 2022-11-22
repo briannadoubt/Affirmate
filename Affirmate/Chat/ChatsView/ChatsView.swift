@@ -64,7 +64,7 @@ struct ChatsView: View {
             }
             #elseif os(macOS)
             NavigationView {
-                ChatsList(chats: chats, selectedChat: $selectedChat, getChats: getChats)
+                ChatsList(chats: Array(chats), selectedChat: $selectedChat, getChats: getChats)
                     .environmentObject(authenticationObserver)
                     .environmentObject(chatsObserver)
                 chat

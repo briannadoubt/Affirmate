@@ -5,6 +5,7 @@
 //  Created by Bri on 7/30/22.
 //
 
+import AffirmateShared
 import Fluent
 import Vapor
 
@@ -17,14 +18,14 @@ struct ChatRouteCollection: RouteCollection {
         // MARK: - POST "/chats": Creates a new blank chat, adds the current user as a participant, and invites any other specified users to the chat.
         chats.post { request async throws -> HTTPStatus in
             try await request.db.transaction { database in
-                let chatCreate = try request.content.decode(Chat.Create.self)
+                let chatCreate = try request.content.decode(ChatCreate.self)
                 let newChat = Chat(
                     id: chatCreate.id,
                     name: chatCreate.name,
                     salt: chatCreate.salt
                 )
                 try await newChat.save(on: database)
-                let currentUser = try request.auth.require(AffirmateUser.self)
+                let currentUser = try request.auth.require(User.self)
                 let newPublicKey = try PublicKey(
                     signingKey: chatCreate.signingKey,
                     encryptionKey: chatCreate.encryptionKey,
@@ -53,88 +54,17 @@ struct ChatRouteCollection: RouteCollection {
         }
         
         // MARK: - GET "/chats": Returns all authorized chats based on the user token session.
-        chats.get { request async throws -> [Chat.GetResponse] in
+        chats.get { request async throws -> [ChatResponse] in
             try await request.db.transaction { database in
-                let currentUser = try request.auth.require(AffirmateUser.self)
-                let chats = try await currentUser.$chats.query(on: database)
-                    .with(\.$messages) {
-                        $0.with(\.$sender) {
-                            $0
-                                .with(\.$user)
-                                .with(\.$publicKey)
-                        }
-                        .with(\.$recipient) {
-                            $0
-                                .with(\.$user)
-                                .with(\.$publicKey)
-                        }
-                    }
-                    .with(\.$participants) {
-                        $0
-                            .with(\.$user)
-                            .with(\.$publicKey)
-                    }
-                    .all()
-                let chatsResponse = try chats.compactMap { chat in
-                    return Chat.GetResponse(
-                        id: try chat.requireID(),
-                        name: chat.name,
-                        messages: try chat.messages.filter({ $0.recipient.user.id == currentUser.id }).map { message in
-                            Message.GetResponse(
-                                id: try message.requireID(),
-                                text: Message.Sealed(
-                                    ephemeralPublicKeyData: message.ephemeralPublicKeyData,
-                                    ciphertext: message.ciphertext,
-                                    signature: message.signature
-                                ),
-                                chat: Chat.MessageResponse(id: try chat.requireID()),
-                                sender: Participant.GetResponse(
-                                    id: try message.sender.requireID(),
-                                    role: message.sender.role,
-                                    user: AffirmateUser.ParticipantResponse(
-                                        id: try message.sender.user.requireID(),
-                                        username: message.sender.user.username
-                                    ),
-                                    chat: Chat.ParticipantResponse(id: try chat.requireID()),
-                                    signingKey: message.sender.publicKey.signingKey,
-                                    encryptionKey: message.sender.publicKey.encryptionKey
-                                ),
-                                recipient: Participant.GetResponse(
-                                    id: try message.recipient.requireID(),
-                                    role: message.recipient.role,
-                                    user: AffirmateUser.ParticipantResponse(
-                                        id: try message.recipient.user.requireID(),
-                                        username: message.recipient.user.username
-                                    ),
-                                    chat: Chat.ParticipantResponse(id: try chat.requireID()),
-                                    signingKey: message.recipient.publicKey.signingKey,
-                                    encryptionKey: message.recipient.publicKey.encryptionKey
-                                ),
-                                created: message.created
-                            )
-                        },
-                        participants: try chat.participants.map { participant in
-                            Participant.GetResponse(
-                                id: try participant.requireID(),
-                                role: participant.role,
-                                user: AffirmateUser.ParticipantResponse(
-                                    id: try participant.user.requireID(),
-                                    username: participant.user.username
-                                ),
-                                chat: Chat.ParticipantResponse(id: try chat.requireID()),
-                                signingKey: participant.publicKey.signingKey,
-                                encryptionKey: participant.publicKey.encryptionKey
-                            )
-                        },
-                        salt: chat.salt
-                    )
-                }
+                let currentUser = try request.auth.require(User.self)
+                let chats = try await getChats(from: database, currentUser: currentUser)
+                let response = try chatResponses(from: chats, currentUser: currentUser)
                 for chat in chats {
                     for message in chat.messages {
                         try await message.delete(on: database)
                     }
                 }
-                return chatsResponse
+                return response
             }
         }
         
@@ -144,8 +74,8 @@ struct ChatRouteCollection: RouteCollection {
         let invite = specificChat.grouped("invite")
         invite.post { request async throws -> HTTPStatus in
             try await request.db.transaction { database in
-                let currentUser = try request.auth.require(AffirmateUser.self)
-                let invitationCreate = try request.content.decode(ChatInvitation.Create.self)
+                let currentUser = try request.auth.require(User.self)
+                let invitationCreate = try request.content.decode(ChatInvitationCreate.self)
                 let (chatId, _) = try await getChat(request: request, database: database)
                 let invitation = ChatInvitation(
                     role: invitationCreate.role,
@@ -162,8 +92,8 @@ struct ChatRouteCollection: RouteCollection {
         let join = specificChat.grouped("join")
         join.post { request async throws -> HTTPStatus in
             try await request.db.transaction{ database in
-                let confirmation = try request.content.decode(ChatInvitation.Join.self)
-                let currentUser = try request.auth.require(AffirmateUser.self)
+                let confirmation = try request.content.decode(ChatInvitationJoin.self)
+                let currentUser = try request.auth.require(User.self)
                 let (chatId, chat) = try await getChat(request: request, database: database)
                 let invitation = try await getInvitation(chat: chat, currentUser: currentUser, database: database)
                 try await invitation.$user.load(on: database)
@@ -192,8 +122,8 @@ struct ChatRouteCollection: RouteCollection {
         let decline = specificChat.grouped("decline")
         decline.post { request async throws -> HTTPStatus in
             try await request.db.transaction{ database in
-                let declination = try request.content.decode(ChatInvitation.Decline.self)
-                let currentUser = try request.auth.require(AffirmateUser.self)
+                let declination = try request.content.decode(ChatInvitationDecline.self)
+                let currentUser = try request.auth.require(User.self)
                 guard
                     let chatIdString = request.parameters.get("chatId"),
                     let chatId = UUID(uuidString: chatIdString),
@@ -210,6 +140,25 @@ struct ChatRouteCollection: RouteCollection {
 
 extension ChatRouteCollection {
     
+    func getChats(from database: Database, currentUser: User) async throws -> [Chat] {
+        try await currentUser.$chats.query(on: database)
+            .with(\Chat.$messages) {
+                $0.with(\Message.$sender) {
+                    $0.with(\Participant.$user)
+                        .with(\Participant.$publicKey)
+                }
+                .with(\Message.$recipient) {
+                    $0.with(\Participant.$user)
+                        .with(\Participant.$publicKey)
+                }
+            }
+            .with(\Chat.$participants) {
+                $0.with(\Participant.$user)
+                    .with(\Participant.$publicKey)
+            }
+            .all()
+    }
+    
     func getChat(request: Request, database: Database) async throws -> (UUID, Chat) {
         guard
             let chatIdString = request.parameters.get("chatId"),
@@ -221,7 +170,80 @@ extension ChatRouteCollection {
         return (chatId, chat)
     }
     
-    func getInvitation(chat: Chat, currentUser: AffirmateUser, database: Database) async throws -> ChatInvitation {
+    func chatResponses(from chats: [Chat], currentUser: User) throws -> [ChatResponse] {
+        try chats.compactMap { chat in
+            return ChatResponse(
+                id: try chat.requireID(),
+                name: chat.name,
+                messages: try messageResponses(from: chat, currentUser: currentUser),
+                participants: try participantResponses(from: chat),
+                salt: chat.salt
+            )
+        }
+    }
+    
+    func participantResponses(from chat: Chat) throws -> [ParticipantResponse] {
+        try chat.participants.map { participant in
+            ParticipantResponse(
+                id: try participant.requireID(),
+                role: participant.role,
+                user: UserParticipantResponse(
+                    id: try participant.user.requireID(),
+                    username: participant.user.username
+                ),
+                chat: ChatParticipantResponse(id: try chat.requireID()),
+                signingKey: participant.publicKey.signingKey,
+                encryptionKey: participant.publicKey.encryptionKey
+            )
+        }
+    }
+    
+    func messageResponses(from chat: Chat, currentUser: User) throws -> [MessageResponse] {
+        try chat.messages.filter({ $0.recipient.user.id == currentUser.id }).map { message in
+            MessageResponse(
+                id: try message.requireID(),
+                text: MessageSealed(
+                    ephemeralPublicKeyData: message.ephemeralPublicKeyData,
+                    ciphertext: message.ciphertext,
+                    signature: message.signature
+                ),
+                chat: ChatMessageResponse(id: try chat.requireID()),
+                sender: try sender(from: message, chat: chat),
+                recipient: try recipient(from: message, chat: chat),
+                created: message.created
+            )
+        }
+    }
+    
+    func sender(from message: Message, chat: Chat) throws -> ParticipantResponse {
+        ParticipantResponse(
+            id: try message.sender.requireID(),
+            role: message.sender.role,
+            user: UserParticipantResponse(
+                id: try message.sender.user.requireID(),
+                username: message.sender.user.username
+            ),
+            chat: ChatParticipantResponse(id: try chat.requireID()),
+            signingKey: message.sender.publicKey.signingKey,
+            encryptionKey: message.sender.publicKey.encryptionKey
+        )
+    }
+    
+    func recipient(from message: Message, chat: Chat) throws -> ParticipantResponse {
+        ParticipantResponse(
+            id: try message.recipient.requireID(),
+            role: message.recipient.role,
+            user: UserParticipantResponse(
+                id: try message.recipient.user.requireID(),
+                username: message.recipient.user.username
+            ),
+            chat: ChatParticipantResponse(id: try chat.requireID()),
+            signingKey: message.recipient.publicKey.signingKey,
+            encryptionKey: message.recipient.publicKey.encryptionKey
+        )
+    }
+    
+    func getInvitation(chat: Chat, currentUser: User, database: Database) async throws -> ChatInvitation {
         guard let invitation = try await chat.$openInvitations
             .query(on: database)
             .filter(\.$user.$id == currentUser.requireID())
@@ -243,7 +265,7 @@ extension ChatRouteCollection {
 //        try await chatInvitation.save(on: database)
 //    }
     
-    func deleteInvitation(id: UUID, currentUser: AffirmateUser, chat: Chat, database: Database) async throws {
+    func deleteInvitation(id: UUID, currentUser: User, chat: Chat, database: Database) async throws {
         try await currentUser.$chatInvitations.detach(chat, on: database)
         if let chatInvitation = try await ChatInvitation.find(id, on: database) {
             try await chatInvitation.delete(on: database)

@@ -5,6 +5,7 @@
 //  Created by Bri on 8/27/22.
 //
 
+import AffirmateShared
 import Fluent
 import Vapor
 
@@ -18,10 +19,10 @@ final class ChatInvitation: Model, Content {
     @ID(key: FieldKey.id) var id: UUID?
     
     /// The value denoting the prospective permissions of the invited user.
-    @Field(key: "role") var role: Participant.Role
+    @Field(key: "role") var role: ParticipantRole
     
     /// The invited user.
-    @Parent(key: "user_id") var user: AffirmateUser
+    @Parent(key: "user_id") var user: User
     
     /// The participant that invited the invited user.
     @Parent(key: "invited_by_id") var invitedBy: Participant
@@ -39,63 +40,12 @@ final class ChatInvitation: Model, Content {
     ///   - user: The id of the invited user
     ///   - invitedBy: The participant that invited the invited user.
     ///   - chat: The chat that the user has been invited to.
-    init(id: UUID? = nil, role: Participant.Role, user: AffirmateUser.IDValue, invitedBy: Participant.IDValue, chat: Chat.IDValue) {
+    init(id: UUID? = nil, role: ParticipantRole, user: User.IDValue, invitedBy: Participant.IDValue, chat: Chat.IDValue) {
         self.id = id
         self.role = role
         self.$user.id = user
         self.$invitedBy.id = invitedBy
         self.$chat.id = chat
-    }
-    
-    /// Create a new chat invitation.
-    struct Create: Content, Validatable {
-        
-        /// The value denoting the prospective permissions of the invited user.
-        var role: Participant.Role
-        
-        /// The id of the invited user
-        var user: UUID
-        
-        /// Conform to `Validatable`
-        /// - Parameter validations: The validations to validate.
-        static func validations(_ validations: inout Validations) {
-            validations.add("role", as: Participant.Role.self, required: true)
-            validations.add("user", as: UUID.self, required: true)
-        }
-    }
-    
-    /// Join a chat.
-    struct Join: Content, Validatable {
-        
-        /// The id of the chat invitation.
-        var id: UUID
-        
-        /// The public signing key for the new `Participant`.
-        var signingKey: Data
-        
-        /// The public encryption key for the new `Participant`.
-        var encryptionKey: Data
-        
-        /// Conform to `Validatable`
-        /// - Parameter validations: The validations to validate.
-        static func validations(_ validations: inout Validations) {
-            validations.add("id", as: UUID.self, required: true, customFailureDescription: "The ChatInvitation ID is required.")
-            validations.add("signingKey", as: Data.self, required: true)
-            validations.add("encryptionKey", as: Data.self, required: true)
-        }
-    }
-    
-    /// Decline a chat
-    struct Decline: Content, Validatable {
-        
-        /// The id of the chat invitation.
-        var id: UUID
-        
-        /// Conform to `Validatable`
-        /// - Parameter validations: The validations to validate.
-        static func validations(_ validations: inout Validations) {
-            validations.add("id", as: UUID.self, required: true, customFailureDescription: "The ChatInvitation ID is required.")
-        }
     }
     
     /// Handle asyncronous database migration; creating and destroying the "ChatParticipant" table.
@@ -109,7 +59,7 @@ final class ChatInvitation: Model, Content {
             try await database.schema(ChatInvitation.schema)
                 .id()
                 .field("role", .string, .required)
-                .field("user_id", .uuid, .required, .references(AffirmateUser.schema, .id))
+                .field("user_id", .uuid, .required, .references(User.schema, .id))
                 .field("invited_by_id", .uuid, .required, .references(Participant.schema, .id))
                 .field("chat_id", .uuid, .required, .references(Chat.schema, .id))
                 .unique(on: "user_id", "chat_id")
@@ -121,35 +71,33 @@ final class ChatInvitation: Model, Content {
             try await database.schema(ChatInvitation.schema).delete()
         }
     }
-    
-    /// The response included in an HTTP GET response.
-    struct GetResponse: Content, Equatable, Codable {
-        
-        /// The id for the database.
-        var id: UUID
-        
-        /// The value denoting the prospective permissions of the invited user.
-        var role: Participant.Role
-        
-        /// The id of the invited user.
-        var userId: UUID
-        
-        /// The participant id of the user that invited the invited user.
-        var invitedBy: UUID
-        
-        /// The username of the user that invited the invited user.
-        var invitedByUsername: String
-        
-        /// The chat that the user has been invited to.
-        var chatId: UUID
-        
-        /// The name of the chat.
-        var chatName: String?
-        
-        /// The usernames of the current participants in the chat.
-        var chatParticipantUsernames: [String]
-        
-        /// The globally unique salt for encrypting and decrypting the sealed message content.
-        var chatSalt: Data
+}
+
+extension ChatInvitationCreate: Content, Validatable {
+    /// Conform to `Validatable`
+    /// - Parameter validations: The validations to validate.
+    public static func validations(_ validations: inout Validations) {
+        validations.add("role", as: ParticipantRole.self, required: true)
+        validations.add("user", as: UUID.self, required: true)
+    }
+}
+
+extension ChatInvitationResponse: Content { }
+
+extension ChatInvitationDecline: Content, Validatable {
+    /// Conform to `Validatable`
+    /// - Parameter validations: The validations to validate.
+    public static func validations(_ validations: inout Validations) {
+        validations.add("id", as: UUID.self, required: true, customFailureDescription: "The ChatInvitation ID is required.")
+    }
+}
+
+extension ChatInvitationJoin: Content, Validatable {
+    /// Conform to `Validatable`
+    /// - Parameter validations: The validations to validate.
+    public static func validations(_ validations: inout Validations) {
+        validations.add("id", as: UUID.self, required: true, customFailureDescription: "The ChatInvitation ID is required.")
+        validations.add("signingKey", as: Data.self, required: true)
+        validations.add("encryptionKey", as: Data.self, required: true)
     }
 }

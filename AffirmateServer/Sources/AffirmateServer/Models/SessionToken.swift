@@ -21,7 +21,7 @@ final class SessionToken: Model, Content {
     @Field(key: "value") var value: String
     
     /// The user who owns this session.
-    @Parent(key: "user_id") var user: AffirmateUser
+    @Parent(key: "user_id") var user: User
     
     /// Conform to `Model`.
     init() { }

@@ -5,13 +5,14 @@
 //  Created by Bri on 9/7/22.
 //
 
+import AffirmateShared
 import Foundation
 import Alamofire
 
 protocol AuthenticationActable: Repository, Actor {
-    func signUp(user create: AffirmateUser.Create) async throws
-    func login(username: String, password: String) async throws -> AffirmateUser.LoginResponse
-    func refresh(sessionToken: SessionToken) async throws -> SessionToken
+    func signUp(user create: UserCreate) async throws
+    func login(username: String, password: String) async throws -> UserLoginResponse
+    func refresh(sessionToken: SessionTokenResponse) async throws -> SessionTokenResponse
     func update(deviceToken token: Data?) async throws
     func logout() async throws
 }
@@ -20,16 +21,16 @@ actor AuthenticationActor: AuthenticationActable {
     
     typealias Auth = AuthenticationObserver
     
-    func signUp(user create: AffirmateUser.Create) async throws {
+    func signUp(user create: UserCreate) async throws {
         try await http.request(unauthorized: Request.new(user: create))
     }
     
-    func login(username: String, password: String) async throws -> AffirmateUser.LoginResponse {
-        try await http.requestDecodable(Request.login(username: username, password: password), to: AffirmateUser.LoginResponse.self)
+    func login(username: String, password: String) async throws -> UserLoginResponse {
+        try await http.requestDecodable(Request.login(username: username, password: password), to: UserLoginResponse.self)
     }
     
-    func refresh(sessionToken: SessionToken) async throws -> SessionToken {
-        try await http.requestDecodable(Request.refresh(sessionToken: sessionToken), to: SessionToken.self)
+    func refresh(sessionToken: SessionTokenResponse) async throws -> SessionTokenResponse {
+        try await http.requestDecodable(Request.refresh(sessionToken: sessionToken), to: SessionTokenResponse.self)
     }
     
     func update(deviceToken token: Data?) async throws {
@@ -45,9 +46,9 @@ extension AuthenticationActor {
     
     enum Request: URLRequestConvertible {
     
-        case new(user: AffirmateUser.Create)
+        case new(user: UserCreate)
         case login(username: String, password: String)
-        case refresh(sessionToken: SessionToken)
+        case refresh(sessionToken: SessionTokenResponse)
         case update(deviceToken: Data?)
         case logout
 

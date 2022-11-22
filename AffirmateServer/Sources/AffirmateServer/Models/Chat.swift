@@ -5,6 +5,7 @@
 //  Created by Bri on 7/30/22.
 //
 
+import AffirmateShared
 import Fluent
 import Vapor
 
@@ -66,70 +67,23 @@ final class Chat: Model, Content {
             try await database.schema(Chat.schema).delete()
         }
     }
-    
-    /// Create a new `Chat`
-    struct Create: Content, Validatable {
-        
-        /// The id for the database.
-        var id: UUID
-        
-        /// The name of the chat. Optional.
-        var name: String?
-        
-        /// The participants to be invited to the chat. Do not include the current user in this parameter.
-        var participants: [Participant.Create]
-        
-        /// The public signing key of the current participant.
-        var signingKey: Data
-        
-        /// The public encryption key of the current participant.
-        var encryptionKey: Data
-        
-        /// The globally unique salt for encrypting and decrypting the sealed message content.
-        var salt: Data
-        
-        /// Conform to `Validatable`
-        /// - Parameter validations: The validations to validate.
-        static func validations(_ validations: inout Validations) {
-            validations.add("id", as: UUID.self, required: true)
-            validations.add("name", as: String.self)
-            validations.add("participants", as: [Participant.Create].self, required: true)
-            validations.add("signingKey", as: Data.self, required: true)
-            validations.add("encryptionKey", as: Data.self, required: true)
-            validations.add("salt", as: Data.self, required: true)
-        }
-    }
-    
-    /// The response included in an HTTP GET response.
-    struct GetResponse: Content {
-        
-        /// The id for the database.
-        var id: UUID
-        
-        /// The name of the chat. Optional.
-        var name: String?
-        
-        /// The messages of the chat.
-        var messages: [Message.GetResponse]
-        
-        /// The participants of the chat.
-        var participants: [Participant.GetResponse]
-        
-        /// The globally unique salt for encrypting and decrypting the sealed message content.
-        var salt: Data
-    }
-    
-    /// The response included in an HTTP GET response, embedded in a `Participant.GetResponse` object.
-    struct ParticipantResponse: Content {
-        
-        /// The id for the database.
-        var id: UUID
-    }
-    
-    /// The response included in an HTTP GET response, embedded in a `Message.GetResponse` object.
-    struct MessageResponse: Content {
-        
-        /// The id for the database.
-        var id: UUID
+}
+
+extension ChatCreate: Content, Validatable {
+    /// Conform to `Validatable`
+    /// - Parameter validations: The validations to validate.
+    public static func validations(_ validations: inout Validations) {
+        validations.add("id", as: UUID.self, required: true)
+        validations.add("name", as: String.self)
+        validations.add("participants", as: [ParticipantCreate].self, required: true)
+        validations.add("signingKey", as: Data.self, required: true)
+        validations.add("encryptionKey", as: Data.self, required: true)
+        validations.add("salt", as: Data.self, required: true)
     }
 }
+
+extension ChatResponse: Content { }
+
+extension ChatParticipantResponse: Content { }
+
+extension ChatMessageResponse: Content { }

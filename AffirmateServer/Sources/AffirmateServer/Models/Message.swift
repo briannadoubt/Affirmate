@@ -5,9 +5,10 @@
 //  Created by Bri on 7/30/22.
 //
 
+import AffirmateShared
+import APNS
 import Fluent
 import Vapor
-import APNS
 
 /// A message from a user of Affirmate to a chat between other users of Affirmate.
 final class Message: Model, Content {
@@ -90,83 +91,23 @@ final class Message: Model, Content {
             try await database.schema(Message.schema).delete()
         }
     }
-    
-    /// Create a new message
-    struct Create: Content, Validatable {
-        
-        /// The sealed content of the message.
-        var sealed: Sealed
-        
-        /// The id of the recipient participant of the message.
-        var recipient: UUID
-        
-        /// Conform to `Validatable`
-        /// - Parameter validations: The validations to validate.
-        static func validations(_ validations: inout Validations) {
-            validations.add("sealed", as: Sealed.self, required: true)
-            validations.add("recipient", as: UUID.self, required: true)
-        }
+}
+
+extension MessageCreate: Content, Validatable {
+    /// Conform to `Validatable`
+    /// - Parameter validations: The validations to validate.
+    public static func validations(_ validations: inout Validations) {
+        validations.add("sealed", as: MessageSealed.self, required: true)
+        validations.add("recipient", as: UUID.self, required: true)
     }
-    
-    /// Verify that the message was recieved by the client. When the server recieves this object in a WebSocket connection the message will be deleted on the database. The client is expected to cache the data on the device in an encrypted format.
-    struct RecievedConfirmation: Content, Validatable {
-        
-        /// The id of the message that was recieved.
-        var messageId: UUID
-        
-        /// Conform to `Validatable`
-        /// - Parameter validations: The validations to validate.
-        static func validations(_ validations: inout Validations) {
-            validations.add("messageId", as: UUID.self, required: true)
-        }
-    }
-    
-    /// The response included in an HTTP GET response.
-    struct GetResponse: Content {
-        
-        /// The id for the database.
-        var id: UUID
-        
-        /// The sealed content of the message.
-        var text: Sealed
-        
-        /// The chat that this message was sent to.
-        var chat: Chat.MessageResponse
-        
-        /// The participant that sent this message.
-        var sender: Participant.GetResponse
-        
-        /// The recipient of this message.
-        var recipient: Participant.GetResponse
-        
-        /// The timestamp that the message was created.
-        var created: Date?
-        
-        /// The timestamp that the message was last updated.
-        var updated: Date?
-    }
-    
-    /// The sealed content of a message.
-    struct Sealed: Codable {
-        
-        /// The ephemeral public key portion of the encrypted message.
-        var ephemeralPublicKeyData: Data
-        
-        /// The ciphertext portion of the encrypted message.
-        var ciphertext: Data
-        
-        /// The signature portion of the encrypted message.
-        var signature: Data
-        
-        /// Initialize some new sealed content.
-        /// - Parameters:
-        ///   - ephemeralPublicKeyData: The ephemeral public key portion of the encrypted message.
-        ///   - ciphertext: The ciphertext portion of the encrypted message.
-        ///   - signature: The signature portion of the encrypted message.
-        internal init(ephemeralPublicKeyData: Data, ciphertext: Data, signature: Data) {
-            self.ephemeralPublicKeyData = ephemeralPublicKeyData
-            self.ciphertext = ciphertext
-            self.signature = signature
-        }
+}
+
+extension MessageResponse: Content { }
+
+extension MessageRecievedConfirmation: Content, Validatable {
+    /// Conform to `Validatable`
+    /// - Parameter validations: The validations to validate.
+    public static func validations(_ validations: inout Validations) {
+        validations.add("messageId", as: UUID.self, required: true)
     }
 }

@@ -5,6 +5,7 @@
 //  Created by Bri on 8/7/22.
 //
 
+import AffirmateShared
 import Combine
 import CoreData
 import Foundation
@@ -39,14 +40,14 @@ final class ChatsObserver: ObservableObject {
     
     /// Initiate a request to fetch and decode all available chats.
     func getChats() async throws {
-        let newChatContent: [Chat.GetResponse] = try await actor.get()
+        let newChatContent: [ChatResponse] = try await actor.get()
         try updateChatContent(from: newChatContent)
         try deleteStaleChats(from: newChatContent)
     }
     
     /// Update CoreData with the new content from the server.
     /// - Parameter newChatContent: The chat content recieved from the server.
-    func updateChatContent(from newChatContent: [Chat.GetResponse]) throws {
+    func updateChatContent(from newChatContent: [ChatResponse]) throws {
         for chatContent in newChatContent {
             let chat = try store(chatContent: chatContent)
             if chatObservers[chatContent.id] == nil {
@@ -63,7 +64,7 @@ final class ChatsObserver: ObservableObject {
     
     /// Delete chats that are on the device but no longer on the server.
     /// - Parameter newChatContent: The chat content recieved from the server.
-    func deleteStaleChats(from newChatContent: [Chat.GetResponse]) throws {
+    func deleteStaleChats(from newChatContent: [ChatResponse]) throws {
         guard let entityName = Chat.entity().name else {
             throw ChatError.nonexistentEntityName
         }
@@ -87,7 +88,7 @@ final class ChatsObserver: ObservableObject {
     /// Store a chat recieved from the server to CoreData, and update any fields if necessary.
     /// - Parameter chatContent: The chat content recieved from the server.
     /// - Returns: A chat stored on the device with CoreData.`
-    func store(chatContent: Chat.GetResponse) throws -> Chat {
+    func store(chatContent: ChatResponse) throws -> Chat {
         var chat: Chat
         
         if try self.managedObjectContext.doesNotExist(Chat.self, id: chatContent.id) {
@@ -110,7 +111,7 @@ final class ChatsObserver: ObservableObject {
     /// - Parameters:
     ///   - participantContent: The participant content recieved from the server.
     ///   - chat: The chat stored on the device with CoreData.
-    func store(participantContent: Participant.GetResponse, chat: Chat) throws {
+    func store(participantContent: ParticipantResponse, chat: Chat) throws {
         var participant: Participant
         
         if try self.managedObjectContext.doesNotExist(Participant.self, id: participantContent.id) {
@@ -131,7 +132,7 @@ final class ChatsObserver: ObservableObject {
     /// - Parameters:
     ///   - messageContent: The message content recieved from the server.
     ///   - chat: The chat stored on the device with CoreData.
-    func store(messageContent: Message.GetResponse, chat: Chat) throws {
+    func store(messageContent: MessageResponse, chat: Chat) throws {
         var message: Message
         
         if try managedObjectContext.doesNotExist(Message.self, id: messageContent.id) {
@@ -162,7 +163,7 @@ final class ChatsObserver: ObservableObject {
     ///   - participant: The participant to update.
     ///   - participantContent: The participant content recieved from the server.
     ///   - chat: The chat stored on the device with CoreData.
-    func update(_ participant: inout Participant, from participantContent: Participant.GetResponse, chat: Chat) {
+    func update(_ participant: inout Participant, from participantContent: ParticipantResponse, chat: Chat) {
         participant.id = participantContent.id
         participant.role = participantContent.role.rawValue
         participant.userId = participantContent.user.id
@@ -176,7 +177,7 @@ final class ChatsObserver: ObservableObject {
     /// - Parameters:
     ///   - chat: The chat to update.
     ///   - chatContent: The chat content recieved from the server.
-    func update(_ chat: inout Chat, from chatContent: Chat.GetResponse) {
+    func update(_ chat: inout Chat, from chatContent: ChatResponse) {
         chat.id = chatContent.id
         chat.name = chatContent.name
         chat.salt = chatContent.salt
@@ -187,7 +188,7 @@ final class ChatsObserver: ObservableObject {
     ///   - message: The message to update.
     ///   - messageContent: The message content recieved from the server.
     ///   - chat: The chat stored on the device with CoreData.
-    func update(message: inout Message, from messageContent: Message.GetResponse, chat: Chat) {
+    func update(message: inout Message, from messageContent: MessageResponse, chat: Chat) {
         message.ciphertext = messageContent.text.ciphertext
         message.createdAt = messageContent.created ?? Date()
         message.updatedAt = messageContent.updated ?? Date()
@@ -201,11 +202,11 @@ final class ChatsObserver: ObservableObject {
     /// - Parameters:
     ///   - name: The name of the chat
     ///   - selectedParticipants: The participants who will be invited.
-    func newChat(name: String?, selectedParticipants: [AffirmateUser.Public: Participant.Role]) async throws {
+    func newChat(name: String?, selectedParticipants: [UUID: (user: UserPublic, role: ParticipantRole)]) async throws {
         let participantsCreate = selectedParticipants.map { index in
-            let role = index.value
-            let publicUser = index.key
-            return Participant.Create(
+            let role = index.value.role
+            let publicUser = index.value.user
+            return ParticipantCreate(
                 role: role,
                 user: publicUser.id
             )
@@ -214,13 +215,13 @@ final class ChatsObserver: ObservableObject {
         let (signingPublicKey, _) = try await crypto.generateSigningKeyPair(for: chatId)
         let (encryptionPublicKey, _) = try await crypto.generateEncryptionKeyPair(for: chatId)
         let salt = try await crypto.generateSalt()
-        let createChat = Chat.Create(
+        let createChat = ChatCreate(
             id: chatId,
             name: name,
-            salt: salt,
             participants: participantsCreate,
             signingKey: signingPublicKey,
-            encryptionKey: encryptionPublicKey
+            encryptionKey: encryptionPublicKey,
+            salt: salt
         )
         print(createChat)
         try await actor.create(createChat)

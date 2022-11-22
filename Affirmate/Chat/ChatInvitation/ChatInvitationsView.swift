@@ -5,21 +5,22 @@
 //  Created by Bri on 10/12/22.
 //
 
+import AffirmateShared
 import SwiftUI
 
 struct ChatInvitationsView: View {
     
-    var invitations: [ChatInvitation]
+    var invitations: [ChatInvitationResponse]
     
     @StateObject var chatInvitationObserver = ChatInvitationObserver()
     @EnvironmentObject var authentication: AuthenticationObserver
     
-    func joinChat(_ chatId: UUID, invitation: ChatInvitation) {
+    func joinChat(_ chatId: UUID, invitation: ChatInvitationResponse) {
         Task {
             do {
                 let (signingPublicKey, _) = try await chatInvitationObserver.crypto.generateSigningKeyPair(for: chatId)
                 let (encryptionPublicKey, _) = try await chatInvitationObserver.crypto.generateEncryptionKeyPair(for: chatId)
-                let confirmation = ChatInvitation.Join(
+                let confirmation = ChatInvitationJoin(
                     id: invitation.id,
                     signingKey: signingPublicKey,
                     encryptionKey: encryptionPublicKey
@@ -32,10 +33,10 @@ struct ChatInvitationsView: View {
         }
     }
     
-    func declineInvitation(_ chatId: UUID, invitation: ChatInvitation) {
+    func declineInvitation(_ chatId: UUID, invitation: ChatInvitationResponse) {
         Task {
             do {
-                let declination = ChatInvitation.Decline(id: invitation.id)
+                let declination = ChatInvitationDecline(id: invitation.id)
                 try await chatInvitationObserver.declineInvitation(chatId, declination: declination)
                 try await authentication.getCurrentUser()
             } catch {

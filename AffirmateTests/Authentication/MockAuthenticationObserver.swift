@@ -12,10 +12,10 @@ class MockAuthenticationObserver: AuthenticationObservable {
     static var shared = MockAuthenticationObserver()
     
     @Published var state: AuthenticationObserver.State = .initial
-    @Published var currentUser: AffirmateUser? = nil
+    @Published var currentUser: User? = nil
     
     let authenticationActor = AuthenticationActor()
-    let meActor = AffirmateUserActor()
+    let meActor = UserActor()
     
     var calls_setCurrentAuthenticationState = 0
     var calls_setState = 0
@@ -36,7 +36,7 @@ class MockAuthenticationObserver: AuthenticationObservable {
         calls_setState += 1
     }
     
-    func setCurrentUser(to user: AffirmateUser?) {
+    func setCurrentUser(to user: User?) {
         calls_setCurrentUser += 1
     }
     
@@ -44,7 +44,7 @@ class MockAuthenticationObserver: AuthenticationObservable {
         calls_getCurrentUser += 1
     }
     
-    func signUp(user create: AffirmateUser.Create) async throws {
+    func signUp(user create: User.Create) async throws {
         calls_signUp += 1
     }
     

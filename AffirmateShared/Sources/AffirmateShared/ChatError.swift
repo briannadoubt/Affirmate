@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ChatError: LocalizedError {
+public enum ChatError: LocalizedError {
     case failedToBuildURL
     case chatIdNotFound
     case clientIdHasNotBeenSet
@@ -15,7 +15,7 @@ enum ChatError: LocalizedError {
     case preKeyNotFound
     case preKeyDoesNotHaveAssociatedInvitation
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .failedToBuildURL:
             return "Failed to build URL."
@@ -32,7 +32,7 @@ enum ChatError: LocalizedError {
         }
     }
     
-    var failureReason: String? {
+    public var failureReason: String? {
         switch self {
         case .failedToBuildURL:
             return "Oops, we messed up. Please try again."

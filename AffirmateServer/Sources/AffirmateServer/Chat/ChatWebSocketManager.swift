@@ -5,6 +5,7 @@
 //  Created by Bri on 8/22/22.
 //
 
+import AffirmateShared
 import Vapor
 import FluentKit
 
@@ -31,7 +32,7 @@ actor ChatWebSocketManager: WebSocketManager {
                     await self.handle(connect: connectMessage, request: request, webSocket: webSocket)
                     
                 // MARK: Message
-                } else if let webSocketMessage = try self.get(buffer, Message.Create.self) {
+                } else if let webSocketMessage = try self.get(buffer, MessageCreate.self) {
                     await self.handle(chatMessage: webSocketMessage, request: request, webSocket: webSocket)
                     
                 } else {
@@ -51,7 +52,7 @@ extension ChatWebSocketManager {
     ///   - webSocketMessage: The message from the `WebSocket` connection.
     ///   - request: The originating `Request` with access to the `Database` and server `EventLoop`s.
     ///   - webSocket: The `WebSocket` connection that the message was recieved on.
-    func handle(chatMessage webSocketMessage: WebSocketMessage<Message.Create>, request: Request, webSocket: WebSocket) async {
+    func handle(chatMessage webSocketMessage: WebSocketMessage<MessageCreate>, request: Request, webSocket: WebSocket) async {
         await handle(request: request, webSocket: webSocket) { database, currentUser, chat, sender in
             // Create JSON string from data for validation.
             guard let createString = webSocketMessage.data.json else {
@@ -59,7 +60,7 @@ extension ChatWebSocketManager {
                 throw Abort(.badRequest)
             }
             // Validate the new message content
-            try Message.Create.validate(json: createString)
+            try MessageCreate.validate(json: createString)
             
             // Create the new message.
             let messageId = UUID()
@@ -80,10 +81,10 @@ extension ChatWebSocketManager {
                 throw Abort(.notFound)
             }
             
-            // If there are no connected clients for this chat/user, cache the encrypted message on the database until it is retrieved.
-            let connectedClientsForChat = await self.connectedClients(userId: try recipient.user.requireID(), chatId: try chat.requireID())
+            let connectedClientsForChat = await self.clients.getConnectedClients(for: try chat.requireID())
             
-            guard !connectedClientsForChat.isEmpty else {
+            // If there are no connected clients for this chat/recipient, cache the encrypted message on the database until it is retrieved.
+            if try !connectedClientsForChat.contains(where: { try $1.userId == recipient.user.requireID() }) {
                 // Save the message to the chat
                 try await chat.$messages.create(newMessage, on: database)
                 return
@@ -92,8 +93,8 @@ extension ChatWebSocketManager {
             // Create the response
             let newMessageResponse = try self.createChatMessageResponse(messageId: messageId, webSocketMessage: webSocketMessage, currentUser: currentUser, chat: chat, newMessage: newMessage, sender: sender, recipient: recipient)
             
-            // Broadcast to connected clients.
-            try await self.broadcast(message: newMessageResponse, to: connectedClientsForChat, database: database)
+            // Broadcast to identified connected clients.
+            try await self.broadcast(message: newMessageResponse, to: Array(connectedClientsForChat.values), database: database)
         }
     }
     
@@ -104,8 +105,8 @@ extension ChatWebSocketManager {
     ///   - webSocket: The `WebSocket` connection that the message was recieved on.
     func handle(connect webSocketMessage: WebSocketMessage<Connect>, request: Request, webSocket: WebSocket) async {
         await handle(request: request, webSocket: webSocket) { database, currentUser, chat, sender in
-            let client = ChatWebSocketClient(id: webSocketMessage.client, chatId: webSocketMessage.data.chatId, socket: webSocket)
-            try await self.clients.add(client, chatId: webSocketMessage.data.chatId, userId: try currentUser.requireID())
+            let client = ChatWebSocketClient(id: webSocketMessage.client, userId: try currentUser.requireID(), chatId: webSocketMessage.data.chatId, socket: webSocket)
+            try await self.clients.add(client)
             print("Added client app: \(webSocketMessage.client)")
             let confirmConnection = ConfirmConnection(connected: true)
             try await self.broadcast(confirmConnection, to: try currentUser.requireID(), on: webSocketMessage.data.chatId)
@@ -117,7 +118,7 @@ extension ChatWebSocketManager {
     ///   - request: The originating `Request`.
     ///   - webSocket: The new `WebSocket` connection.
     ///   - block: The handler called when a message is recieved over the active `WebSocket` connection.
-    func handle(request: Request, webSocket: WebSocket, withThrowing block: @escaping (_ database: Database, _ currentUser: AffirmateUser, _ chat: Chat, _ sender: Participant) async throws -> ()) async {
+    func handle(request: Request, webSocket: WebSocket, withThrowing block: @escaping (_ database: Database, _ currentUser: User, _ chat: Chat, _ sender: Participant) async throws -> ()) async {
         do {
             try await request.db.transaction { database in
                 let currentUser = try await self.getUser(request)
@@ -149,34 +150,34 @@ extension ChatWebSocketManager {
     ///   - currentParticipant: The participant sending the message.
     ///   - recipientParticipant: The participant recieving the message.
     /// - Returns: A response object representing a new chat message.
-    func createChatMessageResponse(messageId: UUID, webSocketMessage: WebSocketMessage<Message.Create>, currentUser: AffirmateUser, chat: Chat, newMessage: Message, sender: Participant, recipient: Participant) throws -> Message.GetResponse {
-        Message.GetResponse(
+    func createChatMessageResponse(messageId: UUID, webSocketMessage: WebSocketMessage<MessageCreate>, currentUser: User, chat: Chat, newMessage: Message, sender: Participant, recipient: Participant) throws -> MessageResponse {
+        MessageResponse(
             id: messageId,
-            text: Message.Sealed(
+            text: MessageSealed(
                 ephemeralPublicKeyData: newMessage.ephemeralPublicKeyData,
                 ciphertext: webSocketMessage.data.sealed.ciphertext,
                 signature: webSocketMessage.data.sealed.signature
             ),
-            chat: Chat.MessageResponse(id: try chat.requireID()),
-            sender: Participant.GetResponse(
+            chat: ChatMessageResponse(id: try chat.requireID()),
+            sender: ParticipantResponse(
                 id: try sender.requireID(),
                 role: sender.role,
-                user: AffirmateUser.ParticipantResponse(
+                user: UserParticipantResponse(
                     id: try currentUser.requireID(),
                     username: currentUser.username
                 ),
-                chat: Chat.ParticipantResponse(id: try chat.requireID()),
+                chat: ChatParticipantResponse(id: try chat.requireID()),
                 signingKey: sender.publicKey.signingKey,
                 encryptionKey: sender.publicKey.encryptionKey
             ),
-            recipient: Participant.GetResponse(
+            recipient: ParticipantResponse(
                 id: try newMessage.recipient.requireID(),
                 role: recipient.role,
-                user: AffirmateUser.ParticipantResponse(
+                user: UserParticipantResponse(
                     id: try recipient.user.requireID(),
                     username: recipient.user.username
                 ),
-                chat: Chat.ParticipantResponse(id: try chat.requireID()),
+                chat: ChatParticipantResponse(id: try chat.requireID()),
                 signingKey: recipient.publicKey.signingKey,
                 encryptionKey: recipient.publicKey.encryptionKey
             ),
@@ -216,8 +217,8 @@ extension ChatWebSocketManager {
     /// Get the currently authenticated user from the given request.
     /// - Parameter request: The authenticated request.
     /// - Returns: The currently authenticated user. Throws if user is not logged in.
-    func getUser(_ request: Request) throws -> AffirmateUser {
-        try request.auth.require(AffirmateUser.self)	
+    func getUser(_ request: Request) throws -> User {
+        try request.auth.require(User.self)	
     }
     
     /// Decode a `ByteBuffer` into a `WebSocketMessage` object.
@@ -229,18 +230,15 @@ extension ChatWebSocketManager {
         try buffer.decodeWebSocketMessage(type.self)
     }
     
-    /// Flatten all connected and active clients into an array for easy sending.
-    /// - Parameters:
-    ///   - userId: The userId used to look up the client.
-    ///   - chatId: The chatId used to look up the client.
-    /// - Returns: An array of active and connected clients.
-    func connectedClients(userId: UUID, chatId: UUID) async -> [ChatWebSocketClient] {
-        let activeClients = await clients.active(chatId: chatId, userId: userId)
-        let connectedClients = activeClients[chatId]?[userId]?.compactMap{
-            $0.value as ChatWebSocketClient
-        }
-        return connectedClients ?? []
-    }
+//    /// Flatten all connected and active clients into an array for easy sending.
+//    /// - Parameters:
+//    ///   - userId: The userId used to look up the client.
+//    ///   - chatId: The chatId used to look up the client.
+//    /// - Returns: An array of active and connected clients.
+//    func connectedClients(userId: UUID, chatId: UUID) async -> [ChatWebSocketClient] {
+//        let activeClients = await clients.active()
+//        return connectedClients
+//    }
     
     /// Broadcast a new chat message to the active/connected clients.
     /// - Parameters:
@@ -248,7 +246,7 @@ extension ChatWebSocketManager {
     ///   - userId: Used to reference the client.
     ///   - chatId: Used to reference the client.
     ///   - database: The `Database` attached to the originating `Request`.
-    func broadcast(message: Message.GetResponse, to clients: [ChatWebSocketClient], database: Database) async throws {
+    func broadcast(message: MessageResponse, to clients: [ChatWebSocketClient], database: Database) async throws {
         if clients.isEmpty {
             return
         }
@@ -267,12 +265,12 @@ extension ChatWebSocketManager {
     ///   - userId: The userId used to reference the client.
     ///   - chatId: The chatId used to reference the message.
     func broadcast<T: Codable>(_ data: T, to userId: UUID, on chatId: UUID) async throws {
-        let connectedClients = await connectedClients(userId: userId, chatId: chatId)
+        let connectedClients = await self.clients.active()
         guard !connectedClients.isEmpty else {
             return
         }
-        try connectedClients.forEach { client in
-            let webSocketMessage = WebSocketMessage(client: client.id, data: data)
+        try connectedClients.forEach { id, client in
+            let webSocketMessage = WebSocketMessage(client: id, data: data)
             let encoder = JSONEncoder()
             encoder.dateEncodingStrategy = .iso8601
             let data = try JSONEncoder().encode(webSocketMessage)

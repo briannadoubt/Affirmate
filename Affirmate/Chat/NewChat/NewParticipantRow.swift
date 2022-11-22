@@ -5,21 +5,22 @@
 //  Created by Bri on 9/8/22.
 //
 
+import AffirmateShared
 import SwiftUI
 
 struct NewParticipantRow: View {
     
     @EnvironmentObject var newParticipantObserver: NewParticipantsObserver
     
-    let publicUser: AffirmateUser.Public
+    let publicUser: UserPublic
     
-    @State var selectedRoleId: String = Participant.Role.participant.rawValue
+    @State var selectedRoleId: String = ParticipantRole.participant.rawValue
     
     var body: some View {
         Menu {
             Picker(selection: $selectedRoleId) {
-                ForEach(Participant.Role.allCases) { role in
-                    Text(role.description)
+                ForEach(ParticipantRole.allCases) { role in
+                    Text(role.title)
                         .id(role.id)
                 }
             } label: {
@@ -28,7 +29,7 @@ struct NewParticipantRow: View {
             .pickerStyle(.menu)
             .onChange(of: selectedRoleId) { newRoleId in
                 newParticipantObserver.set(
-                    role: Participant.Role(rawValue: newRoleId) ?? .participant,
+                    role: ParticipantRole(rawValue: newRoleId) ?? .participant,
                     for: publicUser
                 )
             }
@@ -42,7 +43,7 @@ struct NewParticipantRow: View {
             HStack {
                 Text("@") + Text(publicUser.username)
                 Spacer()
-                Text(newParticipantObserver.selectedParticipants[publicUser]?.description ?? "")
+                Text(newParticipantObserver.selectedParticipants[publicUser.id]?.role.title ?? "")
                     .foregroundStyle(.secondary)
             }
         }
@@ -52,7 +53,7 @@ struct NewParticipantRow: View {
 struct NewParticipantRow_Previews: PreviewProvider {
     static var previews: some View {
         NewParticipantRow(
-            publicUser: AffirmateUser.Public(
+            publicUser: UserPublic(
                 id: UUID(),
                 username: "meowface"
             )

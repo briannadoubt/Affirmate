@@ -5,6 +5,7 @@
 //  Created by Bri on 9/8/22.
 //
 
+import AffirmateShared
 import SwiftUI
 
 struct AddParticipantButton: View {
@@ -16,10 +17,10 @@ struct AddParticipantButton: View {
     func addParticipants() {
         Task {
             do {
-                let newParticipants = newParticipantObserver.selectedParticipants.map { user, role in
-                    Participant.Create(
-                        role: role,
-                        user: user.id
+                let newParticipants = newParticipantObserver.selectedParticipants.map { id, value in
+                    ParticipantCreate(
+                        role: value.role,
+                        user: value.user.id
                     )
                 }
                 try chatObserver.inviteParticipants(newParticipants)

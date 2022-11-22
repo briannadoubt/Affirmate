@@ -5,27 +5,28 @@
 //  Created by Bri on 7/31/22.
 //
 
+import AffirmateShared
 import SwiftUI
 
 protocol AuthenticationObservable: ObservableObject {
     associatedtype _AuthenticationObservable
     static var shared: _AuthenticationObservable { get set }
     var state: AuthenticationObserver.State { get set }
-    var currentUser: AffirmateUser? { get set }
+    var currentUser: UserResponse? { get set }
     associatedtype _AuthenticationActable = AuthenticationActable
     var authenticationActor: _AuthenticationActable { get }
-    associatedtype _AffirmateUserActable = AffirmateUserActable
-    var meActor: _AffirmateUserActable { get }
+    associatedtype _UserActable = UserActable
+    var meActor: _UserActable { get }
     func setCurrentAuthenticationState() async
     func setState(to newState: AuthenticationObserver.State)
-    func setCurrentUser(to user: AffirmateUser?)
+    func setCurrentUser(to user: UserResponse?)
     func getCurrentUser() async throws
-    func signUp(user create: AffirmateUser.Create) async throws
+    func signUp(user create: UserCreate) async throws
     func login(username: String, password: String) async throws
     func signOut(serverHasValidKey: Bool) async throws
     func update(deviceToken token: Data?) async throws
-    func refesh(sessionToken: SessionToken) async throws
-    func store(sessionToken: SessionToken?) throws
+    func refesh(sessionToken: SessionTokenResponse) async throws
+    func store(sessionToken: SessionTokenResponse?) throws
 }
 
 final class AuthenticationObserver: AuthenticationObservable {
@@ -33,10 +34,18 @@ final class AuthenticationObserver: AuthenticationObservable {
     static var shared = AuthenticationObserver()
     
     @Published var state: AuthenticationObserver.State = .initial
-    @Published var currentUser: AffirmateUser?
+    @Published var currentUser: UserResponse?
     
-    let authenticationActor = AuthenticationActor()
-    let meActor = AffirmateUserActor()
+    let authenticationActor: AuthenticationActable
+    let meActor: UserActor
+    
+    init(
+        authenticationActor: AuthenticationActable = AuthenticationActor(),
+        meActor: UserActor = UserActor()
+    ) {
+        self.authenticationActor = authenticationActor
+        self.meActor = meActor
+    }
     
     func setCurrentAuthenticationState() async {
         await setState(to: authenticationActor.http.interceptor.sessionToken == nil ? .loggedOut : .loggedIn)
@@ -48,7 +57,7 @@ final class AuthenticationObserver: AuthenticationObservable {
         }
     }
     
-    @MainActor func setCurrentUser(to user: AffirmateUser?) {
+    @MainActor func setCurrentUser(to user: UserResponse?) {
         withAnimation {
             self.currentUser = user
             if user == nil {
@@ -70,7 +79,7 @@ final class AuthenticationObserver: AuthenticationObservable {
         }
     }
     
-    func signUp(user create: AffirmateUser.Create) async throws {
+    func signUp(user create: UserCreate) async throws {
         await setState(to: .loading(message: "Signing up..."))
         do {
             try await authenticationActor.signUp(user: create)
@@ -118,13 +127,13 @@ final class AuthenticationObserver: AuthenticationObservable {
         try await authenticationActor.update(deviceToken: token)
     }
     
-    func refesh(sessionToken: SessionToken) async throws {
+    func refesh(sessionToken: SessionTokenResponse) async throws {
         let newSessionToken = try await authenticationActor.refresh(sessionToken: sessionToken)
         try store(sessionToken: nil)
         try store(sessionToken: newSessionToken)
     }
     
-    func store(sessionToken: SessionToken?) throws {
+    func store(sessionToken: SessionTokenResponse?) throws {
         if let sessionToken {
             try AffirmateKeychain.session.set(sessionToken.value, key: Constants.KeyChain.Session.token)
         } else {
