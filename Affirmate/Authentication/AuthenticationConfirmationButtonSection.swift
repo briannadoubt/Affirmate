@@ -33,6 +33,6 @@ struct AuthenticationConfirmationButtonSection: View {
 
 struct AuthenticationConfirmationButtonSection_Previews: PreviewProvider {
     static var previews: some View {
-        AuthenticationConfirmationButtonSection()
+        AuthenticationConfirmationButtonSection(firstName: .constant("Meow"), lastName: .constant("Face"), username: .constant("meowface"), email: .constant("meow@fake.com"), password: .constant("Test123$"), confirmPassword: .constant("Test123$"), showError: { _ in })
     }
 }

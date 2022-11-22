@@ -40,6 +40,6 @@ struct LoginButton: View {
 
 struct LoginButton_Previews: PreviewProvider {
     static var previews: some View {
-        LoginButton()
+        LoginButton(username: .constant("meowface"), password: .constant("Test123$"), showError: { _ in })
     }
 }

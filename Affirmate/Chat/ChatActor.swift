@@ -8,15 +8,32 @@
 import AffirmateShared
 import Foundation
 import Alamofire
+import KeychainAccess
 
-actor ChatActor: Repository {
+actor ChatActor {
+    let http: HTTPActable
+    let keychain: Keychain
+    
+    init(http: HTTPActable = HTTPActor(), keychain: Keychain = AffirmateKeychain.session) {
+        self.http = http
+        self.keychain = keychain
+    }
+    
+    var sessionToken: String? {
+        keychain[Constants.KeyChain.Session.token]
+    }
+    
+    func getSessionToken() -> String? {
+        sessionToken
+    }
+    
     func get() async throws -> [ChatResponse] {
         let chatResponses = try await http.requestDecodable(Request.chats, to: [ChatResponse].self)
         return chatResponses
     }
     
     func get(_ id: UUID) async throws -> ChatResponse {
-        let chatResponse = try await http.requestDecodable(Request.chat(chatId: id, sessionToken: http.interceptor.sessionToken), to: ChatResponse.self)
+        let chatResponse = try await http.requestDecodable(Request.chat(chatId: id, sessionToken: sessionToken), to: ChatResponse.self)
         return chatResponse
     }
     
@@ -24,14 +41,12 @@ actor ChatActor: Repository {
         try await http.request(Request.newChat(object))
     }
     
-//    func invite(_ )
-    
     func joinChat(_ chatId: UUID, confirmation: ChatInvitationJoin) async throws {
-        try await http.request(Request.joinChat(chatId: chatId, confirmation: confirmation, sessionToken: http.interceptor.sessionToken))
+        try await http.request(Request.joinChat(chatId: chatId, confirmation: confirmation, sessionToken: sessionToken))
     }
     
     func declineInvitation(_ chatId: UUID, declination: ChatInvitationDecline) async throws {
-        try await http.request(Request.declineInvitation(chatId: chatId, declination: declination, sessionToken: http.interceptor.sessionToken))
+        try await http.request(Request.declineInvitation(chatId: chatId, declination: declination, sessionToken: sessionToken))
     }
 }
     

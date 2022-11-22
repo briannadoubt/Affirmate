@@ -9,7 +9,7 @@ import AffirmateShared
 import Alamofire
 import SwiftUI
 
-protocol UserActable: Repository, Actor {
+protocol UserActable: Actor {
     func me() async throws -> UserResponse
     func find(username: String?) async throws -> [UserPublic]
 }

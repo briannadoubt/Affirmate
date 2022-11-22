@@ -148,6 +148,8 @@
 		03DEF170292CE426009AA00E /* AuthenticationTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF16E292CE426009AA00E /* AuthenticationTitle.swift */; };
 		03DEF172292CE43A009AA00E /* AffirmateLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF171292CE43A009AA00E /* AffirmateLogo.swift */; };
 		03DEF173292CE43A009AA00E /* AffirmateLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF171292CE43A009AA00E /* AffirmateLogo.swift */; };
+		03DEF175292D45A1009AA00E /* AuthenticationActorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF174292D45A1009AA00E /* AuthenticationActorTests.swift */; };
+		03DEF177292D46E8009AA00E /* MockHTTPActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF176292D46E8009AA00E /* MockHTTPActor.swift */; };
 		03E1922928AEA2B600876C5D /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1922828AEA2B600876C5D /* ChatView.swift */; };
 		03E1922C28AEA30B00876C5D /* ReversedScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = 03E1922B28AEA30B00876C5D /* ReversedScrollView */; };
 		03E1922E28AEA3B000876C5D /* KeyboardHeightObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1922D28AEA3B000876C5D /* KeyboardHeightObserver.swift */; };
@@ -281,6 +283,8 @@
 		03DEF16B292CE412009AA00E /* AuthenticationFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationFields.swift; sourceTree = "<group>"; };
 		03DEF16E292CE426009AA00E /* AuthenticationTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationTitle.swift; sourceTree = "<group>"; };
 		03DEF171292CE43A009AA00E /* AffirmateLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateLogo.swift; sourceTree = "<group>"; };
+		03DEF174292D45A1009AA00E /* AuthenticationActorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationActorTests.swift; sourceTree = "<group>"; };
+		03DEF176292D46E8009AA00E /* MockHTTPActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHTTPActor.swift; sourceTree = "<group>"; };
 		03E1922828AEA2B600876C5D /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		03E1922D28AEA3B000876C5D /* KeyboardHeightObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardHeightObserver.swift; sourceTree = "<group>"; };
 		03E1922F28AEA49000876C5D /* ChatObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatObserver.swift; sourceTree = "<group>"; };
@@ -616,6 +620,7 @@
 				0397775329049F5B00246260 /* MockAuthenticationObserver.swift */,
 				033A92CA292AFA9A001FCB1E /* MockAuthenticationActor.swift */,
 				033A92C8292AF997001FCB1E /* AuthenticationObserverTests.swift */,
+				03DEF174292D45A1009AA00E /* AuthenticationActorTests.swift */,
 				033A92CC292AFED8001FCB1E /* MockAffirmateUserActor.swift */,
 			);
 			path = Authentication;
@@ -635,6 +640,7 @@
 			children = (
 				0397774D29046EC500246260 /* WebSocket */,
 				0397774E29046EDB00246260 /* HTTPActorTests.swift */,
+				03DEF176292D46E8009AA00E /* MockHTTPActor.swift */,
 				039777512904713800246260 /* MockURLProtocol.swift */,
 			);
 			path = Network;
@@ -1010,12 +1016,14 @@
 			files = (
 				033A92CD292AFED8001FCB1E /* MockAffirmateUserActor.swift in Sources */,
 				0397774F29046EDB00246260 /* HTTPActorTests.swift in Sources */,
+				03DEF175292D45A1009AA00E /* AuthenticationActorTests.swift in Sources */,
 				033A92CB292AFA9A001FCB1E /* MockAuthenticationActor.swift in Sources */,
 				0397774B2903CE8300246260 /* AffirmateCryptoTests.swift in Sources */,
 				039777412903BDC200246260 /* AppDelegateTests.swift in Sources */,
 				039777522904713800246260 /* MockURLProtocol.swift in Sources */,
 				039777492903C83700246260 /* AffirmateKeychainTests.swift in Sources */,
 				033A92C9292AF997001FCB1E /* AuthenticationObserverTests.swift in Sources */,
+				03DEF177292D46E8009AA00E /* MockHTTPActor.swift in Sources */,
 				0397775429049F5B00246260 /* MockAuthenticationObserver.swift in Sources */,
 				0389BC9E286FAB2B00CBDC3B /* AffirmateAppTests.swift in Sources */,
 			);

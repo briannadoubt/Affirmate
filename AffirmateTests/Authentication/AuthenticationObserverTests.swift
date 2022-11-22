@@ -16,6 +16,7 @@ final class AuthenticationObserverTests: XCTestCase {
     var meActor: MockUserActor!
     var authenticationActor: MockAuthenticationActor!
     var sessionKeychain: Keychain!
+    var http: MockHTTPActor!
     
     static let userId = UUID()
     static let firstName = "Meow"
@@ -46,7 +47,8 @@ final class AuthenticationObserverTests: XCTestCase {
         sessionKeychain = Keychain()
         do { try sessionKeychain.removeAll() } catch { }
         meActor = MockUserActor()
-        authenticationActor = MockAuthenticationActor()
+        http = MockHTTPActor(keychain: sessionKeychain)
+        authenticationActor = MockAuthenticationActor(http: http)
         observer = AuthenticationObserver(authenticationActor: authenticationActor, meActor: meActor, sessionKeychain: sessionKeychain)
     }
 
@@ -56,6 +58,44 @@ final class AuthenticationObserverTests: XCTestCase {
         observer = nil
         authenticationActor = nil
         meActor = nil
+    }
+    
+    func test_initialValues() {
+        XCTAssertEqual(observer.state, .initial)
+        XCTAssertEqual(observer.currentUser, nil)
+    }
+    
+    func test_setCurrentAuthenticationState() async throws {
+        try observer.store(sessionToken: sessionTokenResponse)
+        XCTAssertEqual(sessionKeychain[string: Constants.KeyChain.Session.token], sessionTokenResponse.value)
+        await observer.setCurrentAuthenticationState()
+        XCTAssertEqual(observer.state, .loggedIn)
+    }
+    
+    func test_setCurrentAuthenticationState_sessionTokenIsNil() async throws {
+        XCTAssertNil(sessionKeychain[string: Constants.KeyChain.Session.token])
+        await observer.setCurrentAuthenticationState()
+        XCTAssertEqual(observer.state, .loggedOut)
+    }
+    
+    @MainActor func test_setState() {
+        XCTAssertEqual(observer.state, .initial)
+        let state = AuthenticationObserver.State.loggedOut
+        observer.setState(to: state)
+        XCTAssertEqual(observer.state, state)
+    }
+    
+    @MainActor func test_setCurrentUser() throws {
+        observer.setCurrentUser(to: currentUser)
+        XCTAssertEqual(observer.currentUser, currentUser)
+    }
+    
+    @MainActor func test_setCurrentUser_nilValue() throws {
+        try observer.store(sessionToken: sessionTokenResponse)
+        XCTAssertEqual(sessionKeychain[string: Constants.KeyChain.Session.token], sessionTokenResponse.value)
+        observer.setCurrentUser(to: nil)
+        XCTAssertNil(observer.currentUser)
+        XCTAssertNil(sessionKeychain[string: Constants.KeyChain.Session.token])
     }
 
     func test_getCurrentUser() async throws {

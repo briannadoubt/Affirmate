@@ -31,6 +31,6 @@ struct AuthenticationFields: View {
 
 struct AuthenticationFields_Previews: PreviewProvider {
     static var previews: some View {
-        AuthenticationFields()
+        AuthenticationFields(firstName: .constant("Meow"), lastName: .constant("Face"), username: .constant("meowface"), email: .constant("meow@fake.com"), password: .constant("Test123$"), confirmPassword: .constant("Test123$"), showError: { _ in })
     }
 }

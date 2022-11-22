@@ -14,8 +14,7 @@ protocol AuthenticationObservable: ObservableObject {
     static var shared: _AuthenticationObservable { get set }
     var state: AuthenticationObserver.State { get set }
     var currentUser: UserResponse? { get set }
-    associatedtype _AuthenticationActable = AuthenticationActable
-    var authenticationActor: _AuthenticationActable { get }
+    var authenticationActor: AuthenticationActable { get }
     associatedtype _UserActable = UserActable
     var meActor: _UserActable { get }
     func setCurrentAuthenticationState() async
@@ -52,7 +51,7 @@ final class AuthenticationObserver: AuthenticationObservable {
     }
     
     func setCurrentAuthenticationState() async {
-        await setState(to: authenticationActor.http.interceptor.sessionToken == nil ? .loggedOut : .loggedIn)
+        await setState(to: sessionKeychain[Constants.KeyChain.Session.token] == nil ? .loggedOut : .loggedIn)
     }
     
     @MainActor func setState(to newState: AuthenticationObserver.State) {
@@ -66,7 +65,7 @@ final class AuthenticationObserver: AuthenticationObservable {
             self.currentUser = user
             if user == nil {
                 do {
-                    try sessionKeychain.remove(Constants.KeyChain.Session.token)
+                    try store(sessionToken: nil)
                 } catch {
                     print("Failed to remove tokens")
                 }

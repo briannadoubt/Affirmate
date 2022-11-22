@@ -150,14 +150,16 @@ private extension ChatObserver {
     
     /// Start a new chat.
     func start() {
-        let sessionToken = chatActor.http.interceptor.sessionToken
-        let request = ChatActor.Request.chat(chatId: chatId, sessionToken: sessionToken)
-        guard let urlRequest = try? request.asURLRequest() else {
-            assertionFailure()
-            return
+        Task {
+            let sessionToken = await chatActor.getSessionToken()
+            let request = ChatActor.Request.chat(chatId: chatId, sessionToken: sessionToken)
+            guard let urlRequest = try? request.asURLRequest() else {
+                assertionFailure()
+                return
+            }
+            start(urlRequest)
+            print(request)
         }
-        start(urlRequest)
-        print(request)
     }
     
     /// Insert a new message into the local chat, updating the view.

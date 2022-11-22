@@ -5,6 +5,7 @@
 //  Created by Bri on 11/22/22.
 //
 
+import AffirmateShared
 import SwiftUI
 
 struct SignUpButton: View {
@@ -53,6 +54,6 @@ struct SignUpButton: View {
 
 struct SignUpButton_Previews: PreviewProvider {
     static var previews: some View {
-        SignUpButton()
+        SignUpButton(firstName: .constant("Meow"), lastName: .constant("Face"), username: .constant("meowface"), email: .constant("meow@fake.com"), password: .constant("Test123$"), confirmPassword: .constant("Test123$"), showError: { _ in })
     }
 }

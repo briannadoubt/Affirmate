@@ -9,7 +9,9 @@ import AffirmateShared
 import Foundation
 import Alamofire
 
-protocol AuthenticationActable: Repository, Actor {
+protocol AuthenticationActable: Actor {
+    var http: HTTPActable { get }
+    init(http: HTTPActable)
     func signUp(user create: UserCreate) async throws
     func login(username: String, password: String) async throws -> UserLoginResponse
     func refresh(sessionToken: SessionTokenResponse) async throws -> SessionTokenResponse
@@ -18,8 +20,11 @@ protocol AuthenticationActable: Repository, Actor {
 }
 
 actor AuthenticationActor: AuthenticationActable {
+    let http: HTTPActable
     
-    typealias Auth = AuthenticationObserver
+    init(http: HTTPActable = HTTPActor()) {
+        self.http = http
+    }
     
     func signUp(user create: UserCreate) async throws {
         try await http.request(unauthorized: Request.new(user: create))

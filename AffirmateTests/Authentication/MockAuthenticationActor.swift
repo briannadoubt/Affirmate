@@ -15,6 +15,12 @@ enum MockError: LocalizedError {
 }
 
 actor MockAuthenticationActor: AuthenticationActable {
+    var http: HTTPActable
+    
+    init(http: HTTPActable) {
+        self.http = http
+    }
+    
     static var loginResponse: UserLoginResponse?
     static var sessionToken: SessionTokenResponse?
     
