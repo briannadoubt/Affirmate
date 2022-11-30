@@ -57,10 +57,10 @@ struct AuthenticationRouteCollection: RouteCollection {
         // MARK: - POST: /auth/validate
         // "/validate" checks if there is a valid token on the JWT session.
         // If this check fails the client is expected to re-authenticate with another call to "/login"
-        auth.post("validate") { request -> HTTPStatus in
-            try request.auth.require(SessionToken.self)
-            return .ok
-        }
+//        auth.post("validate") { request -> HTTPStatus in
+//            try request.auth.require(SessionToken.self)
+//            return .ok
+//        }
         
         let tokenProtected = auth.grouped(SessionToken.authenticator(), SessionToken.guardMiddleware())
         

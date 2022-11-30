@@ -7,22 +7,16 @@ import APNSwift
 import JWT
 import Redis
 
-// configures your application
-public func configure(_ app: Application) throws {
-    // uncomment to serve files from /Public folder
-    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
-
-    if app.environment != .testing {
-        // Use PostGreSQL as a database. Connect to localhost if running in DEBUG, otherwise use environment variables for an integrated environment.
-        app.databases.use(.postgres(
-            hostname: Environment.get("DATABASE_HOST") ?? "localhost",
-            port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? PostgresConfiguration.ianaPortNumber,
-            username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
-            password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
-            database: Environment.get("DATABASE_NAME") ?? "vapor_database"
-        ), as: .psql)
-    }
-
+fileprivate func configureDatabase(for app: Application) {
+    // Use PostGreSQL as a database. Connect to localhost if running in DEBUG, otherwise use environment variables for an integrated environment.
+    app.databases.use(.postgres(
+        hostname: Environment.get("DATABASE_HOST") ?? "localhost",
+        port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? PostgresConfiguration.ianaPortNumber,
+        username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
+        password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
+        database: Environment.get("DATABASE_NAME") ?? "vapor_database"
+    ), as: .psql)
+    
     // Configure migrations
     app.migrations.add(User.Migration())
     app.migrations.add(Chat.Migration())
@@ -31,15 +25,9 @@ public func configure(_ app: Application) throws {
     app.migrations.add(ChatInvitation.Migration())
     app.migrations.add(SessionToken.Migration())
     app.migrations.add(Message.Migration())
-    
-    // Log level
-    #if DEBUG
-    app.logger.logLevel = .debug
-    #endif
-    
-    // Configure using Leaf as an HTML rendering engine for web browser clients.
-//    app.views.use(.leaf)
-    
+}
+
+fileprivate func configureApns(for app: Application) throws {
     if
         let apnsKey = Environment.get("APNS_KEY")?.replacingOccurrences(of: "\\n", with: "\n"),
         let keyIdentifier = Environment.get("APNS_KEY_ID"),
@@ -47,7 +35,6 @@ public func configure(_ app: Application) throws {
     {
         let iOSBundleIdentifier = "org.affirmate.Affirmate"
 //        let watchOSBundleIdentifier = "org.affirmate.Affirmate.Watch"
-//        let macOSBundleIdentifier = "org.affirmate.Affirmate"
         
         let key: ECDSAKey =  try .private(pem: apnsKey)
         
@@ -79,22 +66,25 @@ public func configure(_ app: Application) throws {
         // Configure Apple app identifier.
         app.jwt.apple.applicationIdentifier = iOSBundleIdentifier
     }
+}
+
+// configures your application
+public func configure(_ app: Application) throws {
+    // uncomment to serve files from /Public folder
+    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+
+    configureDatabase(for: app)
+    
+    // Log level
+    #if DEBUG
+    app.logger.logLevel = .debug
+    #endif
+    
+    try configureApns(for: app)
     
     // Configure Google app identifier and domain name.
 //    app.jwt.google.applicationIdentifier = "org.affirmate.Affirmate"
 //    app.jwt.google.gSuiteDomainName = "..."
-    
-    do {
-        // MARK: Clear Database
-        if app.environment == .testing {
-            try app.autoRevert().wait()
-        }
-        if !app.environment.isRelease {
-            try app.autoMigrate().wait()
-        }
-    } catch {
-        print(error)
-    }
     
     // Register Routes
     do {
@@ -104,6 +94,7 @@ public func configure(_ app: Application) throws {
         try app.register(collection: ChatRouteCollection())
     } catch {
         print(error)
+        throw error
     }
     
     let chatWebSocketManager = ChatWebSocketManager(eventLoop: app.eventLoopGroup.next())
