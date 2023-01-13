@@ -649,19 +649,11 @@
 		0397774C29046E3A00246260 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				0397774D29046EC500246260 /* WebSocket */,
 				0397774E29046EDB00246260 /* HTTPActorTests.swift */,
 				03DEF176292D46E8009AA00E /* MockHTTPActor.swift */,
 				039777512904713800246260 /* MockURLProtocol.swift */,
 			);
 			path = Network;
-			sourceTree = "<group>";
-		};
-		0397774D29046EC500246260 /* WebSocket */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = WebSocket;
 			sourceTree = "<group>";
 		};
 		039777552904AC0A00246260 /* AffirmateWatch */ = {
