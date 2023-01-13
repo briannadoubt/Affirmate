@@ -17,10 +17,7 @@ extension NSManagedObjectContext {
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         fetchRequest.includesSubentities = true
         fetchRequest.fetchLimit = 1
-        guard let object = try fetch(fetchRequest).first else {
-            return nil
-        }
-        return object
+        return try fetch(fetchRequest).first
     }
     
     func exists<T: NSManagedObject>(_ object: T.Type, id: UUID) throws -> Bool {
