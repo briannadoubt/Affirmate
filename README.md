@@ -2,6 +2,16 @@
 
 A place for things ❤️‍🔥
 
+## What is it
+
+An encrypted chat app, inspired by Signal's implementation of encryption, but much less securely implemented. Don't use this for anything serious unless you have experience with encryption and have a thorough system for vetting your stuff.
+
+But the system is all built purely in Swift. There's a Vapor server that stands up a mongo database, and a good start on a universal Swift chat app that syncs encrypted chats to other devices through CloudKit.
+
+Real-time chat features (including typing indicators and incoming messages when the app is open) are managed through a custom websocket connection.
+
+All in all, it was a big lift, and a fun project to work on!
+
 ## Set Up Server Development Environment
 
 In order to build and run the server locally you will need to pass in a variety of Arguments and Environment Variables. The Environment Variables are also reccomended on a production server as well, but this repo isn't there yet.
