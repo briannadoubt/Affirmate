@@ -42,12 +42,26 @@ final class AuthenticationRouteCollectionTests: XCTestCase {
         let app = Application(.testing)
         defer { app.shutdown() }
         try! app.setUp()
-        
+
         try await app
             .signUp()
             .login()
             .logout()
-        
+
+        app.tearDown()
+    }
+
+    // MARK: /auth/refresh
+    func test_refresh() async throws {
+        let app = Application(.testing)
+        defer { app.shutdown() }
+        try! app.setUp()
+
+        try await app
+            .signUp()
+            .login()
+            .refresh()
+
         app.tearDown()
     }
 }
