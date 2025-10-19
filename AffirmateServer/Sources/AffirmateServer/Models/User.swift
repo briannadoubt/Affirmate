@@ -74,7 +74,8 @@ final class User: Model, Content {
     func generateToken() throws -> SessionToken {
         try .init(
             value: [UInt8].random(count: 32).base64,
-            userID: self.requireID()
+            userID: self.requireID(),
+            expiresAt: Date().addingTimeInterval(SessionToken.defaultExpirationInterval)
         )
     }
     

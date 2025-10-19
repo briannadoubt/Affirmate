@@ -24,6 +24,7 @@ fileprivate func configureDatabase(for app: Application) {
     app.migrations.add(Participant.Migration())
     app.migrations.add(ChatInvitation.Migration())
     app.migrations.add(SessionToken.Migration())
+    app.migrations.add(SessionToken.ExpiryMigration())
     app.migrations.add(Message.Migration())
 }
 
@@ -99,7 +100,7 @@ public func configure(_ app: Application) throws {
     
     let chatWebSocketManager = ChatWebSocketManager(eventLoop: app.eventLoopGroup.next())
     app
-        .grouped(SessionToken.authenticator(), SessionToken.guardMiddleware())
+        .grouped(SessionToken.authenticator(), SessionToken.expirationMiddleware(), SessionToken.guardMiddleware())
         .webSocket("chats", ":chatId") { request, webSocket async in
             await chatWebSocketManager.connect(request, webSocket)
         }

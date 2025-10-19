@@ -13,7 +13,7 @@ struct UserRouteCollection: RouteCollection {
     
     func boot(routes: RoutesBuilder) throws {
         
-        let tokenProtected = routes.grouped(SessionToken.authenticator(), SessionToken.guardMiddleware())
+        let tokenProtected = routes.grouped(SessionToken.authenticator(), SessionToken.expirationMiddleware(), SessionToken.guardMiddleware())
         let users = tokenProtected.grouped("users")
         
         users.get("find") { request async throws -> [UserPublic] in
