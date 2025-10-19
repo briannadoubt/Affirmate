@@ -28,6 +28,11 @@ In order to build and run the server locally you will need to pass in a variety 
 * `APNS_KEY`: `<Your .pem Private Key (downloaded from developer.apple.com, and configured with APNS permissions)`
 * `APNS_KEY_ID`: `<Your .pem Key ID (found on the page you downloaded your private key from)>`
 
+When running the Vapor server in production (`ENVIRONMENT=production`), the APNs configuration expects to use Apple's production
+push environment. Ensure that the credentials above correspond to an APNs key that has been enabled for production pushes. If
+you store the private key in an environment variable, keep the PEM formatting intact by replacing literal newlines with
+`\n`—the server restores the required line breaks at runtime.
+
 See the following screenshot for an example of all the required keys and arguments:
 
 <img width="440" alt="Required Server Arguments and Environment Variables" src="https://user-images.githubusercontent.com/5713359/186994861-bea4c1af-7d36-435f-be0f-1bdc808a0a88.png">
