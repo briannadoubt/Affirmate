@@ -1,0 +1,145 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  client:
+    name: Client tests (${{ matrix.platform }})
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: iOS
+            destination: "platform=iOS Simulator,OS=latest,name=iPhone 15"
+            scheme: Affirmate
+          - platform: macOS
+            destination: "platform=macOS"
+            scheme: Affirmate
+          - platform: visionOS
+            destination: "platform=visionOS Simulator,OS=latest,name=Apple Vision Pro"
+            scheme: Affirmate
+          - platform: tvOS
+            destination: "platform=tvOS Simulator,OS=latest,name=Apple TV 4K (3rd generation)"
+            scheme: Affirmate
+          - platform: watchOS
+            destination: "platform=watchOS Simulator,OS=latest,name=Apple Watch Series 9 (45mm)"
+            scheme: AffirmateWatch
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.app
+
+      - name: Build and test
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Affirmate.xcodeproj \
+            -scheme "${{ matrix.scheme }}" \
+            -destination "${{ matrix.destination }}" \
+            -skipPackagePluginValidation \
+            -disableAutomaticPackageResolution
+
+  server:
+    name: Server tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-26]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: '6.2'
+
+      - name: Run server tests
+        working-directory: AffirmateServer
+        run: swift test
+
+  integration:
+    name: Integration tests
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.app
+
+      - name: Install PostgreSQL
+        run: |
+          brew update
+          brew install postgresql@16
+
+      - name: Start PostgreSQL
+        run: |
+          POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
+          PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
+          mkdir -p "$PGDATA"
+          if [ ! -f "$PGDATA/PG_VERSION" ]; then
+            "$POSTGRES_PREFIX/bin/initdb" -U runner "$PGDATA"
+          fi
+          "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" -o "-c listen_addresses=localhost" -l "$PGDATA/server.log" start
+          "$POSTGRES_PREFIX/bin/createuser" --superuser vapor_username || true
+          "$POSTGRES_PREFIX/bin/createdb" -O vapor_username vapor_database || true
+          "$POSTGRES_PREFIX/bin/psql" -v ON_ERROR_STOP=1 -d postgres -c "ALTER USER vapor_username WITH PASSWORD 'vapor_password';"
+
+      - name: Run database migrations
+        working-directory: AffirmateServer
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_USERNAME: vapor_username
+          DATABASE_PASSWORD: vapor_password
+          DATABASE_NAME: vapor_database
+        run: swift run Run migrate --yes
+
+      - name: Start server
+        working-directory: AffirmateServer
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_USERNAME: vapor_username
+          DATABASE_PASSWORD: vapor_password
+          DATABASE_NAME: vapor_database
+        run: |
+          swift run Run serve --env production --hostname 0.0.0.0 --port 8080 > "$RUNNER_TEMP/affirmate-server.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/affirmate-server.pid"
+          sleep 15
+
+      - name: Run integration tests
+        env:
+          AFFIRMATE_INTEGRATION_TESTS: '1'
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Affirmate.xcodeproj \
+            -scheme Affirmate \
+            -destination 'platform=macOS' \
+            -skipPackagePluginValidation \
+            -disableAutomaticPackageResolution
+
+      - name: Shutdown server
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/affirmate-server.pid" ]; then
+            kill "$(cat "$RUNNER_TEMP/affirmate-server.pid")" || true
+            wait "$(cat "$RUNNER_TEMP/affirmate-server.pid")" || true
+          fi
+
+      - name: Stop PostgreSQL
+        if: always()
+        run: |
+          POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
+          PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
+          if [ -f "$PGDATA/postmaster.pid" ]; then
+            "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" stop
+          fi
