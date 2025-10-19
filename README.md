@@ -62,6 +62,10 @@ You should see `[ NOTICE ] Server starting on http://0.0.0.0:8080 (Vapor/HTTPSer
 
 Now that the database and the server are up and running you can build and run the iOS, watchOS, or macOS apps and they should connect to the same database/server instance running on your Mac.
 
+## Account deletion
+
+Authenticated users can remove their account by sending an HTTP `DELETE` request to `/me`. The server responds with `204 No Content` once the account has been deleted, and all of the user's session tokens, chat participation, invitations, and public keys are removed. The clients now treat this empty success response as a completed deletion.
+
 ## Authentication Architecture Flow
 
 <img width="250" alt="Authentication Architecture Flow" src="https://user-images.githubusercontent.com/5713359/187051690-515e22ae-0728-4b4f-81cb-4771d5100b5d.png">
