@@ -145,7 +145,7 @@ final class ChatsObserver: ObservableObject {
         }
         
         update(message: &message, from: messageContent, chat: chat)
-        
+
         if let participants = chat.participants as? Set<Participant> {
             if let sender = participants.first(where: { $0.id == messageContent.sender.id }) {
                 message.sender = sender
@@ -154,8 +154,14 @@ final class ChatsObserver: ObservableObject {
                 message.recipient = recipient
             }
         }
-        
+
         try managedObjectContext.save()
+
+        if let chatId = chat.id, let chatObserver = chatObservers[chatId] {
+            Task { @MainActor in
+                chatObserver.sendDeliveryConfirmation(for: messageContent.id)
+            }
+        }
     }
     
     /// Update a participant with the content from the server

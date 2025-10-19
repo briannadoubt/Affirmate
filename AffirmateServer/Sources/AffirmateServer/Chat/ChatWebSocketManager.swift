@@ -29,11 +29,13 @@ actor ChatWebSocketManager: WebSocketManager {
                 // MARK: Connect
                 if let connectMessage = try? self.get(buffer, Connect.self) {
                     await self.handle(connect: connectMessage, request: request, webSocket: webSocket)
-                    
+
                 // MARK: Message
+                } else if let confirmationMessage = try self.get(buffer, MessageRecievedConfirmation.self) {
+                    await self.handle(messageConfirmation: confirmationMessage, request: request, webSocket: webSocket)
                 } else if let webSocketMessage = try self.get(buffer, MessageCreate.self) {
                     await self.handle(chatMessage: webSocketMessage, request: request, webSocket: webSocket)
-                    
+
                 } else {
                     self.sendError("Recieved data in an unrecognized format", on: webSocket)
                 }
@@ -94,6 +96,31 @@ extension ChatWebSocketManager {
             // Broadcast to identified connected clients.
             try await self.broadcast(message: newMessageResponse, to: Array(connectedClientsForChat.values), database: database)
         }
+    }
+
+    func handle(messageConfirmation webSocketMessage: WebSocketMessage<MessageRecievedConfirmation>, request: Request, webSocket: WebSocket) async {
+        await handle(request: request, webSocket: webSocket) { database, currentUser, chat, _ in
+            try await deleteMessageIfAuthorized(webSocketMessage.data.messageId, currentUser: currentUser, chat: chat, database: database)
+        }
+    }
+
+    func deleteMessageIfAuthorized(_ messageId: UUID, currentUser: User, chat: Chat, database: Database) async throws {
+        guard let message = try await Message.find(messageId, on: database) else {
+            return
+        }
+
+        guard message.$chat.id == chat.id else {
+            return
+        }
+
+        try await message.$recipient.load(on: database)
+        try await message.recipient.$user.load(on: database)
+
+        guard try message.recipient.user.requireID() == currentUser.requireID() else {
+            return
+        }
+
+        try await message.delete(on: database)
     }
     
     /// Handle a `Connect` object, registering the client to `self.storage`.

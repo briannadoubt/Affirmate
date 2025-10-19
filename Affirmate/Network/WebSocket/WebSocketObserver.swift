@@ -70,6 +70,8 @@ extension WebSocketObserver {
             print("Did write", T.self, "from client with ID", clientId)
         }
     }
+
+    func flushPendingConfirmationsIfPossible() async { }
     
     /// Initiate an individualized client connection.
     func connect(chatId: UUID) throws {
@@ -101,9 +103,10 @@ extension WebSocketObserver {
         case .connected(let headers):
             Task {
                 await self.set(isConnected: true)
+                await self.flushPendingConfirmationsIfPossible()
             }
             print("WebSocket: did connect: \(headers)")
-            
+
             do {
                 let connect = Connect(chatId: chatId)
                 try write(connect)
@@ -122,6 +125,7 @@ extension WebSocketObserver {
             if let connectionConfirmation = try? data.decodeWebSocketMessage(ConfirmConnection.self) {
                 clientId = nil
                 clientId = connectionConfirmation.client
+                Task { await self.flushPendingConfirmationsIfPossible() }
                 print("WebSocket: Connection confirmed!")
             } else if let webSocketError = try? JSONDecoder().decode(WebSocketError.self, from: data) {
                 print("Recieved webSocket server error:", webSocketError)
