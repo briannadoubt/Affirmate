@@ -76,13 +76,43 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_15.4.app
 
-      - name: Start server stack
-        working-directory: AffirmateServer
+      - name: Install PostgreSQL
         run: |
-          docker compose up -d db
-          until docker compose exec db pg_isready -U vapor_username >/dev/null 2>&1; do sleep 2; done
-          docker compose run --rm migrate
-          docker compose up -d app
+          brew update
+          brew install postgresql@14
+
+      - name: Start PostgreSQL
+        run: |
+          POSTGRES_PREFIX="$(brew --prefix postgresql@14)"
+          PGDATA="$POSTGRES_PREFIX/var/postgresql@14"
+          mkdir -p "$PGDATA"
+          if [ ! -f "$PGDATA/PG_VERSION" ]; then
+            "$POSTGRES_PREFIX/bin/initdb" -U runner "$PGDATA"
+          fi
+          "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" -o "-c listen_addresses=localhost" -l "$PGDATA/server.log" start
+          "$POSTGRES_PREFIX/bin/createuser" --superuser vapor_username || true
+          "$POSTGRES_PREFIX/bin/createdb" -O vapor_username vapor_database || true
+          "$POSTGRES_PREFIX/bin/psql" -v ON_ERROR_STOP=1 -d postgres -c "ALTER USER vapor_username WITH PASSWORD 'vapor_password';"
+
+      - name: Run database migrations
+        working-directory: AffirmateServer
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_USERNAME: vapor_username
+          DATABASE_PASSWORD: vapor_password
+          DATABASE_NAME: vapor_database
+        run: swift run Run migrate --yes
+
+      - name: Start server
+        working-directory: AffirmateServer
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_USERNAME: vapor_username
+          DATABASE_PASSWORD: vapor_password
+          DATABASE_NAME: vapor_database
+        run: |
+          swift run Run serve --env production --hostname 0.0.0.0 --port 8080 > "$RUNNER_TEMP/affirmate-server.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/affirmate-server.pid"
           sleep 15
 
       - name: Run integration tests
@@ -97,7 +127,19 @@ jobs:
             -skipPackagePluginValidation \
             -disableAutomaticPackageResolution
 
-      - name: Shutdown server stack
+      - name: Shutdown server
         if: always()
-        working-directory: AffirmateServer
-        run: docker compose down -v
+        run: |
+          if [ -f "$RUNNER_TEMP/affirmate-server.pid" ]; then
+            kill "$(cat "$RUNNER_TEMP/affirmate-server.pid")" || true
+            wait "$(cat "$RUNNER_TEMP/affirmate-server.pid")" || true
+          fi
+
+      - name: Stop PostgreSQL
+        if: always()
+        run: |
+          POSTGRES_PREFIX="$(brew --prefix postgresql@14)"
+          PGDATA="$POSTGRES_PREFIX/var/postgresql@14"
+          if [ -f "$PGDATA/postmaster.pid" ]; then
+            "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" stop
+          fi
