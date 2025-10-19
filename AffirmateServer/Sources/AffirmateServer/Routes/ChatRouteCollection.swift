@@ -34,7 +34,7 @@ struct ChatRouteCollection: RouteCollection {
                 )
                 try await newPublicKey.save(on: database)
                 let newParticipant = Participant(
-                    role: .admin,
+                    role: invitation.role,
                     user: try currentUser.requireID(),
                     chat: try newChat.requireID(),
                     publicKey: try newPublicKey.requireID()
@@ -106,7 +106,7 @@ struct ChatRouteCollection: RouteCollection {
                 )
                 try await newPublicKey.save(on: database)
                 let newParticipant = Participant(
-                    role: .admin,
+                    role: invitation.role,
                     user: try currentUser.requireID(),
                     chat: chatId,
                     publicKey: try newPublicKey.requireID()
