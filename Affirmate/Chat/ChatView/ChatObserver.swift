@@ -39,14 +39,37 @@ class ChatObserver: WebSocketObserver {
     
     /// The chat's Id.
     var chatId: UUID
-    
+
     let crypto = AffirmateCrypto()
-    
+
     let currentUserId: UUID
-    
+
     let salt: Data?
-    
+
     var managedObjectContext: NSManagedObjectContext
+
+    private(set) var pendingConfirmations: Set<UUID> = []
+
+    @MainActor func sendDeliveryConfirmation(for messageId: UUID) {
+        pendingConfirmations.insert(messageId)
+        flushPendingConfirmations()
+    }
+
+    @MainActor func flushPendingConfirmations() {
+        guard socket != nil, clientId != nil else {
+            return
+        }
+        let confirmations = pendingConfirmations
+        for messageId in confirmations {
+            do {
+                let confirmation = MessageRecievedConfirmation(messageId: messageId)
+                try write(confirmation)
+                pendingConfirmations.remove(messageId)
+            } catch {
+                break
+            }
+        }
+    }
     
     /// Create a `ChatObserver` with a an existing `Chat`.
     /// - Parameters:
@@ -177,22 +200,23 @@ private extension ChatObserver {
                     throw ChatError.chatIdNotFound
                 }
                 message.chat = chat
-                
+
                 guard let participants = chat.participants as? Set<Participant> else {
                     throw ChatError.chatWithNoOtherParticipants
                 }
-                
+
                 if let sender = participants.first(where: { $0.id == messageContent.sender.id }) {
                     message.sender = sender
                 }
-                
+
                 if let recipient = participants.first(where: { $0.id == messageContent.recipient.id}) {
                     message.recipient = recipient
                 }
-                
+
                 try managedObjectContext.save()
             }
         }
+        sendDeliveryConfirmation(for: messageContent.id)
     }
     
     /// Add a new participant to the local chat, updating the view.
@@ -215,4 +239,12 @@ private extension ChatObserver {
 //            try managedObjectContext.save()
 //        }
 //    }
+}
+
+extension ChatObserver {
+    func flushPendingConfirmationsIfPossible() async {
+        await MainActor.run {
+            self.flushPendingConfirmations()
+        }
+    }
 }
