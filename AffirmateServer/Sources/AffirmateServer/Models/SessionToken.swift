@@ -107,13 +107,22 @@ extension SessionToken {
     /// Middleware that enforces token expiration and prunes expired tokens.
     struct ExpirationMiddleware: AsyncMiddleware {
         func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
-            guard let token = request.auth.get(SessionToken.self) else {
+            if let token = request.auth.get(SessionToken.self) {
+                guard token.isValid else {
+                    try await token.delete(on: request.db)
+                    request.auth.logout(SessionToken.self)
+                    throw Abort(.unauthorized)
+                }
+
                 return try await next.respond(to: request)
             }
 
-            guard token.isValid else {
+            if let bearerToken = request.headers.bearerAuthorization?.token,
+               let token = try await SessionToken.query(on: request.db)
+                    .filter(\.$value == bearerToken)
+                    .first(),
+               token.isValid == false {
                 try await token.delete(on: request.db)
-                request.auth.logout(SessionToken.self)
                 throw Abort(.unauthorized)
             }
 
