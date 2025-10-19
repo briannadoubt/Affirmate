@@ -133,8 +133,8 @@ extension AuthenticationActor {
                 request.httpBody = try encoder.encode(user)
             case .update(let deviceToken):
                 request.httpBody = try encoder.encode(APNSDeviceToken(token: deviceToken))
-            case .refresh(let sessionToken):
-                request.httpBody = try encoder.encode(sessionToken)
+            case .refresh:
+                break
             case .login, .logout:
                 break
             }

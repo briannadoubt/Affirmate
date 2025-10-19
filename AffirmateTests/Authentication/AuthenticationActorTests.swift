@@ -64,6 +64,34 @@ final class AuthenticationActorTests: XCTestCase {
         }
     }
 
+    func test_refresh() async throws {
+        let sessionToken = SessionTokenResponse(id: Self.userId, value: "refreshed-token")
+        await http.set(result: sessionToken)
+
+        let response = try await actor.refresh(sessionToken: sessionToken)
+
+        let called_requestDecodable = await http.called_requestDecodable
+        XCTAssertEqual(called_requestDecodable, 1)
+        XCTAssertEqual(response.id, sessionToken.id)
+        XCTAssertEqual(response.value, sessionToken.value)
+    }
+
+    func test_refresh_httpActorFailed() async throws {
+        let sessionToken = SessionTokenResponse(id: Self.userId, value: "refreshed-token")
+        await http.set(result: sessionToken)
+        await http.set(shouldFail: true)
+
+        do {
+            _ = try await actor.refresh(sessionToken: sessionToken)
+            XCTFail("Call should fail.")
+        } catch {
+            let error = try XCTUnwrap(error as? MockError)
+            XCTAssertEqual(error, .youToldMeTo)
+            let called_requestDecodable = await http.called_requestDecodable
+            XCTAssertEqual(called_requestDecodable, 1)
+        }
+    }
+
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         self.measure {

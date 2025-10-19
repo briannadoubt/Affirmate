@@ -51,6 +51,55 @@ final class AuthenticationRouteCollectionTests: XCTestCase {
         app.tearDown()
     }
 
+    // MARK: /auth/refresh
+    func test_refresh() async throws {
+        let app = Application(.testing)
+        defer { app.shutdown() }
+        try! app.setUp()
+
+        try await app
+            .signUp()
+            .login()
+            .refresh()
+      
+        let optionalToken = try await SessionToken.query(on: app.db).with(\.$user).first()
+        let token = try XCTUnwrap(optionalToken)
+        token.expiresAt = Date(timeIntervalSince1970: 0)
+        try await token.save(on: app.db)
+
+        try await app.test(.POST, "/auth/logout/") { request in
+            request.headers.bearerAuthorization = BearerAuthorization(token: token.value)
+        } afterResponse: { response in
+            XCTAssertEqual(response.status, .unauthorized)
+            let tokens = try await SessionToken.query(on: app.db).all()
+            XCTAssertTrue(tokens.isEmpty)
+        }
+
+        app.tearDown()
+    }
+
+    func test_freshTokenAuthenticatesProtectedRoute() async throws {
+        let app = Application(.testing)
+        defer { app.shutdown() }
+        try! app.setUp()
+
+        try await app
+            .signUp()
+            .login()
+
+        let optionalToken = try await SessionToken.query(on: app.db).first()
+        let token = try XCTUnwrap(optionalToken)
+        XCTAssertNotNil(token.expiresAt)
+        XCTAssertTrue(token.isValid)
+
+        try await app.test(.POST, "/auth/logout/") { request in
+            request.headers.bearerAuthorization = BearerAuthorization(token: token.value)
+        } afterResponse: { response in
+            XCTAssertEqual(response.status, .ok)
+        }
+        app.tearDown()
+    }
+
     func test_expiredTokenIsRejectedAndPruned() async throws {
         let app = Application(.testing)
         defer { app.shutdown() }

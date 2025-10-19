@@ -81,4 +81,47 @@ extension Application {
         }
         return self
     }
+
+    @discardableResult
+    func refresh() async throws -> Application {
+        var previousTokenID: UUID?
+        var previousTokenValue: String?
+
+        try await test(.POST, "/auth/refresh/") { request in
+            let optionalSessionToken = try await SessionToken.query(on: db).all().first
+            let sessionToken = try XCTUnwrap(optionalSessionToken)
+
+            previousTokenID = try sessionToken.requireID()
+            previousTokenValue = sessionToken.value
+
+            request.headers.bearerAuthorization = BearerAuthorization(token: sessionToken.value)
+        } afterResponse: { response in
+            XCTAssertEqual(response.status, .ok)
+
+            let refreshResponse = try response.content.decode(SessionTokenResponse.self)
+
+            let tokens = try await SessionToken.query(on: db).all()
+            XCTAssertEqual(tokens.count, 1)
+            let storedToken = try XCTUnwrap(tokens.first)
+
+            XCTAssertEqual(try storedToken.requireID(), refreshResponse.id)
+            XCTAssertEqual(storedToken.value, refreshResponse.value)
+
+            if let previousTokenID {
+                XCTAssertNotEqual(try storedToken.requireID(), previousTokenID)
+            }
+
+            if let previousTokenValue {
+                XCTAssertNotEqual(storedToken.value, previousTokenValue)
+
+                try await self.test(.POST, "/auth/logout/") { request in
+                    request.headers.bearerAuthorization = BearerAuthorization(token: previousTokenValue)
+                } afterResponse: { response in
+                    XCTAssertEqual(response.status, .unauthorized)
+                }
+            }
+        }
+
+        return self
+    }
 }
