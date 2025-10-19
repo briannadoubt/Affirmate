@@ -12,7 +12,7 @@ import Vapor
 struct ChatRouteCollection: RouteCollection {
     
     func boot(routes: RoutesBuilder) throws {
-        let tokenProtected = routes.grouped(SessionToken.authenticator(), SessionToken.guardMiddleware()) // Auth and guard with session token
+        let tokenProtected = routes.grouped(SessionToken.authenticator(), SessionToken.expirationMiddleware(), SessionToken.guardMiddleware()) // Auth and guard with session token
         let chats = tokenProtected.grouped("chats")
         
         // MARK: - POST "/chats": Creates a new blank chat, adds the current user as a participant, and invites any other specified users to the chat.

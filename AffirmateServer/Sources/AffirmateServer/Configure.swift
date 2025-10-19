@@ -24,7 +24,17 @@ fileprivate func configureDatabase(for app: Application) {
     app.migrations.add(Participant.Migration())
     app.migrations.add(ChatInvitation.Migration())
     app.migrations.add(SessionToken.Migration())
+    app.migrations.add(SessionToken.ExpiryMigration())
     app.migrations.add(Message.Migration())
+}
+
+func apnsEnvironment(for environment: Environment) -> APNSwiftConfiguration.Environment {
+    switch environment {
+    case .production:
+        return .production
+    default:
+        return .sandbox
+    }
 }
 
 fileprivate func configureApns(for app: Application) throws {
@@ -35,34 +45,30 @@ fileprivate func configureApns(for app: Application) throws {
     {
         let iOSBundleIdentifier = "org.affirmate.Affirmate"
 //        let watchOSBundleIdentifier = "org.affirmate.Affirmate.Watch"
-        
+
         let key: ECDSAKey =  try .private(pem: apnsKey)
-        
+
         let apnsAuthentication: APNSwiftConfiguration.AuthenticationMethod = .jwt(
             key: key,
             keyIdentifier: keyIdentifier.jwkIdentifier,
             teamIdentifier: teamIdentifier
         )
-        
-        switch app.environment {
-        case .production:
-            app.apns.configuration = APNSwiftConfiguration(
-                authenticationMethod: apnsAuthentication,
-                topic: iOSBundleIdentifier,
-//                environment: .production
-                environment: .sandbox
-            )
-        default:
-            app.apns.configuration = APNSwiftConfiguration(
-                authenticationMethod: apnsAuthentication,
-                topic: iOSBundleIdentifier,
-                environment: .sandbox
-            )
+
+        let environment = apnsEnvironment(for: app.environment)
+
+        app.apns.configuration = APNSwiftConfiguration(
+            authenticationMethod: apnsAuthentication,
+            topic: iOSBundleIdentifier,
+            environment: environment
+        )
+
+        if app.environment == .production {
+            precondition(environment == .production, "Production environment must use APNS production environment.")
         }
-        
+
         // Add an ECDSA key to the JWT insfrustructure with an ES-256 signer.
         app.jwt.signers.use(.es256(key: key))
-        
+
         // Configure Apple app identifier.
         app.jwt.apple.applicationIdentifier = iOSBundleIdentifier
     }
@@ -99,7 +105,7 @@ public func configure(_ app: Application) throws {
     
     let chatWebSocketManager = ChatWebSocketManager(eventLoop: app.eventLoopGroup.next())
     app
-        .grouped(SessionToken.authenticator(), SessionToken.guardMiddleware())
+        .grouped(SessionToken.authenticator(), SessionToken.expirationMiddleware(), SessionToken.guardMiddleware())
         .webSocket("chats", ":chatId") { request, webSocket async in
             await chatWebSocketManager.connect(request, webSocket)
         }

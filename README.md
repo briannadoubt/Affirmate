@@ -28,6 +28,11 @@ In order to build and run the server locally you will need to pass in a variety 
 * `APNS_KEY`: `<Your .pem Private Key (downloaded from developer.apple.com, and configured with APNS permissions)`
 * `APNS_KEY_ID`: `<Your .pem Key ID (found on the page you downloaded your private key from)>`
 
+When running the Vapor server in production (`ENVIRONMENT=production`), the APNs configuration expects to use Apple's production
+push environment. Ensure that the credentials above correspond to an APNs key that has been enabled for production pushes. If
+you store the private key in an environment variable, keep the PEM formatting intact by replacing literal newlines with
+`\n`—the server restores the required line breaks at runtime.
+
 See the following screenshot for an example of all the required keys and arguments:
 
 <img width="440" alt="Required Server Arguments and Environment Variables" src="https://user-images.githubusercontent.com/5713359/186994861-bea4c1af-7d36-435f-be0f-1bdc808a0a88.png">
@@ -61,6 +66,10 @@ You should see `[ NOTICE ] Server starting on http://0.0.0.0:8080 (Vapor/HTTPSer
 ## Run one of the clients
 
 Now that the database and the server are up and running you can build and run the iOS, watchOS, or macOS apps and they should connect to the same database/server instance running on your Mac.
+
+## Account deletion
+
+Authenticated users can remove their account by sending an HTTP `DELETE` request to `/me`. The server responds with `204 No Content` once the account has been deleted, and all of the user's session tokens, chat participation, invitations, and public keys are removed. The clients now treat this empty success response as a completed deletion.
 
 ## Authentication Architecture Flow
 
