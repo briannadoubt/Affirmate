@@ -59,11 +59,21 @@ struct ChatRouteCollection: RouteCollection {
                 let currentUser = try request.auth.require(User.self)
                 let chats = try await getChats(from: database, currentUser: currentUser)
                 let response = try chatResponses(from: chats, currentUser: currentUser)
-                for chat in chats {
-                    for message in chat.messages {
-                        try await message.delete(on: database)
+
+                let currentUserId = try currentUser.requireID()
+                let recipientIds = try chats
+                    .compactMap { chat in
+                        try chat.participants.first(where: { participant in
+                            try participant.user.requireID() == currentUserId
+                        })?.requireID()
                     }
+
+                if !recipientIds.isEmpty {
+                    try await Message.query(on: database)
+                        .filter(\.$recipient.$id ~~ recipientIds)
+                        .delete()
                 }
+
                 return response
             }
         }
@@ -106,7 +116,7 @@ struct ChatRouteCollection: RouteCollection {
                 )
                 try await newPublicKey.save(on: database)
                 let newParticipant = Participant(
-                    role: .admin,
+                    role: invitation.role,
                     user: try currentUser.requireID(),
                     chat: chatId,
                     publicKey: try newPublicKey.requireID()
