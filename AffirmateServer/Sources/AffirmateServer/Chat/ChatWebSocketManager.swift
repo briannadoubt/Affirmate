@@ -31,7 +31,7 @@ actor ChatWebSocketManager: WebSocketManager {
                     await self.handle(connect: connectMessage, request: request, webSocket: webSocket)
 
                 // MARK: Message
-                } else if let confirmationMessage = try self.get(buffer, MessageRecievedConfirmation.self) {
+                } else if let confirmationMessage = try? self.get(buffer, MessageRecievedConfirmation.self) {
                     await self.handle(messageConfirmation: confirmationMessage, request: request, webSocket: webSocket)
                 } else if let webSocketMessage = try self.get(buffer, MessageCreate.self) {
                     await self.handle(chatMessage: webSocketMessage, request: request, webSocket: webSocket)
