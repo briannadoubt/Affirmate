@@ -45,8 +45,8 @@ actor HTTPActor: HTTPActable {
     func request(_ requestConvertible: any URLRequestConvertible) async throws {
         switch await session
             .request(requestConvertible, interceptor: interceptor)
-            .validate(statusCode: [200])
-            .serializingData(emptyResponseCodes: [200])
+            .validate(statusCode: [200, 204])
+            .serializingData(emptyResponseCodes: [200, 204])
             .result {
         case .failure(let error):
             if error.responseCode == 401 {
@@ -62,8 +62,8 @@ actor HTTPActor: HTTPActable {
     func request(unauthorized requestConvertible: any URLRequestConvertible) async throws {
         switch await session
             .request(requestConvertible)
-            .validate(statusCode: [200])
-            .serializingData(emptyResponseCodes: [200])
+            .validate(statusCode: [200, 204])
+            .serializingData(emptyResponseCodes: [200, 204])
             .result {
         case .failure(let error):
             throw error
