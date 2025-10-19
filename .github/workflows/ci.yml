@@ -9,7 +9,7 @@ on:
 jobs:
   client:
     name: Client tests (${{ matrix.platform }})
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+        run: sudo xcode-select -s /Applications/Xcode_16.1.app
 
       - name: Build and test
         run: |
@@ -52,7 +52,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-14]
+        os: [ubuntu-latest, macos-15]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -60,7 +60,7 @@ jobs:
       - name: Set up Swift
         uses: swift-actions/setup-swift@v2
         with:
-          swift-version: '5.10'
+          swift-version: '6.0'
 
       - name: Run server tests
         working-directory: AffirmateServer
@@ -68,23 +68,23 @@ jobs:
 
   integration:
     name: Integration tests
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+        run: sudo xcode-select -s /Applications/Xcode_16.1.app
 
       - name: Install PostgreSQL
         run: |
           brew update
-          brew install postgresql@14
+          brew install postgresql@16
 
       - name: Start PostgreSQL
         run: |
-          POSTGRES_PREFIX="$(brew --prefix postgresql@14)"
-          PGDATA="$POSTGRES_PREFIX/var/postgresql@14"
+          POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
+          PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
           mkdir -p "$PGDATA"
           if [ ! -f "$PGDATA/PG_VERSION" ]; then
             "$POSTGRES_PREFIX/bin/initdb" -U runner "$PGDATA"
@@ -138,8 +138,8 @@ jobs:
       - name: Stop PostgreSQL
         if: always()
         run: |
-          POSTGRES_PREFIX="$(brew --prefix postgresql@14)"
-          PGDATA="$POSTGRES_PREFIX/var/postgresql@14"
+          POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
+          PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
           if [ -f "$PGDATA/postmaster.pid" ]; then
             "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" stop
           fi
