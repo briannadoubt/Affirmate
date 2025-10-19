@@ -62,7 +62,7 @@ struct AuthenticationRouteCollection: RouteCollection {
 //            return .ok
 //        }
         
-        let tokenProtected = auth.grouped(SessionToken.authenticator(), SessionToken.guardMiddleware())
+        let tokenProtected = auth.grouped(SessionToken.authenticator(), SessionToken.expirationMiddleware(), SessionToken.guardMiddleware())
         
         // MARK: - POST: /auth/logout
         tokenProtected.post("logout") { request -> HTTPStatus in
