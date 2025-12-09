@@ -50,6 +50,9 @@ class ChatObserver: WebSocketObserver {
 
     private(set) var pendingConfirmations: Set<UUID> = []
 
+    /// The latest WebSocket error, if any. Observe this to display errors in the UI.
+    @Published var webSocketError: Error?
+
     @MainActor func sendDeliveryConfirmation(for messageId: UUID) {
         pendingConfirmations.insert(messageId)
         flushPendingConfirmations()
@@ -149,8 +152,8 @@ class ChatObserver: WebSocketObserver {
         print(newParticipants)
     }
     
-    /// Handle new data recieved from the `WebSocket` connection.
-    func recieved(_ data: Data) {
+    /// Handle new data received from the `WebSocket` connection.
+    func received(_ data: Data) {
         if let newMessage = try? data.decodeWebSocketMessage(MessageResponse.self) {
             Task {
                 do {
@@ -158,15 +161,22 @@ class ChatObserver: WebSocketObserver {
                 } catch {
                     print("Chat: Failed to cache message:", error)
                 }
-                print("Chat: Recieved message:", newMessage)
+                print("Chat: Received message:", newMessage)
             }
         } else {
             print("Chat: Received unrecognized data:", (try? JSONSerialization.jsonObject(with: data) as Any) as? [String: Any] as Any)
         }
     }
-    
+
     /// Don't do anything with text.
-    func recieved(_ text: String) { }
+    func received(_ text: String) { }
+
+    /// Handle WebSocket errors by updating the published error property.
+    func handleWebSocketError(_ error: Error?) {
+        DispatchQueue.main.async {
+            self.webSocketError = error
+        }
+    }
 }
 
 private extension ChatObserver {

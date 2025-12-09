@@ -40,13 +40,13 @@ protocol GenericPasswordConvertible: CustomStringConvertible {
 
 extension Curve25519.KeyAgreement.PrivateKey: GenericPasswordConvertible {
     public var description: String {
-        String(data: rawRepresentation, encoding: .utf8)!
+        rawRepresentation.base64EncodedString()
     }
 }
 
 extension Curve25519.Signing.PrivateKey: GenericPasswordConvertible {
     public var description: String {
-        String(data: rawRepresentation, encoding: .utf8)!
+        rawRepresentation.base64EncodedString()
     }
 }
 

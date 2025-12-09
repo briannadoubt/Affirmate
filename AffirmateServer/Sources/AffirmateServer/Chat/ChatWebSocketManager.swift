@@ -37,7 +37,7 @@ actor ChatWebSocketManager: WebSocketManager {
                     await self.handle(chatMessage: webSocketMessage, request: request, webSocket: webSocket)
 
                 } else {
-                    self.sendError("Recieved data in an unrecognized format", on: webSocket)
+                    self.sendError("Received data in an unrecognized format", on: webSocket)
                 }
             } catch {
                 self.sendError("Decoding failed: \(error)", on: webSocket)
@@ -51,7 +51,7 @@ extension ChatWebSocketManager {
     /// - Parameters:
     ///   - webSocketMessage: The message from the `WebSocket` connection.
     ///   - request: The originating `Request` with access to the `Database` and server `EventLoop`s.
-    ///   - webSocket: The `WebSocket` connection that the message was recieved on.
+    ///   - webSocket: The `WebSocket` connection that the message was received on.
     func handle(chatMessage webSocketMessage: WebSocketMessage<MessageCreate>, request: Request, webSocket: WebSocket) async {
         await handle(request: request, webSocket: webSocket) { database, currentUser, chat, sender in
             // Create JSON string from data for validation.
@@ -127,7 +127,7 @@ extension ChatWebSocketManager {
     /// - Parameters:
     ///   - webSocketMessage: The message from the `WebSocket` connection.
     ///   - request: The originating `Request` with access to the `Database` and server `EventLoop`s.
-    ///   - webSocket: The `WebSocket` connection that the message was recieved on.
+    ///   - webSocket: The `WebSocket` connection that the message was received on.
     func handle(connect webSocketMessage: WebSocketMessage<Connect>, request: Request, webSocket: WebSocket) async {
         await handle(request: request, webSocket: webSocket) { database, currentUser, chat, sender in
             let client = ChatWebSocketClient(id: webSocketMessage.client, userId: try currentUser.requireID(), chatId: webSocketMessage.data.chatId, socket: webSocket)
@@ -142,7 +142,7 @@ extension ChatWebSocketManager {
     /// - Parameters:
     ///   - request: The originating `Request`.
     ///   - webSocket: The new `WebSocket` connection.
-    ///   - block: The handler called when a message is recieved over the active `WebSocket` connection.
+    ///   - block: The handler called when a message is received over the active `WebSocket` connection.
     func handle(request: Request, webSocket: WebSocket, withThrowing block: @escaping (_ database: Database, _ currentUser: User, _ chat: Chat, _ sender: Participant) async throws -> ()) async {
         do {
             try await request.db.transaction { database in
@@ -170,10 +170,10 @@ extension ChatWebSocketManager {
     ///   - messageId: The id of the new message.
     ///   - webSocketMessage: The message from the WebSocket connection.
     ///   - currentUser: The currently signed in user.
-    ///   - chat: The chat that the new message was recieved from.
+    ///   - chat: The chat that the new message was received from.
     ///   - newMessage: The new `Message` instance, recently saved to the database.
     ///   - currentParticipant: The participant sending the message.
-    ///   - recipientParticipant: The participant recieving the message.
+    ///   - recipientParticipant: The participant receiving the message.
     /// - Returns: A response object representing a new chat message.
     func createChatMessageResponse(messageId: UUID, webSocketMessage: WebSocketMessage<MessageCreate>, currentUser: User, chat: Chat, newMessage: Message, sender: Participant, recipient: Participant) throws -> MessageResponse {
         MessageResponse(
@@ -248,7 +248,7 @@ extension ChatWebSocketManager {
     
     /// Decode a `ByteBuffer` into a `WebSocketMessage` object.
     /// - Parameters:
-    ///   - buffer: The buffer to decode, recieved from the WebSocket connection.
+    ///   - buffer: The buffer to decode, received from the WebSocket connection.
     ///   - type: The type to decode the data into.
     /// - Returns: The decoded WebSocketMessage with an embedded, decoded type.
     func get<T: Codable>(_ buffer: ByteBuffer, _ type: T.Type) throws -> WebSocketMessage<T>? {
@@ -275,11 +275,11 @@ extension ChatWebSocketManager {
         if clients.isEmpty {
             return
         }
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
         for client in clients {
             let webSocketMessage = WebSocketMessage(client: client.id, data: message)
-            let encoder = JSONEncoder()
-            encoder.dateEncodingStrategy = .iso8601
-            let data = try JSONEncoder().encode(webSocketMessage)
+            let data = try encoder.encode(webSocketMessage)
             try await client.socket.send(raw: data, opcode: .binary)
         }
     }
@@ -294,12 +294,12 @@ extension ChatWebSocketManager {
         guard !connectedClients.isEmpty else {
             return
         }
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
         try connectedClients.forEach { id, client in
             let webSocketMessage = WebSocketMessage(client: id, data: data)
-            let encoder = JSONEncoder()
-            encoder.dateEncodingStrategy = .iso8601
-            let data = try JSONEncoder().encode(webSocketMessage)
-            client.socket.send(raw: data, opcode: .binary)
+            let encodedData = try encoder.encode(webSocketMessage)
+            client.socket.send(raw: encodedData, opcode: .binary)
         }
     }
     
