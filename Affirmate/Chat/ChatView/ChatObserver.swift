@@ -65,7 +65,7 @@ class ChatObserver: WebSocketObserver {
         let confirmations = pendingConfirmations
         for messageId in confirmations {
             do {
-                let confirmation = MessageRecievedConfirmation(messageId: messageId)
+                let confirmation = MessageReceivedConfirmation(messageId: messageId)
                 try write(confirmation)
                 pendingConfirmations.remove(messageId)
             } catch {

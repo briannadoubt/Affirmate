@@ -104,7 +104,7 @@ extension MessageCreate: Content, Validatable {
 
 extension MessageResponse: Content { }
 
-extension MessageRecievedConfirmation: Content, Validatable {
+extension MessageReceivedConfirmation: Content, Validatable {
     /// Conform to `Validatable`
     /// - Parameter validations: The validations to validate.
     public static func validations(_ validations: inout Validations) {

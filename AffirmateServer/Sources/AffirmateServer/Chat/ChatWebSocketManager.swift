@@ -31,7 +31,7 @@ actor ChatWebSocketManager: WebSocketManager {
                     await self.handle(connect: connectMessage, request: request, webSocket: webSocket)
 
                 // MARK: Message
-                } else if let confirmationMessage = try? self.get(buffer, MessageRecievedConfirmation.self) {
+                } else if let confirmationMessage = try? self.get(buffer, MessageReceivedConfirmation.self) {
                     await self.handle(messageConfirmation: confirmationMessage, request: request, webSocket: webSocket)
                 } else if let webSocketMessage = try self.get(buffer, MessageCreate.self) {
                     await self.handle(chatMessage: webSocketMessage, request: request, webSocket: webSocket)
@@ -98,7 +98,7 @@ extension ChatWebSocketManager {
         }
     }
 
-    func handle(messageConfirmation webSocketMessage: WebSocketMessage<MessageRecievedConfirmation>, request: Request, webSocket: WebSocket) async {
+    func handle(messageConfirmation webSocketMessage: WebSocketMessage<MessageReceivedConfirmation>, request: Request, webSocket: WebSocket) async {
         await handle(request: request, webSocket: webSocket) { database, currentUser, chat, _ in
             try await deleteMessageIfAuthorized(webSocketMessage.data.messageId, currentUser: currentUser, chat: chat, database: database)
         }

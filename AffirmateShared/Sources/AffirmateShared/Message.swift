@@ -82,13 +82,13 @@ public struct MessageSealed: Codable {
     }
 }
 
-/// Verify that the message was recieved by the client. When the server recieves this object in a WebSocket connection the message will be deleted on the database. The client is expected to cache the data on the device in an encrypted format.
-public struct MessageRecievedConfirmation: Codable {
-    /// The id of the message that was recieved.
+/// Verify that the message was received by the client. When the server receives this object in a WebSocket connection the message will be deleted on the database. The client is expected to cache the data on the device in an encrypted format.
+public struct MessageReceivedConfirmation: Codable {
+    /// The id of the message that was received.
     public var messageId: UUID
-    
-    /// Verify that the message was recieved by the client. When the server recieves this object in a WebSocket connection the message will be deleted on the database. The client is expected to cache the data on the device in an encrypted format.
-    /// - Parameter messageId: The id of the message that was recieved.
+
+    /// Verify that the message was received by the client. When the server receives this object in a WebSocket connection the message will be deleted on the database. The client is expected to cache the data on the device in an encrypted format.
+    /// - Parameter messageId: The id of the message that was received.
     public init(messageId: UUID) {
         self.messageId = messageId
     }
