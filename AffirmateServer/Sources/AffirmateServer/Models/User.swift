@@ -132,8 +132,9 @@ extension UserCreate: Content, Validatable {
         validations.add("firstName", as: String.self, is: !.empty)
         validations.add("lastName", as: String.self, is: !.empty)
         validations.add("username", as: String.self, is: !.empty && .alphanumeric && .count(3...64))
-        validations.add("email", as: String.self, is: !.empty)
-        validations.add("password", as: String.self, is: .count(8...))
+        validations.add("email", as: String.self, is: !.empty && .email)
+        // Password: min 12 chars, must contain uppercase, lowercase, digit, and special character
+        validations.add("password", as: String.self, is: .count(12...) && .characterSet(.alphanumerics + .init(charactersIn: "!@#$%^&*()_+-=[]{}|;':\",./<>?")))
     }
 }
 

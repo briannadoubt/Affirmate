@@ -11,28 +11,28 @@ import KeychainAccess
 import SwiftUI
 
 class AffirmateKeychain: ObservableObject {
-    
-    static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
+
+    static let appIdentifierPrefix = (Bundle.main.infoDictionary?["AppIdentifierPrefix"] as? String) ?? ""
     static let chatService = "\(appIdentifierPrefix)org.affirmate.chat"
     static let sessionService = "\(appIdentifierPrefix)org.affirmate.session"
     static let accessGroup = "group.Affirmate"
-    
+
     static var chat: Keychain {
         Keychain(
             service: chatService,
             accessGroup: accessGroup
         )
-        .synchronizable(true)
+        .synchronizable(false)
     }
-    
+
     static var session: Keychain {
         Keychain(
             service: sessionService,
             accessGroup: accessGroup
         )
-        .synchronizable(true)
+        .synchronizable(false)
     }
-    
+
     static var password: Keychain {
         Keychain(
             server: "https://affirmate.org/",
@@ -40,7 +40,7 @@ class AffirmateKeychain: ObservableObject {
             accessGroup: accessGroup,
             authenticationType: .httpBasic
         )
-        .synchronizable(true)
+        .synchronizable(false)
     }
 }
 

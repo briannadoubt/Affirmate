@@ -97,6 +97,11 @@ struct ChatRouteCollection: RouteCollection {
                     throw Abort(.forbidden, reason: "You are not a participant of this chat")
                 }
 
+                // Only admins can invite new participants
+                guard invitingParticipant.role == .admin else {
+                    throw Abort(.forbidden, reason: "Only admins can invite new participants")
+                }
+
                 let invitation = ChatInvitation(
                     role: invitationCreate.role,
                     user: invitationCreate.user,
