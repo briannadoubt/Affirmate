@@ -22,10 +22,12 @@ protocol WebSocketObserver: ObservableObject, WebSocketDelegate {
     var chatId: UUID { get set }
     /// Disconnect from the server and sever the connection.
     func disconnect()
-    /// Called when the connection recieves a `Data` bloc.
-    func recieved(_ data: Data)
-    /// Called when the connection recieves a `String`.
-    func recieved(_ text: String)
+    /// Called when the connection receives a `Data` blob.
+    func received(_ data: Data)
+    /// Called when the connection receives a `String`.
+    func received(_ text: String)
+    /// Called when a WebSocket error occurs. Override to display errors in the UI.
+    func handleWebSocketError(_ error: Error?)
 }
 
 extension WebSocketObserver {
@@ -72,6 +74,9 @@ extension WebSocketObserver {
     }
 
     func flushPendingConfirmationsIfPossible() async { }
+
+    /// Default implementation does nothing. Override to display errors in UI.
+    func handleWebSocketError(_ error: Error?) { }
     
     /// Initiate an individualized client connection.
     func connect(chatId: UUID) throws {
@@ -94,9 +99,9 @@ extension WebSocketObserver {
         }
     }
     
-    /// Called by the `StarScream` library via the `WebSocketDelegate` conformance whenever an event is recieved from the active WebSocket connection.
+    /// Called by the `StarScream` library via the `WebSocketDelegate` conformance whenever an event is received from the active WebSocket connection.
     /// - Parameters:
-    ///   - event: The `WebSocketEvent` that was recieved.
+    ///   - event: The `WebSocketEvent` that was received.
     ///   - client: The currently active WebSocket connection represented by an object.
     func didReceive(event: WebSocketEvent, client: WebSocket) {
         switch event {
@@ -119,8 +124,8 @@ extension WebSocketObserver {
             }
             print("WebSocket: Did disconnect: \(reason) with code: \(code)")
         case .text(let text):
-            print("WebSocket: Recieved text:", text)
-            recieved(text)
+            print("WebSocket: Received text:", text)
+            received(text)
         case .binary(let data):
             if let connectionConfirmation = try? data.decodeWebSocketMessage(ConfirmConnection.self) {
                 clientId = nil
@@ -128,15 +133,15 @@ extension WebSocketObserver {
                 Task { await self.flushPendingConfirmationsIfPossible() }
                 print("WebSocket: Connection confirmed!")
             } else if let webSocketError = try? JSONDecoder().decode(WebSocketError.self, from: data) {
-                print("Recieved webSocket server error:", webSocketError)
+                print("Received webSocket server error:", webSocketError)
             } else {
-                print("WebSocket: Recieved data")
-                recieved(data)
+                print("WebSocket: Received data")
+                received(data)
             }
         case .ping(let data):
-            print("WebSocket: Recieved Ping:", data as Any)
+            print("WebSocket: Received Ping:", data as Any)
         case .pong(let data):
-            print("WebSocket: Recieved Pong:", data as Any)
+            print("WebSocket: Received Pong:", data as Any)
         case .viabilityChanged(let changed):
             print("WebSocket: Visibility changed:", changed)
         case .reconnectSuggested(let reconnectSuggested):
@@ -153,7 +158,7 @@ extension WebSocketObserver {
             Task {
                 await self.set(isConnected: false)
             }
-            print("WebSocket: TODO: Show this error on the UI:", error as Any)
+            handleWebSocketError(error)
         }
     }
 }

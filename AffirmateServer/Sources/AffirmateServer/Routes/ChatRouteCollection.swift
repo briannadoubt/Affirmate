@@ -87,10 +87,25 @@ struct ChatRouteCollection: RouteCollection {
                 let currentUser = try request.auth.require(User.self)
                 let invitationCreate = try request.content.decode(ChatInvitationCreate.self)
                 let (chatId, _) = try await getChat(request: request, database: database)
+
+                // Find the current user's participant record for this chat
+                guard let invitingParticipant = try await Participant.query(on: database)
+                    .filter(\.$user.$id == currentUser.requireID())
+                    .filter(\.$chat.$id == chatId)
+                    .first()
+                else {
+                    throw Abort(.forbidden, reason: "You are not a participant of this chat")
+                }
+
+                // Only admins can invite new participants
+                guard invitingParticipant.role == .admin else {
+                    throw Abort(.forbidden, reason: "Only admins can invite new participants")
+                }
+
                 let invitation = ChatInvitation(
                     role: invitationCreate.role,
                     user: invitationCreate.user,
-                    invitedBy: try currentUser.requireID(),
+                    invitedBy: try invitingParticipant.requireID(),
                     chat: chatId
                 )
                 try await invitation.save(on: database)

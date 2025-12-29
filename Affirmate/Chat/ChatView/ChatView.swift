@@ -23,7 +23,9 @@ public struct ChatView: View {
     
     @State var presentedParticipant: ParticipantResponse?
     @State var presentedCopiedUrl = false
-    
+    @State private var sendErrorMessage: String?
+    @State private var showingSendError = false
+
     #if os(iOS)
     @StateObject fileprivate var keyboard = KeyboardHeightObserver()
     #endif
@@ -41,15 +43,15 @@ public struct ChatView: View {
             guard !newMessageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                 return
             }
-            // TODO: Verify (with science) whether there are "not allowed" words in the message.
             do {
                 try await chatObserver.sendMessage(newMessageText, to: Array(participants))
+                withAnimation {
+                    focused = true
+                    newMessageText = ""
+                }
             } catch {
-                print(error)
-            }
-            withAnimation {
-                focused = true
-                newMessageText = ""
+                sendErrorMessage = error.localizedDescription
+                showingSendError = true
             }
         }
     }
@@ -204,6 +206,18 @@ public struct ChatView: View {
         } content: { participant in
             if let presentedParticipant = presentedParticipant {
                 ProfileView(user: presentedParticipant.user)
+            }
+        }
+        .alert("Failed to Send Message", isPresented: $showingSendError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(sendErrorMessage ?? "An unknown error occurred")
+        }
+        .onChange(of: chatObserver.webSocketError != nil) { hasError in
+            if hasError {
+                showingSendError = true
+                sendErrorMessage = chatObserver.webSocketError?.localizedDescription ?? "Connection error"
+                chatObserver.webSocketError = nil
             }
         }
     }

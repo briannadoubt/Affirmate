@@ -87,7 +87,7 @@ actor HTTPActor: HTTPActable {
         case .success(let data):
             print(data)
             let jsonString = data.base64EncodedString()
-            Logger.network.debug("Recieved data: \(jsonString)")
+            Logger.network.debug("Received data: \(jsonString)")
             let value = try decoder.decode(type.self, from: data)
             return value
         }

@@ -9,11 +9,14 @@ import AffirmateShared
 import SwiftUI
 
 struct NewParticipantsUsernameSearchFieldSection: View {
-    
+
     @EnvironmentObject var newParticipantsObserver: NewParticipantsObserver
-    
+
     var newPublicUsers: [UserPublic]
-    
+
+    @State private var errorMessage: String?
+    @State private var showingError: Bool = false
+
     @MainActor func didSelect(publicUser: UserPublic) {
         withAnimation {
             newParticipantsObserver.select(user: publicUser)
@@ -40,9 +43,15 @@ struct NewParticipantsUsernameSearchFieldSection: View {
                         do {
                             try await newParticipantsObserver.find()
                         } catch {
-                            print("TODO: Show this error on the UI:", error)
+                            errorMessage = error.localizedDescription
+                            showingError = true
                         }
                     }
+                }
+                .alert("Search Error", isPresented: $showingError) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text(errorMessage ?? "Failed to search for users")
                 }
             ForEach(newPublicUsers) { publicUser in
                 HStack {

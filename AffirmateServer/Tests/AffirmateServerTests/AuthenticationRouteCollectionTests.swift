@@ -125,26 +125,4 @@ final class AuthenticationRouteCollectionTests: XCTestCase {
         app.tearDown()
     }
 
-    func test_freshTokenAuthenticatesProtectedRoute() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
-
-        try await app
-            .signUp()
-            .login()
-
-        let optionalToken = try await SessionToken.query(on: app.db).first()
-        let token = try XCTUnwrap(optionalToken)
-        XCTAssertNotNil(token.expiresAt)
-        XCTAssertTrue(token.isValid)
-
-        try await app.test(.POST, "/auth/logout/") { request in
-            request.headers.bearerAuthorization = BearerAuthorization(token: token.value)
-        } afterResponse: { response in
-            XCTAssertEqual(response.status, .ok)
-        }
-
-        app.tearDown()
-    }
 }

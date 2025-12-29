@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AuthenticationContent: View {
     @EnvironmentObject var authentication: AuthenticationObserver
-    
+
     #if DEBUG
     @State var firstName: String = "Meow"
     @State var lastName: String = "Face"
@@ -25,9 +25,13 @@ struct AuthenticationContent: View {
     @State var password: String = ""
     @State var confirmPassword: String = ""
     #endif
-    
+
+    @State private var errorMessage: String?
+    @State private var showingError: Bool = false
+
     func showError(_ error: Error) {
-        print("TODO: Display this error in the UI:", error)
+        errorMessage = error.localizedDescription
+        showingError = true
     }
     
     var body: some View {
@@ -52,6 +56,11 @@ struct AuthenticationContent: View {
         }
         .cornerRadius(16)
         .shadow(radius: 1)
+        .alert("Error", isPresented: $showingError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage ?? "An unknown error occurred")
+        }
     }
 }
 

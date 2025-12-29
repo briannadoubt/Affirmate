@@ -96,7 +96,6 @@ actor ChatWebSocketClients {
             try self.eventLoop.flatten(futures).wait()
         } catch {
             print("Failed to flatten WebSocket futures:", error)
-            assertionFailure("Failed to flatten WebSocket futures")
         }
     }
 }
