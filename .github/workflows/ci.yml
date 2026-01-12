@@ -43,8 +43,7 @@ jobs:
             -project Affirmate.xcodeproj \
             -scheme "${{ matrix.scheme }}" \
             -destination "${{ matrix.destination }}" \
-            -skipPackagePluginValidation \
-            -disableAutomaticPackageResolution
+            -skipPackagePluginValidation
 
   server:
     name: Server tests (${{ matrix.os }})
@@ -124,8 +123,7 @@ jobs:
             -project Affirmate.xcodeproj \
             -scheme Affirmate \
             -destination 'platform=macOS' \
-            -skipPackagePluginValidation \
-            -disableAutomaticPackageResolution
+            -skipPackagePluginValidation
 
       - name: Shutdown server
         if: always()
