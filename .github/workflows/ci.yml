@@ -36,6 +36,13 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_26.app
 
+      - name: Resolve package dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project Affirmate.xcodeproj \
+            -scheme "${{ matrix.scheme }}" \
+            -onlyUsePackageVersionsFromResolvedFile
+
       - name: Build and test
         run: |
           set -o pipefail
@@ -46,13 +53,23 @@ jobs:
             -skipPackagePluginValidation \
             -disableAutomaticPackageResolution
 
-  server:
-    name: Server tests (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-26]
+  server-ubuntu:
+    name: Server tests (ubuntu-latest)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: vapor_username
+          POSTGRES_PASSWORD: vapor_password
+          POSTGRES_DB: vapor_database
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,7 +81,54 @@ jobs:
 
       - name: Run server tests
         working-directory: AffirmateServer
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_USERNAME: vapor_username
+          DATABASE_PASSWORD: vapor_password
+          DATABASE_NAME: vapor_database
         run: swift test
+
+  server-macos:
+    name: Server tests (macos-26)
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: '6.2'
+
+      - name: Install and start PostgreSQL
+        run: |
+          brew install postgresql@16
+          POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
+          PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
+          mkdir -p "$PGDATA"
+          "$POSTGRES_PREFIX/bin/initdb" -U runner "$PGDATA"
+          "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" -o "-c listen_addresses=localhost" -l "$PGDATA/server.log" start
+          "$POSTGRES_PREFIX/bin/createuser" --superuser vapor_username || true
+          "$POSTGRES_PREFIX/bin/createdb" -O vapor_username vapor_database || true
+          "$POSTGRES_PREFIX/bin/psql" -v ON_ERROR_STOP=1 -d postgres -c "ALTER USER vapor_username WITH PASSWORD 'vapor_password';"
+
+      - name: Run server tests
+        working-directory: AffirmateServer
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_USERNAME: vapor_username
+          DATABASE_PASSWORD: vapor_password
+          DATABASE_NAME: vapor_database
+        run: swift test
+
+      - name: Stop PostgreSQL
+        if: always()
+        run: |
+          POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
+          PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
+          if [ -f "$PGDATA/postmaster.pid" ]; then
+            "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" stop
+          fi
 
   integration:
     name: Integration tests
@@ -114,6 +178,13 @@ jobs:
           swift run Run serve --env production --hostname 0.0.0.0 --port 8080 > "$RUNNER_TEMP/affirmate-server.log" 2>&1 &
           echo $! > "$RUNNER_TEMP/affirmate-server.pid"
           sleep 15
+
+      - name: Resolve package dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project Affirmate.xcodeproj \
+            -scheme Affirmate \
+            -onlyUsePackageVersionsFromResolvedFile
 
       - name: Run integration tests
         env:
