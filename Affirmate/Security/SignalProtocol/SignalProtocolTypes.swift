@@ -1,0 +1,273 @@
+//
+//  SignalProtocolTypes.swift
+//  Affirmate
+//
+//  Signal Protocol compliant key types and structures.
+//
+
+import CryptoKit
+import Foundation
+
+// MARK: - Signal Protocol Errors
+
+enum SignalProtocolError: LocalizedError {
+    case invalidKeyData
+    case sessionNotFound
+    case invalidPreKeyBundle
+    case signatureVerificationFailed
+    case decryptionFailed
+    case messageCounterMismatch
+    case skippedMessageLimitExceeded
+    case invalidMessageFormat
+    case noOneTimePreKeyAvailable
+    case chainKeyExhausted
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidKeyData:
+            return "Invalid key data format"
+        case .sessionNotFound:
+            return "No session found for this recipient"
+        case .invalidPreKeyBundle:
+            return "Invalid PreKey bundle"
+        case .signatureVerificationFailed:
+            return "Signature verification failed on PreKey bundle"
+        case .decryptionFailed:
+            return "Failed to decrypt message"
+        case .messageCounterMismatch:
+            return "Message counter mismatch - possible replay attack"
+        case .skippedMessageLimitExceeded:
+            return "Too many skipped messages"
+        case .invalidMessageFormat:
+            return "Invalid message format"
+        case .noOneTimePreKeyAvailable:
+            return "No one-time PreKey available"
+        case .chainKeyExhausted:
+            return "Chain key exhausted, need new DH ratchet"
+        }
+    }
+}
+
+// MARK: - Identity Key Pair
+
+/// Long-term identity key pair used for authentication.
+/// This key pair is generated once and persists for the lifetime of the account.
+struct IdentityKeyPair: Codable {
+    let privateKey: Data
+    let publicKey: Data
+
+    init() {
+        let key = Curve25519.Signing.PrivateKey()
+        self.privateKey = key.rawRepresentation
+        self.publicKey = key.publicKey.rawRepresentation
+    }
+
+    init(privateKey: Data, publicKey: Data) {
+        self.privateKey = privateKey
+        self.publicKey = publicKey
+    }
+
+    func signingPrivateKey() throws -> Curve25519.Signing.PrivateKey {
+        try Curve25519.Signing.PrivateKey(rawRepresentation: privateKey)
+    }
+
+    func signingPublicKey() throws -> Curve25519.Signing.PublicKey {
+        try Curve25519.Signing.PublicKey(rawRepresentation: publicKey)
+    }
+
+    /// Sign data with the identity key
+    func sign(_ data: Data) throws -> Data {
+        let key = try signingPrivateKey()
+        return try key.signature(for: data)
+    }
+
+    /// Verify a signature from a public identity key
+    static func verify(signature: Data, for data: Data, from publicKey: Data) throws -> Bool {
+        let key = try Curve25519.Signing.PublicKey(rawRepresentation: publicKey)
+        return key.isValidSignature(signature, for: data)
+    }
+}
+
+// MARK: - Key Agreement Key Pair
+
+/// Curve25519 key pair for Diffie-Hellman key agreement
+struct KeyAgreementKeyPair: Codable {
+    let privateKey: Data
+    let publicKey: Data
+
+    init() {
+        let key = Curve25519.KeyAgreement.PrivateKey()
+        self.privateKey = key.rawRepresentation
+        self.publicKey = key.publicKey.rawRepresentation
+    }
+
+    init(privateKey: Data, publicKey: Data) {
+        self.privateKey = privateKey
+        self.publicKey = publicKey
+    }
+
+    func agreementPrivateKey() throws -> Curve25519.KeyAgreement.PrivateKey {
+        try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privateKey)
+    }
+
+    func agreementPublicKey() throws -> Curve25519.KeyAgreement.PublicKey {
+        try Curve25519.KeyAgreement.PublicKey(rawRepresentation: publicKey)
+    }
+
+    /// Perform Diffie-Hellman key agreement
+    func sharedSecret(with theirPublicKey: Data) throws -> SharedSecret {
+        let ourKey = try agreementPrivateKey()
+        let theirKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: theirPublicKey)
+        return try ourKey.sharedSecretFromKeyAgreement(with: theirKey)
+    }
+}
+
+// MARK: - Signed PreKey
+
+/// Medium-term signed PreKey.
+/// Rotated periodically (e.g., weekly) and signed by the identity key.
+struct SignedPreKey: Codable {
+    let id: UInt32
+    let keyPair: KeyAgreementKeyPair
+    let signature: Data
+    let timestamp: Date
+
+    init(id: UInt32, identityKey: IdentityKeyPair) throws {
+        self.id = id
+        self.keyPair = KeyAgreementKeyPair()
+        self.timestamp = Date()
+        // Sign the public key with the identity key
+        self.signature = try identityKey.sign(keyPair.publicKey)
+    }
+
+    init(id: UInt32, keyPair: KeyAgreementKeyPair, signature: Data, timestamp: Date) {
+        self.id = id
+        self.keyPair = keyPair
+        self.signature = signature
+        self.timestamp = timestamp
+    }
+
+    /// Verify the signature on this signed PreKey
+    func verify(with identityPublicKey: Data) throws -> Bool {
+        try IdentityKeyPair.verify(signature: signature, for: keyPair.publicKey, from: identityPublicKey)
+    }
+}
+
+// MARK: - One-Time PreKey
+
+/// Ephemeral one-time PreKey for forward secrecy.
+/// Each key can only be used once.
+struct OneTimePreKey: Codable {
+    let id: UInt32
+    let keyPair: KeyAgreementKeyPair
+
+    init(id: UInt32) {
+        self.id = id
+        self.keyPair = KeyAgreementKeyPair()
+    }
+
+    init(id: UInt32, keyPair: KeyAgreementKeyPair) {
+        self.id = id
+        self.keyPair = keyPair
+    }
+}
+
+// MARK: - PreKey Bundle
+
+/// Public PreKey bundle published to the server.
+/// Used by others to establish a session.
+struct PreKeyBundle: Codable {
+    /// The user's public identity key
+    let identityKey: Data
+    /// The signed PreKey ID
+    let signedPreKeyId: UInt32
+    /// The signed PreKey public key
+    let signedPreKey: Data
+    /// Signature on the signed PreKey
+    let signedPreKeySignature: Data
+    /// Optional one-time PreKey ID
+    let oneTimePreKeyId: UInt32?
+    /// Optional one-time PreKey public key
+    let oneTimePreKey: Data?
+
+    /// Verify the signed PreKey signature
+    func verifySignature() throws -> Bool {
+        try IdentityKeyPair.verify(
+            signature: signedPreKeySignature,
+            for: signedPreKey,
+            from: identityKey
+        )
+    }
+}
+
+// MARK: - Message Header
+
+/// Header included with each encrypted message.
+/// Contains the DH ratchet public key and message counters.
+struct MessageHeader: Codable {
+    /// Current DH ratchet public key
+    let dhPublicKey: Data
+    /// Previous chain message count (for out-of-order message handling)
+    let previousChainCount: UInt32
+    /// Message number in current chain
+    let messageNumber: UInt32
+}
+
+// MARK: - Signal Protocol Message
+
+/// Complete encrypted message with header and ciphertext
+struct SignalMessage: Codable {
+    /// Message header containing DH key and counters
+    let header: MessageHeader
+    /// Encrypted message content
+    let ciphertext: Data
+    /// MAC for authentication
+    let mac: Data
+
+    /// Serialize the message for transmission
+    func serialize() throws -> Data {
+        try JSONEncoder().encode(self)
+    }
+
+    /// Deserialize a message from data
+    static func deserialize(from data: Data) throws -> SignalMessage {
+        try JSONDecoder().decode(SignalMessage.self, from: data)
+    }
+}
+
+// MARK: - PreKey Signal Message
+
+/// Initial message when establishing a new session using X3DH
+struct PreKeySignalMessage: Codable {
+    /// Sender's identity public key
+    let identityKey: Data
+    /// Sender's ephemeral public key (used in X3DH)
+    let ephemeralKey: Data
+    /// ID of the signed PreKey used
+    let signedPreKeyId: UInt32
+    /// ID of the one-time PreKey used (if any)
+    let oneTimePreKeyId: UInt32?
+    /// The actual encrypted message
+    let message: SignalMessage
+
+    /// Serialize the message for transmission
+    func serialize() throws -> Data {
+        try JSONEncoder().encode(self)
+    }
+
+    /// Deserialize a message from data
+    static func deserialize(from data: Data) throws -> PreKeySignalMessage {
+        try JSONDecoder().decode(PreKeySignalMessage.self, from: data)
+    }
+}
+
+// MARK: - Associated Data
+
+/// Generate associated data for AEAD encryption
+/// This binds the ciphertext to both parties' identity keys
+func generateAssociatedData(
+    senderIdentityKey: Data,
+    recipientIdentityKey: Data
+) -> Data {
+    senderIdentityKey + recipientIdentityKey
+}

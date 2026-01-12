@@ -47,6 +47,9 @@ fileprivate func configureDatabase(for app: Application) {
     app.migrations.add(SessionToken.Migration())
     app.migrations.add(SessionToken.ExpiryMigration())
     app.migrations.add(Message.Migration())
+    // Signal Protocol migrations
+    app.migrations.add(SignalIdentity.Migration())
+    app.migrations.add(SignalOneTimePreKey.Migration())
 }
 
 func apnsEnvironment(for environment: Environment) -> APNSEnvironment {
@@ -143,6 +146,7 @@ public func configure(_ app: Application) async throws {
         try app.register(collection: MeRouteCollection())
         try app.register(collection: UserRouteCollection())
         try app.register(collection: ChatRouteCollection())
+        try app.register(collection: SignalRouteCollection())
     } catch {
         print(error)
         throw error
