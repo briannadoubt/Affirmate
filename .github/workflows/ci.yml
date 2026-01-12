@@ -41,7 +41,7 @@ jobs:
           xcodebuild -resolvePackageDependencies \
             -project Affirmate.xcodeproj \
             -scheme "${{ matrix.scheme }}" \
-            -clonedSourcePackagesDirPath "$RUNNER_TEMP/SourcePackages"
+            -onlyUsePackageVersionsFromResolvedFile
 
       - name: Build and test
         run: |
@@ -50,8 +50,8 @@ jobs:
             -project Affirmate.xcodeproj \
             -scheme "${{ matrix.scheme }}" \
             -destination "${{ matrix.destination }}" \
-            -clonedSourcePackagesDirPath "$RUNNER_TEMP/SourcePackages" \
-            -skipPackagePluginValidation
+            -skipPackagePluginValidation \
+            -disableAutomaticPackageResolution
 
   server:
     name: Server tests (${{ matrix.os }})
@@ -127,7 +127,7 @@ jobs:
           xcodebuild -resolvePackageDependencies \
             -project Affirmate.xcodeproj \
             -scheme Affirmate \
-            -clonedSourcePackagesDirPath "$RUNNER_TEMP/SourcePackages"
+            -onlyUsePackageVersionsFromResolvedFile
 
       - name: Run integration tests
         env:
@@ -138,8 +138,8 @@ jobs:
             -project Affirmate.xcodeproj \
             -scheme Affirmate \
             -destination 'platform=macOS' \
-            -clonedSourcePackagesDirPath "$RUNNER_TEMP/SourcePackages" \
-            -skipPackagePluginValidation
+            -skipPackagePluginValidation \
+            -disableAutomaticPackageResolution
 
       - name: Shutdown server
         if: always()
