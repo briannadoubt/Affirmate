@@ -53,16 +53,12 @@ jobs:
             -skipPackagePluginValidation \
             -disableAutomaticPackageResolution
 
-  server:
-    name: Server tests (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-26]
+  server-ubuntu:
+    name: Server tests (ubuntu-latest)
+    runs-on: ubuntu-latest
     services:
       postgres:
-        image: ${{ matrix.os == 'ubuntu-latest' && 'postgres:16' || '' }}
+        image: postgres:16
         env:
           POSTGRES_USER: vapor_username
           POSTGRES_PASSWORD: vapor_password
@@ -83,8 +79,28 @@ jobs:
         with:
           swift-version: '6.2'
 
-      - name: Install and start PostgreSQL (macOS)
-        if: matrix.os == 'macos-26'
+      - name: Run server tests
+        working-directory: AffirmateServer
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_USERNAME: vapor_username
+          DATABASE_PASSWORD: vapor_password
+          DATABASE_NAME: vapor_database
+        run: swift test
+
+  server-macos:
+    name: Server tests (macos-26)
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: '6.2'
+
+      - name: Install and start PostgreSQL
         run: |
           brew install postgresql@16
           POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
@@ -105,8 +121,8 @@ jobs:
           DATABASE_NAME: vapor_database
         run: swift test
 
-      - name: Stop PostgreSQL (macOS)
-        if: always() && matrix.os == 'macos-26'
+      - name: Stop PostgreSQL
+        if: always()
         run: |
           POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
           PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
