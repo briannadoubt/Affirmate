@@ -402,6 +402,7 @@ final class SignalProtocolTests: XCTestCase {
 
         let preKeyMessage = PreKeySignalMessage(
             identityKey: Data(repeating: 0x01, count: 32),
+            identityAgreementKey: Data(repeating: 0x03, count: 32),
             ephemeralKey: Data(repeating: 0x02, count: 32),
             signedPreKeyId: 1,
             oneTimePreKeyId: 42,
@@ -412,6 +413,7 @@ final class SignalProtocolTests: XCTestCase {
         let deserialized = try PreKeySignalMessage.deserialize(from: serialized)
 
         XCTAssertEqual(deserialized.identityKey, preKeyMessage.identityKey)
+        XCTAssertEqual(deserialized.identityAgreementKey, preKeyMessage.identityAgreementKey)
         XCTAssertEqual(deserialized.ephemeralKey, preKeyMessage.ephemeralKey)
         XCTAssertEqual(deserialized.signedPreKeyId, 1)
         XCTAssertEqual(deserialized.oneTimePreKeyId, 42)
@@ -458,6 +460,7 @@ final class SignalProtocolTests: XCTestCase {
 
         let preKeyMessage = PreKeySignalMessage(
             identityKey: Data(repeating: 0x01, count: 32),
+            identityAgreementKey: Data(repeating: 0x03, count: 32),
             ephemeralKey: Data(repeating: 0x02, count: 32),
             signedPreKeyId: 1,
             oneTimePreKeyId: nil,
@@ -471,6 +474,7 @@ final class SignalProtocolTests: XCTestCase {
         if case .preKeyMessage(let msg) = deserialized {
             XCTAssertEqual(msg.signedPreKeyId, 1)
             XCTAssertNil(msg.oneTimePreKeyId)
+            XCTAssertEqual(msg.identityAgreementKey, preKeyMessage.identityAgreementKey)
         } else {
             XCTFail("Expected prekey message")
         }
