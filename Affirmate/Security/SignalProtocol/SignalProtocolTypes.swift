@@ -281,6 +281,53 @@ struct PreKeySignalMessage: Codable {
     /// The actual encrypted message
     let message: SignalMessage
 
+    private enum CodingKeys: String, CodingKey {
+        case identityKey
+        case identityAgreementKey
+        case ephemeralKey
+        case signedPreKeyId
+        case oneTimePreKeyId
+        case message
+    }
+
+    init(
+        identityKey: Data,
+        identityAgreementKey: Data,
+        ephemeralKey: Data,
+        signedPreKeyId: UInt32,
+        oneTimePreKeyId: UInt32?,
+        message: SignalMessage
+    ) {
+        self.identityKey = identityKey
+        self.identityAgreementKey = identityAgreementKey
+        self.ephemeralKey = ephemeralKey
+        self.signedPreKeyId = signedPreKeyId
+        self.oneTimePreKeyId = oneTimePreKeyId
+        self.message = message
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let identityKey = try container.decode(Data.self, forKey: .identityKey)
+        let identityAgreementKey = try container.decodeIfPresent(Data.self, forKey: .identityAgreementKey)
+        self.identityKey = identityKey
+        self.identityAgreementKey = identityAgreementKey ?? identityKey
+        self.ephemeralKey = try container.decode(Data.self, forKey: .ephemeralKey)
+        self.signedPreKeyId = try container.decode(UInt32.self, forKey: .signedPreKeyId)
+        self.oneTimePreKeyId = try container.decodeIfPresent(UInt32.self, forKey: .oneTimePreKeyId)
+        self.message = try container.decode(SignalMessage.self, forKey: .message)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(identityKey, forKey: .identityKey)
+        try container.encode(identityAgreementKey, forKey: .identityAgreementKey)
+        try container.encode(ephemeralKey, forKey: .ephemeralKey)
+        try container.encode(signedPreKeyId, forKey: .signedPreKeyId)
+        try container.encodeIfPresent(oneTimePreKeyId, forKey: .oneTimePreKeyId)
+        try container.encode(message, forKey: .message)
+    }
+
     /// Serialize the message for transmission
     func serialize() throws -> Data {
         try JSONEncoder().encode(self)

@@ -419,6 +419,41 @@ final class SignalProtocolTests: XCTestCase {
         XCTAssertEqual(deserialized.oneTimePreKeyId, 42)
     }
 
+    func test_preKeySignalMessage_missingIdentityAgreementKey_defaultsToIdentityKey() throws {
+        let header = MessageHeader(
+            dhPublicKey: Data(repeating: 0x42, count: 32),
+            previousChainCount: 0,
+            messageNumber: 0
+        )
+
+        let innerMessage = SignalMessage(
+            header: header,
+            ciphertext: Data("encrypted".utf8),
+            mac: Data(repeating: 0x00, count: 12)
+        )
+
+        let preKeyMessage = PreKeySignalMessage(
+            identityKey: Data(repeating: 0x01, count: 32),
+            identityAgreementKey: Data(repeating: 0x02, count: 32),
+            ephemeralKey: Data(repeating: 0x03, count: 32),
+            signedPreKeyId: 1,
+            oneTimePreKeyId: 42,
+            message: innerMessage
+        )
+
+        let serialized = try preKeyMessage.serialize()
+        guard var payload = try JSONSerialization.jsonObject(with: serialized) as? [String: Any] else {
+            XCTFail("Failed to serialize PreKeySignalMessage payload")
+            return
+        }
+        payload.removeValue(forKey: "identityAgreementKey")
+        let modifiedData = try JSONSerialization.data(withJSONObject: payload, options: [])
+
+        let decoded = try PreKeySignalMessage.deserialize(from: modifiedData)
+
+        XCTAssertEqual(decoded.identityAgreementKey, decoded.identityKey)
+    }
+
     // MARK: - Encrypted Message Container Tests
 
     func test_encryptedMessageContainer_signalMessage() throws {
