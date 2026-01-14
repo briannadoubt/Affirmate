@@ -131,6 +131,7 @@ final class SignalProtocolTests: XCTestCase {
 
         let bundle = PreKeyBundle(
             identityKey: identityKey.publicKey,
+            identityAgreementKey: identityKey.agreementKeyPair.publicKey,
             signedPreKeyId: signedPreKey.id,
             signedPreKey: signedPreKey.keyPair.publicKey,
             signedPreKeySignature: signedPreKey.signature,
@@ -154,6 +155,7 @@ final class SignalProtocolTests: XCTestCase {
         // Bob's PreKey bundle
         let bobBundle = PreKeyBundle(
             identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
             signedPreKeyId: bobSignedPreKey.id,
             signedPreKey: bobSignedPreKey.keyPair.publicKey,
             signedPreKeySignature: bobSignedPreKey.signature,
@@ -177,7 +179,7 @@ final class SignalProtocolTests: XCTestCase {
             identityKeyPair: bobIdentity,
             signedPreKey: bobSignedPreKey,
             oneTimePreKey: bobOneTimePreKey,
-            theirIdentityKey: aliceIdentity.publicKey,
+            theirIdentityAgreementKey: aliceIdentity.agreementKeyPair.publicKey,
             theirEphemeralKey: aliceResult.ephemeralKeyPair.publicKey
         )
 
@@ -193,6 +195,7 @@ final class SignalProtocolTests: XCTestCase {
         // Bundle without one-time PreKey
         let bobBundle = PreKeyBundle(
             identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
             signedPreKeyId: bobSignedPreKey.id,
             signedPreKey: bobSignedPreKey.keyPair.publicKey,
             signedPreKeySignature: bobSignedPreKey.signature,
@@ -212,7 +215,7 @@ final class SignalProtocolTests: XCTestCase {
             identityKeyPair: bobIdentity,
             signedPreKey: bobSignedPreKey,
             oneTimePreKey: nil,
-            theirIdentityKey: aliceIdentity.publicKey,
+            theirIdentityAgreementKey: aliceIdentity.agreementKeyPair.publicKey,
             theirEphemeralKey: aliceResult.ephemeralKeyPair.publicKey
         )
 
@@ -229,6 +232,7 @@ final class SignalProtocolTests: XCTestCase {
 
         let bobBundle = PreKeyBundle(
             identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
             signedPreKeyId: bobSignedPreKey.id,
             signedPreKey: bobSignedPreKey.keyPair.publicKey,
             signedPreKeySignature: bobSignedPreKey.signature,
@@ -275,6 +279,7 @@ final class SignalProtocolTests: XCTestCase {
 
         let bobBundle = PreKeyBundle(
             identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
             signedPreKeyId: bobSignedPreKey.id,
             signedPreKey: bobSignedPreKey.keyPair.publicKey,
             signedPreKeySignature: bobSignedPreKey.signature,

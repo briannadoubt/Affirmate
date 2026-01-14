@@ -160,7 +160,7 @@ actor SignalSessionManager {
             identityKeyPair: identityKeyPair,
             signedPreKey: signedPreKey,
             oneTimePreKey: oneTimePreKey,
-            theirIdentityKey: preKeyMessage.identityKey,
+            theirIdentityAgreementKey: preKeyMessage.identityAgreementKey,
             theirEphemeralKey: preKeyMessage.ephemeralKey
         )
 
@@ -257,6 +257,7 @@ actor SignalSessionManager {
         // Create PreKey message
         return PreKeySignalMessage(
             identityKey: identityKeyPair.publicKey,
+            identityAgreementKey: identityKeyPair.agreementKeyPair.publicKey,
             ephemeralKey: ephemeralKey,
             signedPreKeyId: preKeyBundle.signedPreKeyId,
             oneTimePreKeyId: usedOTPKId,

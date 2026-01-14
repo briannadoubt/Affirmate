@@ -55,16 +55,19 @@ enum SignalProtocolError: LocalizedError {
 struct IdentityKeyPair: Codable {
     let privateKey: Data
     let publicKey: Data
+    let agreementKeyPair: KeyAgreementKeyPair
 
     init() {
         let key = Curve25519.Signing.PrivateKey()
         self.privateKey = key.rawRepresentation
         self.publicKey = key.publicKey.rawRepresentation
+        self.agreementKeyPair = KeyAgreementKeyPair()
     }
 
-    init(privateKey: Data, publicKey: Data) {
+    init(privateKey: Data, publicKey: Data, agreementKeyPair: KeyAgreementKeyPair) {
         self.privateKey = privateKey
         self.publicKey = publicKey
+        self.agreementKeyPair = agreementKeyPair
     }
 
     func signingPrivateKey() throws -> Curve25519.Signing.PrivateKey {
@@ -85,6 +88,30 @@ struct IdentityKeyPair: Codable {
     static func verify(signature: Data, for data: Data, from publicKey: Data) throws -> Bool {
         let key = try Curve25519.Signing.PublicKey(rawRepresentation: publicKey)
         return key.isValidSignature(signature, for: data)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case privateKey
+        case publicKey
+        case agreementKeyPair
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.privateKey = try container.decode(Data.self, forKey: .privateKey)
+        self.publicKey = try container.decode(Data.self, forKey: .publicKey)
+        if let agreementKeyPair = try container.decodeIfPresent(KeyAgreementKeyPair.self, forKey: .agreementKeyPair) {
+            self.agreementKeyPair = agreementKeyPair
+        } else {
+            self.agreementKeyPair = KeyAgreementKeyPair()
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(privateKey, forKey: .privateKey)
+        try container.encode(publicKey, forKey: .publicKey)
+        try container.encode(agreementKeyPair, forKey: .agreementKeyPair)
     }
 }
 
@@ -179,6 +206,8 @@ struct OneTimePreKey: Codable {
 struct PreKeyBundle: Codable {
     /// The user's public identity key
     let identityKey: Data
+    /// The user's public identity agreement key
+    let identityAgreementKey: Data
     /// The signed PreKey ID
     let signedPreKeyId: UInt32
     /// The signed PreKey public key
@@ -241,6 +270,8 @@ struct SignalMessage: Codable {
 struct PreKeySignalMessage: Codable {
     /// Sender's identity public key
     let identityKey: Data
+    /// Sender's identity agreement public key
+    let identityAgreementKey: Data
     /// Sender's ephemeral public key (used in X3DH)
     let ephemeralKey: Data
     /// ID of the signed PreKey used

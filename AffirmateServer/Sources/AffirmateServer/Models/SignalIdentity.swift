@@ -24,6 +24,8 @@ final class SignalIdentity: Model, Content {
 
     /// Public identity key (Curve25519)
     @Field(key: "identity_key") var identityKey: Data
+    /// Public identity agreement key (Curve25519)
+    @Field(key: "identity_agreement_key") var identityAgreementKey: Data
 
     /// Current signed PreKey ID
     @Field(key: "signed_prekey_id") var signedPreKeyId: UInt32
@@ -50,6 +52,7 @@ final class SignalIdentity: Model, Content {
         userId: User.IDValue,
         registrationId: UInt32,
         identityKey: Data,
+        identityAgreementKey: Data,
         signedPreKeyId: UInt32,
         signedPreKey: Data,
         signedPreKeySignature: Data
@@ -58,6 +61,7 @@ final class SignalIdentity: Model, Content {
         self.$user.id = userId
         self.registrationId = registrationId
         self.identityKey = identityKey
+        self.identityAgreementKey = identityAgreementKey
         self.signedPreKeyId = signedPreKeyId
         self.signedPreKey = signedPreKey
         self.signedPreKeySignature = signedPreKeySignature
@@ -72,6 +76,7 @@ final class SignalIdentity: Model, Content {
                 .field("user_id", .uuid, .required, .references(User.schema, .id, onDelete: .cascade))
                 .field("registration_id", .uint32, .required)
                 .field("identity_key", .data, .required)
+                .field("identity_agreement_key", .data, .required)
                 .field("signed_prekey_id", .uint32, .required)
                 .field("signed_prekey", .data, .required)
                 .field("signed_prekey_signature", .data, .required)

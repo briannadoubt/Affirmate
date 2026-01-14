@@ -87,6 +87,7 @@ actor SignalCrypto {
         return SignalKeysUpload(
             registrationId: keys.registrationId,
             identityKey: keys.identityKey,
+            identityAgreementKey: keys.identityAgreementKey,
             signedPreKey: SignedPreKeyUpload(
                 id: keys.signedPreKeyId,
                 publicKey: keys.signedPreKey,
@@ -151,6 +152,7 @@ actor SignalCrypto {
         // Convert to internal PreKey bundle format
         let bundle = PreKeyBundle(
             identityKey: preKeyBundle.identityKey,
+            identityAgreementKey: preKeyBundle.identityAgreementKey,
             signedPreKeyId: preKeyBundle.signedPreKeyId,
             signedPreKey: preKeyBundle.signedPreKey,
             signedPreKeySignature: preKeyBundle.signedPreKeySignature,
@@ -186,6 +188,7 @@ actor SignalCrypto {
             return .preKeyMessage(SignalPreKeyMessage(
                 registrationId: 0, // Will be filled by session manager
                 identityKey: msg.identityKey,
+                identityAgreementKey: msg.identityAgreementKey,
                 ephemeralKey: msg.ephemeralKey,
                 signedPreKeyId: msg.signedPreKeyId,
                 oneTimePreKeyId: msg.oneTimePreKeyId,
@@ -227,6 +230,7 @@ actor SignalCrypto {
         // Convert to internal PreKey bundle format
         let bundle = PreKeyBundle(
             identityKey: preKeyBundle.identityKey,
+            identityAgreementKey: preKeyBundle.identityAgreementKey,
             signedPreKeyId: preKeyBundle.signedPreKeyId,
             signedPreKey: preKeyBundle.signedPreKey,
             signedPreKeySignature: preKeyBundle.signedPreKeySignature,
@@ -245,6 +249,7 @@ actor SignalCrypto {
         return .preKeyMessage(SignalPreKeyMessage(
             registrationId: registrationId,
             identityKey: preKeyMessage.identityKey,
+            identityAgreementKey: preKeyMessage.identityAgreementKey,
             ephemeralKey: preKeyMessage.ephemeralKey,
             signedPreKeyId: preKeyMessage.signedPreKeyId,
             oneTimePreKeyId: preKeyMessage.oneTimePreKeyId,
@@ -297,6 +302,7 @@ actor SignalCrypto {
         case .preKeyMessage(let msg):
             internalContainer = .preKeyMessage(PreKeySignalMessage(
                 identityKey: msg.identityKey,
+                identityAgreementKey: msg.identityAgreementKey,
                 ephemeralKey: msg.ephemeralKey,
                 signedPreKeyId: msg.signedPreKeyId,
                 oneTimePreKeyId: msg.oneTimePreKeyId,

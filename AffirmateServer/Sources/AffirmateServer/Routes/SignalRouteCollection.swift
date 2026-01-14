@@ -44,6 +44,7 @@ struct SignalRouteCollection: RouteCollection {
             // Update existing identity
             existing.registrationId = upload.registrationId
             existing.identityKey = upload.identityKey
+            existing.identityAgreementKey = upload.identityAgreementKey
             existing.signedPreKeyId = upload.signedPreKey.id
             existing.signedPreKey = upload.signedPreKey.publicKey
             existing.signedPreKeySignature = upload.signedPreKey.signature
@@ -54,6 +55,7 @@ struct SignalRouteCollection: RouteCollection {
                 userId: userId,
                 registrationId: upload.registrationId,
                 identityKey: upload.identityKey,
+                identityAgreementKey: upload.identityAgreementKey,
                 signedPreKeyId: upload.signedPreKey.id,
                 signedPreKey: upload.signedPreKey.publicKey,
                 signedPreKeySignature: upload.signedPreKey.signature
@@ -110,6 +112,7 @@ struct SignalRouteCollection: RouteCollection {
         return SignalPreKeyBundle(
             registrationId: identity.registrationId,
             identityKey: identity.identityKey,
+            identityAgreementKey: identity.identityAgreementKey,
             signedPreKeyId: identity.signedPreKeyId,
             signedPreKey: identity.signedPreKey,
             signedPreKeySignature: identity.signedPreKeySignature,

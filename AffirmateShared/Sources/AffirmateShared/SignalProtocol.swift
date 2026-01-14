@@ -16,6 +16,8 @@ public struct SignalPreKeyBundle: Codable, Equatable {
     public var registrationId: UInt32
     /// The user's public identity key
     public var identityKey: Data
+    /// The user's public identity agreement key
+    public var identityAgreementKey: Data
     /// The signed PreKey ID
     public var signedPreKeyId: UInt32
     /// The signed PreKey public key
@@ -30,6 +32,7 @@ public struct SignalPreKeyBundle: Codable, Equatable {
     public init(
         registrationId: UInt32,
         identityKey: Data,
+        identityAgreementKey: Data,
         signedPreKeyId: UInt32,
         signedPreKey: Data,
         signedPreKeySignature: Data,
@@ -38,6 +41,7 @@ public struct SignalPreKeyBundle: Codable, Equatable {
     ) {
         self.registrationId = registrationId
         self.identityKey = identityKey
+        self.identityAgreementKey = identityAgreementKey
         self.signedPreKeyId = signedPreKeyId
         self.signedPreKey = signedPreKey
         self.signedPreKeySignature = signedPreKeySignature
@@ -54,6 +58,8 @@ public struct SignalKeysUpload: Codable {
     public var registrationId: UInt32
     /// The user's public identity key
     public var identityKey: Data
+    /// The user's public identity agreement key
+    public var identityAgreementKey: Data
     /// The current signed PreKey
     public var signedPreKey: SignedPreKeyUpload
     /// One-time PreKeys to upload
@@ -62,11 +68,13 @@ public struct SignalKeysUpload: Codable {
     public init(
         registrationId: UInt32,
         identityKey: Data,
+        identityAgreementKey: Data,
         signedPreKey: SignedPreKeyUpload,
         oneTimePreKeys: [OneTimePreKeyUpload]
     ) {
         self.registrationId = registrationId
         self.identityKey = identityKey
+        self.identityAgreementKey = identityAgreementKey
         self.signedPreKey = signedPreKey
         self.oneTimePreKeys = oneTimePreKeys
     }
@@ -153,6 +161,8 @@ public struct SignalPreKeyMessage: Codable, Equatable {
     public var registrationId: UInt32
     /// Sender's public identity key
     public var identityKey: Data
+    /// Sender's public identity agreement key
+    public var identityAgreementKey: Data
     /// Sender's ephemeral public key (used in X3DH)
     public var ephemeralKey: Data
     /// ID of the signed PreKey used
@@ -165,6 +175,7 @@ public struct SignalPreKeyMessage: Codable, Equatable {
     public init(
         registrationId: UInt32,
         identityKey: Data,
+        identityAgreementKey: Data,
         ephemeralKey: Data,
         signedPreKeyId: UInt32,
         oneTimePreKeyId: UInt32?,
@@ -172,6 +183,7 @@ public struct SignalPreKeyMessage: Codable, Equatable {
     ) {
         self.registrationId = registrationId
         self.identityKey = identityKey
+        self.identityAgreementKey = identityAgreementKey
         self.ephemeralKey = ephemeralKey
         self.signedPreKeyId = signedPreKeyId
         self.oneTimePreKeyId = oneTimePreKeyId

@@ -367,6 +367,7 @@ actor SignalProtocolStore {
         return SignalPublicKeys(
             registrationId: regId,
             identityKey: identityKey.publicKey,
+            identityAgreementKey: identityKey.agreementKeyPair.publicKey,
             signedPreKeyId: bundle.signedPreKeyId,
             signedPreKey: bundle.signedPreKey,
             signedPreKeySignature: bundle.signedPreKeySignature,
@@ -383,6 +384,7 @@ actor SignalProtocolStore {
 struct SignalPublicKeys: Codable {
     let registrationId: UInt32
     let identityKey: Data
+    let identityAgreementKey: Data
     let signedPreKeyId: UInt32
     let signedPreKey: Data
     let signedPreKeySignature: Data
