@@ -297,6 +297,7 @@ actor SignalCrypto {
 
         // Convert from shared message format
         let internalContainer: EncryptedMessageContainer
+        let oneTimePreKeyIdToConsume: UInt32?
 
         switch container {
         case .preKeyMessage(let msg):
@@ -316,11 +317,7 @@ actor SignalCrypto {
                     mac: msg.message.mac
                 )
             ))
-
-            // Consume the one-time PreKey if it was used
-            if let otpkId = msg.oneTimePreKeyId {
-                try await store.consumeOneTimePreKey(id: otpkId)
-            }
+            oneTimePreKeyIdToConsume = msg.oneTimePreKeyId
 
         case .signalMessage(let msg):
             internalContainer = .signalMessage(SignalMessage(
@@ -332,9 +329,16 @@ actor SignalCrypto {
                 ciphertext: msg.ciphertext,
                 mac: msg.mac
             ))
+            oneTimePreKeyIdToConsume = nil
         }
 
-        return try await manager.decryptMessage(internalContainer, from: senderId)
+        let plaintext = try await manager.decryptMessage(internalContainer, from: senderId)
+
+        if let otpkId = oneTimePreKeyIdToConsume {
+            try await store.consumeOneTimePreKey(id: otpkId)
+        }
+
+        return plaintext
     }
 
     /// Decrypt a message and return it as a string
