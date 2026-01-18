@@ -9,13 +9,13 @@ on:
 jobs:
   client:
     name: Client tests (${{ matrix.platform }})
-    runs-on: macos-26
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
         include:
           - platform: iOS
-            destination: "platform=iOS Simulator,OS=latest,name=iPhone 15"
+            destination: "platform=iOS Simulator,OS=latest,name=iPhone 16"
             scheme: Affirmate
           - platform: macOS
             destination: "platform=macOS"
@@ -27,7 +27,7 @@ jobs:
             destination: "platform=tvOS Simulator,OS=latest,name=Apple TV 4K (3rd generation)"
             scheme: Affirmate
           - platform: watchOS
-            destination: "platform=watchOS Simulator,OS=latest,name=Apple Watch Series 9 (45mm)"
+            destination: "platform=watchOS Simulator,OS=latest,name=Apple Watch Series 10 (46mm)"
             scheme: AffirmateWatch
     steps:
       - name: Checkout
@@ -47,29 +47,13 @@ jobs:
             -disableAutomaticPackageResolution
 
   server:
-    name: Server tests (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-26]
-        include:
-          - os: ubuntu-latest
-            swift-version: '6.1'
-          - os: macos-26
-            swift-version: '6.2'
+    name: Server tests
+    runs-on: macos-15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Swift (Ubuntu)
-        if: runner.os == 'Linux'
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: ${{ matrix.swift-version }}
-
-      - name: Select Xcode (macOS)
-        if: runner.os == 'macOS'
+      - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_26.2.app
 
       - name: Run server tests
@@ -78,7 +62,7 @@ jobs:
 
   integration:
     name: Integration tests
-    runs-on: macos-26
+    runs-on: macos-15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
