@@ -7,8 +7,6 @@
 
 import AffirmateShared
 import Foundation
-import Alamofire
-import KeychainAccess
 
 actor ChatActor {
     let http: HTTPActable
@@ -52,7 +50,7 @@ actor ChatActor {
     
 extension ChatActor {
     
-    enum Request: URLRequestConvertible {
+    enum Request: URLRequestConvertible, Sendable {
         case newChat(ChatCreate)
         case chats
         case chat(chatId: UUID, sessionToken: String?)
@@ -67,7 +65,7 @@ extension ChatActor {
         #endif
         
         #if os(macOS)
-        var uri: URLConvertible? {
+        var uri: URL? {
             switch self {
             case .chats, .newChat:
                 return url
@@ -80,7 +78,7 @@ extension ChatActor {
             }
         }
         #else
-        var uri: URLConvertible? {
+        var uri: URL? {
             switch self {
             case .chats, .newChat:
                 return url
@@ -103,13 +101,15 @@ extension ChatActor {
             }
         }
         
-        var headers: HTTPHeaders {
+        @MainActor
+        func asURLRequest() throws -> URLRequest {
+            guard let requestURL = uri else {
+                throw ChatError.failedToBuildURL
+            }
+            var request = URLRequest(url: requestURL)
+            request.httpMethod = method.rawValue
             var headers = HTTPHeaders()
-            headers.add(.defaultAcceptLanguage)
-            headers.add(.defaultUserAgent)
-            headers.add(.defaultAcceptEncoding)
-            headers.add(.contentType("application/json"))
-            headers.add(.accept("application/json"))
+            headers.addJSONDefaults()
             switch self {
             case .chat(_, let sessionToken),
                  .joinChat(_, _, let sessionToken),
@@ -117,16 +117,10 @@ extension ChatActor {
                 if let sessionToken {
                     headers.add(.authorization(bearerToken: sessionToken))
                 }
-            default: break
+            default:
+                break
             }
-            return headers
-        }
-        
-        func asURLRequest() throws -> URLRequest {
-            guard let requestURL = uri else {
-                throw ChatError.failedToBuildURL
-            }
-            var request = try URLRequest(url: requestURL, method: method, headers: headers)
+            headers.apply(to: &request)
             switch self {
             case .chats, .chat:
                 break

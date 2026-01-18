@@ -6,35 +6,33 @@
 //
 
 import AffirmateShared
-import SwiftUI
 import ReversedScrollView
+import SwiftUI
 import UniformTypeIdentifiers
 
 public struct ChatView: View {
     
     @FetchRequest var messages: FetchedResults<Message>
     @FetchRequest var participants: FetchedResults<Participant>
-    
-    @EnvironmentObject var authentication: AuthenticationObserver
-    @EnvironmentObject var chatObserver: ChatObserver
+
+    @Environment(AuthenticationObserver.self) private var authentication
+    @Environment(ChatObserver.self) private var chatObserver
     
     @SceneStorage("chat_newMessageText") var newMessageText = ""
     @SceneStorage("chat_showingNewParticipants") var showingNewParticipants = false
     
     @State var presentedParticipant: ParticipantResponse?
     @State var presentedCopiedUrl = false
-    @State private var sendErrorMessage: String?
-    @State private var showingSendError = false
-
+    
     #if os(iOS)
-    @StateObject fileprivate var keyboard = KeyboardHeightObserver()
+    @State private var keyboard = KeyboardHeightObserver()
     #endif
     
     @FocusState fileprivate var focused
     
     init(chatId: UUID) {
-        _messages = FetchRequest(sortDescriptors: [SortDescriptor(\.createdAt)], predicate: NSPredicate(format: "chat.id == %@", chatId as CVarArg))
-        _participants = FetchRequest(sortDescriptors: [SortDescriptor(\.role), SortDescriptor(\.username)], predicate: NSPredicate(format: "chat.id == %@", chatId as CVarArg))
+        _messages = FetchRequest(sortDescriptors: [NSSortDescriptor(key: "createdAt", ascending: true)], predicate: NSPredicate(format: "chat.id == %@", chatId as CVarArg))
+        _participants = FetchRequest(sortDescriptors: [NSSortDescriptor(key: "role", ascending: true), NSSortDescriptor(key: "username", ascending: true)], predicate: NSPredicate(format: "chat.id == %@", chatId as CVarArg))
     }
     
     fileprivate func send() {
@@ -43,15 +41,15 @@ public struct ChatView: View {
             guard !newMessageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                 return
             }
+            // TODO: Verify (with science) whether there are "not allowed" words in the message.
             do {
                 try await chatObserver.sendMessage(newMessageText, to: Array(participants))
-                withAnimation {
-                    focused = true
-                    newMessageText = ""
-                }
             } catch {
-                sendErrorMessage = error.localizedDescription
-                showingSendError = true
+                print(error)
+            }
+            withAnimation {
+                focused = true
+                newMessageText = ""
             }
         }
     }
@@ -93,132 +91,148 @@ public struct ChatView: View {
     }
     
     public var body: some View {
-        let sortedMessages = messages.sorted(by: { $0.createdAt ?? Date() < $1.createdAt ?? Date() })
-        ScrollViewReader { scrollView in
-            ReversedScrollView(.vertical, showsIndicator: true) {
-                LazyVStack(
-                    alignment: .center,
-                    spacing: -6,
-                    pinnedViews: [.sectionHeaders, .sectionFooters]
-                ) {
-                    if let currentParticipantId = currentParticipantId {
-                        ForEach(sortedMessages) { message in
-                            MessageView(
-                                currentParticipantId: currentParticipantId,
-                                withTail: shouldHaveTail(message),
-                                message: message
-                            )
-                        }
-                        #if os(watchOS)
-                        ChatInputBar(messages: sortedMessages, send: send)
-                            .environmentObject(chatObserver)
-                        #endif
-                    } else {
-                        Text("It seems that you are not a part of this chat!")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding(.horizontal)
-                .onAppear {
-                    scrollToLastMessage(scrollProxy: scrollView)
-                }
-            }
-            #if !os(watchOS)
-            .safeAreaInset(edge: .bottom) {
-                ChatInputBar(messages: sortedMessages, send: send)
-                    .environmentObject(chatObserver)
-            }
-            #endif
-            .onChange(of: focused) { isFocused in
-                if isFocused {
-                    scrollToLastMessage(scrollProxy: scrollView)
-                }
-            }
-            .onChange(of: messages.count) { _ in
-                scrollToLastMessage(scrollProxy: scrollView)
-            }
-            #if os(iOS)
-            .onReceive(keyboard.$height.debounce(for: 0.3, scheduler: RunLoop.main)) { _ in
-                scrollToLastMessage(scrollProxy: scrollView)
-            }
-            #endif
-            #if !os(watchOS) && !os(macOS)
-            .toolbarTitleMenu {
-                ForEach(participants) { participant in
-                    HStack {
-                        Circle().frame(width: 44, height: 44)
-                        Text("@" + (participant.username ?? ""))
-                    }
-                }
-                ShowNewParticipantsButton(showingNewParticipants: $showingNewParticipants)
-            }
-            .sheet(isPresented: $showingNewParticipants) {
-                NewParticipantsView(participants: Set(participants))
-                    .environmentObject(chatObserver)
-            }
-            #endif
+        Group {
+            scrollContent(sortedMessages: sortedMessages)
         }
-        .navigationTitle(chatObserver.name)
+            .navigationTitle(chatObserver.name)
         #if !os(watchOS) && !os(macOS)
-        .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
+            .navigationBarTitleDisplayMode(NavigationBarItem.TitleDisplayMode.inline)
         #endif
-        .onAppear {
-            // MARK: Connect to WebSocket
-            if chatObserver.isConnected {
-                return
-            }
-            do {
-                try chatObserver.connect(chatId: chatObserver.chatId)
-            } catch {
-                print("Failed to connect:", error)
-            }
-        }
-        .onDisappear {
-            // MARK: Disconnect from WebSocket
-            chatObserver.disconnect()
-        }
-        .toolbar {
-            #if !os(watchOS) && !os(macOS)
-            ToolbarTitleMenu()
-            ToolbarItem {
-                Button {
-                    UIPasteboard.general.setValue(chatObserver.shareableUrl, forPasteboardType: UTType.url.identifier)
-                    withAnimation {
-                        presentedCopiedUrl = true
+            .onAppear {
+                // MARK: Connect to WebSocket
+                if chatObserver.isConnected {
+                    return
+                }
+                Task {
+                    do {
+                        try await chatObserver.connect(chatId: chatObserver.chatId)
+                    } catch WebSocketObserverError.socketUnavailable {
+                        // The observer will retry once the task is ready.
+                    } catch {
+                        print("Failed to connect:", error)
                     }
-                } label: {
-                    Label("Share", systemImage: "square.and.arrow.up")
                 }
             }
-            ToolbarItem {
-                ShowNewParticipantsButton(showingNewParticipants: $showingNewParticipants)
+            .onDisappear {
+                // MARK: Disconnect from WebSocket
+                chatObserver.disconnect()
             }
-            #endif
-        }
+            .toolbar {
+                #if !os(watchOS) && !os(macOS)
+                ToolbarTitleMenu()
+                ToolbarItem {
+                    Button {
+                        UIPasteboard.general.setValue(chatObserver.shareableUrl, forPasteboardType: UTType.url.identifier)
+                        withAnimation {
+                            presentedCopiedUrl = true
+                        }
+                    } label: {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                }
+                ToolbarItem {
+                    ShowNewParticipantsButton(showingNewParticipants: $showingNewParticipants)
+                }
+                #endif
+            }
         #if !os(watchOS)
-        .alert(isPresented: $presentedCopiedUrl) {
-            Alert(title: Text("Link Copied!"), message: Text(""))
-        }
+            .alert(isPresented: $presentedCopiedUrl) {
+                Alert(title: Text("Link Copied!"), message: Text(""))
+            }
         #endif
-        .sheet(item: $presentedParticipant) {
+            .sheet(item: $presentedParticipant) {
             presentedParticipant = nil
         } content: { participant in
             if let presentedParticipant = presentedParticipant {
                 ProfileView(user: presentedParticipant.user)
             }
         }
-        .alert("Failed to Send Message", isPresented: $showingSendError) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text(sendErrorMessage ?? "An unknown error occurred")
-        }
-        .onChange(of: chatObserver.webSocketError != nil) { hasError in
-            if hasError {
-                showingSendError = true
-                sendErrorMessage = chatObserver.webSocketError?.localizedDescription ?? "Connection error"
-                chatObserver.webSocketError = nil
+    }
+
+    private var sortedMessages: [Message] {
+        Array(messages)
+    }
+
+    private func scrollContent(sortedMessages: [Message]) -> some View {
+        ScrollViewReader { scrollView in
+            baseScroll(sortedMessages: sortedMessages, scrollView: scrollView)
+            #if !os(watchOS)
+            .safeAreaInset(edge: .bottom) {
+                ChatInputBar(messages: sortedMessages, send: send)
+                    .environment(chatObserver)
             }
+            #endif
+            .onChange(of: focused) { _, isFocused in
+                if isFocused {
+                    scrollToLastMessage(scrollProxy: scrollView)
+                }
+            }
+            .onChange(of: messages.count) {
+                scrollToLastMessage(scrollProxy: scrollView)
+            }
+            #if os(iOS)
+            .onChange(of: keyboard.height) {
+                scrollToLastMessage(scrollProxy: scrollView)
+            }
+            #endif
+            #if !os(watchOS) && !os(macOS)
+            .toolbarTitleMenu { participantsMenu }
+            .sheet(isPresented: $showingNewParticipants) {
+                NewParticipantsView(participants: Set(participants))
+                    .environment(chatObserver)
+            }
+            #endif
+            .task(id: messages.count) {
+                scrollToLastMessage(scrollProxy: scrollView)
+            }
+        }
+    }
+
+    private func baseScroll(sortedMessages: [Message], scrollView: ScrollViewProxy) -> some View {
+        ReversedScrollView(.vertical, showsIndicator: true) {
+            messageStack(sortedMessages: sortedMessages, scrollView: scrollView)
+        }
+    }
+
+    @ViewBuilder
+    private var participantsMenu: some View {
+        ForEach(participants) { participant in
+            HStack {
+                Circle().frame(width: 44, height: 44)
+                Text("@" + (participant.username ?? ""))
+            }
+        }
+        ShowNewParticipantsButton(showingNewParticipants: $showingNewParticipants)
+    }
+
+    @ViewBuilder
+    private func messageStack(sortedMessages: [Message], scrollView: ScrollViewProxy) -> some View {
+        LazyVStack(
+            alignment: .center,
+            spacing: -6,
+            pinnedViews: [.sectionHeaders, .sectionFooters]
+        ) {
+            if let currentParticipantId = currentParticipantId {
+                ForEach(sortedMessages, id: \.id) { (message: Message) in
+                    MessageView(
+                        currentParticipantId: currentParticipantId,
+                        withTail: shouldHaveTail(message),
+                        message: message
+                    )
+                }
+                #if os(watchOS)
+                ChatInputBar(messages: sortedMessages, send: send)
+                    .environment(chatObserver)
+                #endif
+            } else {
+                Text("It seems that you are not a part of this chat!")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.horizontal)
+        .onAppear {
+            scrollToLastMessage(scrollProxy: scrollView)
         }
     }
 }

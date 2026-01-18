@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ChatLabel: View {
-    @EnvironmentObject var chatsObserver: ChatsObserver
     var chat: Chat
     var participants: [Participant] {
         (chat.participants?.allObjects as? [Participant]) ?? []

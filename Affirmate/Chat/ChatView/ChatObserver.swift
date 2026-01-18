@@ -6,28 +6,30 @@
 //
 
 import AffirmateShared
-import Alamofire
 import CoreData
 import CryptoKit
 import Foundation
-import KeychainAccess
-import Starscream
+import Observation
 import SwiftUI
 
 /// An object used on the `View` to display and manage a chat.
-class ChatObserver: WebSocketObserver {
+@Observable
+class ChatObserver: @MainActor WebSocketObserver {
     
     /// Whether or not the WebSocket is connected.
-    @Published var isConnected = false
+    var isConnected = false
     
     /// The key that references the WebSocket connection's `clientId` in the keychain.
     let clientIdKey = Constants.KeyChain.Chat.clientId
     
-    /// The `WebSocket` instance.
-    var socket: WebSocket?
+    /// The `URLSessionWebSocketTask` instance.
+    var socket: URLSessionWebSocketTask?
+    
+    /// The task streaming incoming WebSocket messages.
+    var receiveTask: Task<Void, Never>?
     
     /// The name of the chat.
-    @Published var name: String
+    var name: String
     
     /// The url that opens this chat in the app.
     var shareableUrl: URL {
@@ -50,23 +52,22 @@ class ChatObserver: WebSocketObserver {
 
     private(set) var pendingConfirmations: Set<UUID> = []
 
-    /// The latest WebSocket error, if any. Observe this to display errors in the UI.
-    @Published var webSocketError: Error?
-
     @MainActor func sendDeliveryConfirmation(for messageId: UUID) {
         pendingConfirmations.insert(messageId)
-        flushPendingConfirmations()
+        Task {
+            await self.flushPendingConfirmations()
+        }
     }
 
-    @MainActor func flushPendingConfirmations() {
+    @MainActor func flushPendingConfirmations() async {
         guard socket != nil, clientId != nil else {
             return
         }
         let confirmations = pendingConfirmations
         for messageId in confirmations {
             do {
-                let confirmation = MessageReceivedConfirmation(messageId: messageId)
-                try write(confirmation)
+                let confirmation = MessageRecievedConfirmation(messageId: messageId)
+                try await write(confirmation)
                 pendingConfirmations.remove(messageId)
             } catch {
                 break
@@ -143,7 +144,7 @@ class ChatObserver: WebSocketObserver {
                 signature: encryptedTextDataUsToThem.signature
             )
             let messageCreate = MessageCreate(sealed: newMessageUsToThem, recipient: participantId)
-            try write(messageCreate)
+            try await write(messageCreate)
         }
     }
     
@@ -152,31 +153,22 @@ class ChatObserver: WebSocketObserver {
         print(newParticipants)
     }
     
-    /// Handle new data received from the `WebSocket` connection.
-    func received(_ data: Data) {
+    /// Handle new data recieved from the `WebSocket` connection.
+    func recieved(_ data: Data) {
         if let newMessage = try? data.decodeWebSocketMessage(MessageResponse.self) {
-            Task {
-                do {
-                    try await self.insert(newMessage.data)
-                } catch {
-                    print("Chat: Failed to cache message:", error)
-                }
-                print("Chat: Received message:", newMessage)
+            do {
+                try self.insert(newMessage.data)
+            } catch {
+                print("Chat: Failed to cache message:", error)
             }
+            print("Chat: Recieved message:", newMessage)
         } else {
             print("Chat: Received unrecognized data:", (try? JSONSerialization.jsonObject(with: data) as Any) as? [String: Any] as Any)
         }
     }
-
+    
     /// Don't do anything with text.
-    func received(_ text: String) { }
-
-    /// Handle WebSocket errors by updating the published error property.
-    func handleWebSocketError(_ error: Error?) {
-        DispatchQueue.main.async {
-            self.webSocketError = error
-        }
-    }
+    func recieved(_ text: String) { }
 }
 
 private extension ChatObserver {
@@ -253,8 +245,6 @@ private extension ChatObserver {
 
 extension ChatObserver {
     func flushPendingConfirmationsIfPossible() async {
-        await MainActor.run {
-            self.flushPendingConfirmations()
-        }
+        await flushPendingConfirmations()
     }
 }

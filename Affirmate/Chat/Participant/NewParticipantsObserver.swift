@@ -6,14 +6,16 @@
 //
 
 import AffirmateShared
-import Alamofire
+import Observation
 import SwiftUI
 
-final class NewParticipantsObserver: ObservableObject {
-    
-    @Published var username: String = ""
-    @Published var searchResults: [UserPublic] = []
-    @Published var selectedParticipants: [UUID: (user: UserPublic, role: ParticipantRole)] = [:]
+@MainActor
+@Observable
+final class NewParticipantsObserver {
+
+    var username: String = ""
+    var searchResults: [UserPublic] = []
+    var selectedParticipants: [UUID: (user: UserPublic, role: ParticipantRole)] = [:]
     
     let userActor = UserActor()
     
@@ -34,6 +36,7 @@ final class NewParticipantsObserver: ObservableObject {
         self.selectedParticipants.removeValue(forKey: user.id)
     }
     
+    @concurrent
     func find() async throws {
         let publicUsers = try await userActor.find(username: username)
         await set(searchResults: publicUsers)

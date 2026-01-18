@@ -9,7 +9,7 @@ import AffirmateShared
 import SwiftUI
 
 struct SignUpButton: View {
-    @EnvironmentObject var authentication: AuthenticationObserver
+    @Environment(AuthenticationObserver.self) private var authentication
     
     @Binding var firstName: String
     @Binding var lastName: String

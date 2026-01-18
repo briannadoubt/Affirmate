@@ -9,8 +9,8 @@ import AffirmateShared
 import SwiftUI
 
 struct AuthenticationView: View {
-    
-    @EnvironmentObject var authentication: AuthenticationObserver
+
+    @Environment(AuthenticationObserver.self) private var authentication
     
     var body: some View {
         let scrollView = AuthenticationScrollView()

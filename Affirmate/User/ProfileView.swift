@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ProfileView: View {
 
-    @EnvironmentObject var chatObserver: ChatObserver
+    @Environment(ChatObserver.self) private var chatObserver
 
     let user: UserParticipantResponse
     

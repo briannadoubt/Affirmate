@@ -9,8 +9,8 @@ import AffirmateShared
 import SwiftUI
 
 struct CreateNewChatButton: View {
-    
-    @EnvironmentObject var newParticipantsObserver: NewParticipantsObserver
+
+    @Environment(NewParticipantsObserver.self) private var newParticipantsObserver
     
     var newChat: () -> ()
     
@@ -23,13 +23,13 @@ struct CreateNewChatButton: View {
 }
 
 struct NewChatView: View {
-    
+
     @Binding var isPresented: Bool
-    
-    @EnvironmentObject var authenticationObserver: AuthenticationObserver
-    @EnvironmentObject var chatsObserver: ChatsObserver
-    
-    @StateObject var newParticipantsObserver = NewParticipantsObserver()
+
+    @Environment(AuthenticationObserver.self) private var authenticationObserver
+    @Environment(ChatsObserver.self) private var chatsObserver
+
+    @State private var newParticipantsObserver = NewParticipantsObserver()
     
     @State var name: String = ""
     
@@ -90,7 +90,7 @@ struct NewChatView: View {
             }
             .navigationTitle("New Chat")
         }
-        .environmentObject(newParticipantsObserver)
+        .environment(newParticipantsObserver)
     }
 }
 

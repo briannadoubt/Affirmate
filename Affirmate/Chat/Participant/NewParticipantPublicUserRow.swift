@@ -12,7 +12,7 @@ struct NewParticipantPublicUserRow: View {
     let publicUser: UserPublic
     var body: some View {
         HStack {
-            Text("@") + Text(publicUser.username)
+            Text("@\(publicUser.username)")
         }
     }
 }

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    @StateObject var authentication = AuthenticationObserver.shared
+
+    @State private var authentication = AuthenticationObserver.shared
     
     var body: some View {
         switch authentication.state {
@@ -28,10 +28,10 @@ struct ContentView: View {
             }
         case .loggedOut:
             AuthenticationView()
-                .environmentObject(authentication)
+                .environment(authentication)
         case .loggedIn:
             AffirmateTabView()
-                .environmentObject(authentication)
+                .environment(authentication)
 //                #if !os(watchOS)
 //                .task {
 //                    await AffirmateApp.requestNotificationPermissions()

@@ -7,7 +7,6 @@
 
 import AffirmateShared
 import Foundation
-import Alamofire
 
 protocol AuthenticationActable: Actor {
     var http: HTTPActable { get }
@@ -49,7 +48,7 @@ actor AuthenticationActor: AuthenticationActable {
 
 extension AuthenticationActor {
     
-    enum Request: URLRequestConvertible {
+    enum Request: URLRequestConvertible, Sendable {
     
         case new(user: UserCreate)
         case login(username: String, password: String)
@@ -64,7 +63,7 @@ extension AuthenticationActor {
         #endif
         
         #if os(macOS)
-        var uri: URLConvertible? {
+        var uri: URL? {
             switch self {
             case .new:
                 return url.appendingPathComponent("new")
@@ -79,7 +78,7 @@ extension AuthenticationActor {
             }
         }
         #else
-        var uri: URLConvertible? {
+        var uri: URL? {
             switch self {
             case .new:
                 return url.appending(path: "new")
@@ -106,27 +105,22 @@ extension AuthenticationActor {
             }
         }
         
-        var headers: HTTPHeaders {
+        @MainActor
+        func asURLRequest() throws -> URLRequest {
+            guard let requestURL = uri else {
+                throw ChatError.failedToBuildURL
+            }
+            var request = URLRequest(url: requestURL)
+            request.httpMethod = method.rawValue
             var headers = HTTPHeaders()
-            headers.add(.defaultAcceptLanguage)
-            headers.add(.defaultUserAgent)
-            headers.add(.defaultAcceptEncoding)
-            headers.add(.contentType("application/json"))
-            headers.add(.accept("application/json"))
+            headers.addJSONDefaults()
             switch self {
             case .new, .update, .logout, .refresh:
                 break
             case let .login(username, password):
                 headers.add(.authorization(username: username, password: password))
             }
-            return headers
-        }
-
-        func asURLRequest() throws -> URLRequest {
-            guard let requestURL = uri else {
-                throw ChatError.failedToBuildURL
-            }
-            var request = try URLRequest(url: requestURL, method: method, headers: headers)
+            headers.apply(to: &request)
             let encoder = JSONEncoder()
             switch self {
             case .new(let user):

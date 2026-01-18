@@ -7,8 +7,11 @@
 
 import AffirmateShared
 import Foundation
+import Observation
 
-class ChatInvitationObserver: ObservableObject {
+@MainActor
+@Observable
+class ChatInvitationObserver {
     
     let actor = ChatActor()
     let crypto = AffirmateCrypto()
