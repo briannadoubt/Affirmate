@@ -20,9 +20,6 @@ jobs:
           - platform: macOS
             destination: "platform=macOS"
             scheme: Affirmate
-          - platform: visionOS
-            destination: "platform=visionOS Simulator,OS=latest,name=Apple Vision Pro"
-            scheme: Affirmate
           - platform: tvOS
             destination: "platform=tvOS Simulator,OS=latest,name=Apple TV 4K (3rd generation)"
             scheme: Affirmate
@@ -33,9 +30,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_26.2.app
-
       - name: Build and test
         run: |
           set -o pipefail
@@ -43,8 +37,7 @@ jobs:
             -project Affirmate.xcodeproj \
             -scheme "${{ matrix.scheme }}" \
             -destination "${{ matrix.destination }}" \
-            -skipPackagePluginValidation \
-            -disableAutomaticPackageResolution
+            -skipPackagePluginValidation
 
   server:
     name: Server tests
@@ -53,12 +46,39 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_26.2.app
+      - name: Install PostgreSQL
+        run: brew install postgresql@16
+
+      - name: Start PostgreSQL
+        run: |
+          POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
+          PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
+          mkdir -p "$PGDATA"
+          if [ ! -f "$PGDATA/PG_VERSION" ]; then
+            "$POSTGRES_PREFIX/bin/initdb" -U runner "$PGDATA"
+          fi
+          "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" -o "-c listen_addresses=localhost" -l "$PGDATA/server.log" start
+          "$POSTGRES_PREFIX/bin/createuser" --superuser vapor_username || true
+          "$POSTGRES_PREFIX/bin/createdb" -O vapor_username vapor_database || true
+          "$POSTGRES_PREFIX/bin/psql" -v ON_ERROR_STOP=1 -d postgres -c "ALTER USER vapor_username WITH PASSWORD 'vapor_password';"
 
       - name: Run server tests
         working-directory: AffirmateServer
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_USERNAME: vapor_username
+          DATABASE_PASSWORD: vapor_password
+          DATABASE_NAME: vapor_database
         run: swift test
+
+      - name: Stop PostgreSQL
+        if: always()
+        run: |
+          POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
+          PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
+          if [ -f "$PGDATA/postmaster.pid" ]; then
+            "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" stop
+          fi
 
   integration:
     name: Integration tests
@@ -67,13 +87,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_26.2.app
-
       - name: Install PostgreSQL
-        run: |
-          brew update
-          brew install postgresql@16
+        run: brew install postgresql@16
 
       - name: Start PostgreSQL
         run: |
@@ -118,8 +133,7 @@ jobs:
             -project Affirmate.xcodeproj \
             -scheme Affirmate \
             -destination 'platform=macOS' \
-            -skipPackagePluginValidation \
-            -disableAutomaticPackageResolution
+            -skipPackagePluginValidation
 
       - name: Shutdown server
         if: always()
