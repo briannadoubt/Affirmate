@@ -13,8 +13,8 @@ import DeviceCheck
 struct AffirmateApp: App {
     
     @AppStorage(Constants.UserDefaults.isFirstLaunch) var isFirstLaunch = true
-    
-    @StateObject var persistence = Persistence()
+
+    @State private var persistence = Persistence()
     
     #if os(iOS) || os(tvOS)
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate

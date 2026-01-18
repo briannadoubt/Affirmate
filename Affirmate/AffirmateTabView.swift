@@ -12,9 +12,8 @@ enum DeepLink: String {
 }
 
 struct AffirmateTabView: View {
-    
-    @EnvironmentObject var authentication: AuthenticationObserver
-    
+
+    @Environment(AuthenticationObserver.self) private var authentication
     @Environment(\.managedObjectContext) var managedObjectContext
     
     @SceneStorage("tabSelection") var tabSelection: TabSelection = .home

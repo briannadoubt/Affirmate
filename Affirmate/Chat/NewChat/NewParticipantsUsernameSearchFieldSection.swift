@@ -6,17 +6,15 @@
 //
 
 import AffirmateShared
+import Observation
 import SwiftUI
 
 struct NewParticipantsUsernameSearchFieldSection: View {
 
-    @EnvironmentObject var newParticipantsObserver: NewParticipantsObserver
-
+    @Environment(NewParticipantsObserver.self) private var newParticipantsObserver
+    
     var newPublicUsers: [UserPublic]
-
-    @State private var errorMessage: String?
-    @State private var showingError: Bool = false
-
+    
     @MainActor func didSelect(publicUser: UserPublic) {
         withAnimation {
             newParticipantsObserver.select(user: publicUser)
@@ -26,8 +24,9 @@ struct NewParticipantsUsernameSearchFieldSection: View {
     }
     
     var body: some View {
+        @Bindable var participantsObserver = newParticipantsObserver
         Section {
-            TextField("Username", text: $newParticipantsObserver.username)
+            TextField("Username", text: $participantsObserver.username)
                 #if !os(macOS)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
@@ -35,23 +34,18 @@ struct NewParticipantsUsernameSearchFieldSection: View {
                 #if !os(watchOS) && !os(macOS)
                 .keyboardType(.twitter)
                 #endif
-                .onReceive(newParticipantsObserver.$username.debounce(for: 1, scheduler: RunLoop.main)) { newUserName in
-                    guard !newUserName.isEmpty else {
-                        return
-                    }
-                    Task {
+                .onChange(of: participantsObserver.username) { _, newUsername in
+                    guard !newUsername.isEmpty else { return }
+                    Task { [newUsername] in
+                        try await Task.sleep(for: .seconds(1))
+                        let currentUsername = newParticipantsObserver.username
+                        guard newUsername == currentUsername else { return }
                         do {
                             try await newParticipantsObserver.find()
                         } catch {
-                            errorMessage = error.localizedDescription
-                            showingError = true
+                            print("TODO: Show this error on the UI:", error)
                         }
                     }
-                }
-                .alert("Search Error", isPresented: $showingError) {
-                    Button("OK", role: .cancel) { }
-                } message: {
-                    Text(errorMessage ?? "Failed to search for users")
                 }
             ForEach(newPublicUsers) { publicUser in
                 HStack {

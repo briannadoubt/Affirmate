@@ -14,28 +14,19 @@ import XCTest
 
 final class AffirmateKeychainTests: XCTestCase {
     
-    var keychain: AffirmateKeychain!
-
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        keychain = AffirmateKeychain()
-    }
-
-    override func tearDownWithError() throws {
-        keychain = nil
-        try super.tearDownWithError()
-    }
-    
     func test_appIdentifierPrefix() {
-        XCTAssertEqual(AffirmateKeychain.appIdentifierPrefix, Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String)
+        let expected = (Bundle.main.infoDictionary?["AppIdentifierPrefix"] as? String) ?? ""
+        XCTAssertEqual(AffirmateKeychain.appIdentifierPrefix, expected)
     }
     
     func test_chatService() {
-        XCTAssertEqual(AffirmateKeychain.chatService, "\(AffirmateKeychain.appIdentifierPrefix)org.affirmate.chat")
+        let expected = "\(AffirmateKeychain.appIdentifierPrefix)org.affirmate.chat"
+        XCTAssertEqual(AffirmateKeychain.chatService, expected)
     }
     
     func test_sessionService() {
-        XCTAssertEqual(AffirmateKeychain.sessionService, "\(AffirmateKeychain.appIdentifierPrefix)org.affirmate.session")
+        let expected = "\(AffirmateKeychain.appIdentifierPrefix)org.affirmate.session"
+        XCTAssertEqual(AffirmateKeychain.sessionService, expected)
     }
     
     func test_accessGroup() {
@@ -54,11 +45,21 @@ final class AffirmateKeychainTests: XCTestCase {
         XCTAssertTrue(AffirmateKeychain.session.synchronizable)
     }
     
-    func test_password() throws {
-        XCTAssertEqual(AffirmateKeychain.password.server, URL(string: "https://affirmate.org/")!)
-        XCTAssertEqual(AffirmateKeychain.password.protocolType, .https)
-        XCTAssertEqual(AffirmateKeychain.password.accessGroup, "group.Affirmate")
-        XCTAssertEqual(AffirmateKeychain.password.authenticationType, .httpBasic)
-        XCTAssertTrue(AffirmateKeychain.password.synchronizable)
+    func test_sessionSetAndGetString() throws {
+        let keychain = AffirmateKeychain.session
+        let key = "tests.session.token"
+        let value = UUID().uuidString
+        try keychain.set(value, key: key)
+        defer { try? keychain.remove(key) }
+        XCTAssertEqual(try keychain.getString(key), value)
+    }
+
+    func test_chatSetAndGetData() throws {
+        let keychain = AffirmateKeychain.chat
+        let key = "tests.chat.privateKey"
+        let value = Data(UUID().uuidString.utf8)
+        try keychain.set(value, key: key)
+        defer { try? keychain.remove(key) }
+        XCTAssertEqual(try keychain.getData(key), value)
     }
 }

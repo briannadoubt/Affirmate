@@ -9,11 +9,11 @@ import AffirmateShared
 import SwiftUI
 
 struct ChatInvitationsView: View {
-    
+
     var invitations: [ChatInvitationResponse]
-    
-    @StateObject var chatInvitationObserver = ChatInvitationObserver()
-    @EnvironmentObject var authentication: AuthenticationObserver
+
+    @State private var chatInvitationObserver = ChatInvitationObserver()
+    @Environment(AuthenticationObserver.self) private var authentication
     
     func joinChat(_ chatId: UUID, invitation: ChatInvitationResponse) {
         Task {
@@ -49,8 +49,13 @@ struct ChatInvitationsView: View {
         List {
             ForEach(invitations) { invitation in
                 let label = VStack {
-                    Text("**\(invitation.invitedByUsername)** invited you to \(invitation.chatName == nil ? "chat" : "the chat")**\(invitation.chatName == nil ? "" : " " + invitation.chatName!)**")
-                    + Text("**\(invitation.chatParticipantUsernames.count > 1 ? " with \(invitation.chatParticipantUsernames.count) others" : "")**")
+                    let username = invitation.invitedByUsername
+                    let chatContext = invitation.chatName == nil ? "chat" : "the chat"
+                    let chatName = invitation.chatName == nil ? "" : " " + invitation.chatName!
+                    let participantsCount = invitation.chatParticipantUsernames.count
+                    let withOthersText = "** with \(participantsCount) others**"
+                    let groupChatContextSuffix = participantsCount > 1 ? withOthersText : ""
+                    Text("**\(username)** invited you to \(chatContext)**\(chatName)**\(groupChatContextSuffix)")
                 }
                 .foregroundColor(.primary)
                 

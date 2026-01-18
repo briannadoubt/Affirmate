@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct NewChatButton: View {
-    @EnvironmentObject var chatsObserver: ChatsObserver
-    @EnvironmentObject var authenticationObserver: AuthenticationObserver
+    @Environment(ChatsObserver.self) private var chatsObserver
+    @Environment(AuthenticationObserver.self) private var authenticationObserver
     @SceneStorage("chat.isShowingNewChat") var isShowingNewChat = false
     var body: some View {
         Button(action: { isShowingNewChat.toggle() }) {
@@ -17,8 +17,8 @@ struct NewChatButton: View {
         }
         .popover(isPresented: $isShowingNewChat) {
             NewChatView(isPresented: $isShowingNewChat)
-                .environmentObject(chatsObserver)
-                .environmentObject(authenticationObserver)
+                .environment(chatsObserver)
+                .environment(authenticationObserver)
         }
     }
 }

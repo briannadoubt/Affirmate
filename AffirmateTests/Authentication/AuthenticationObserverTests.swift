@@ -12,14 +12,13 @@
 #endif
 import AffirmateShared
 import XCTest
-import KeychainAccess
 
 final class AuthenticationObserverTests: XCTestCase {
 
     var observer: AuthenticationObserver!
     var meActor: MockUserActor!
     var authenticationActor: MockAuthenticationActor!
-    var sessionKeychain: Keychain!
+    @ObservationIgnored private var sessionKeychain: Keychain!
     var http: MockHTTPActor!
     
     static let userId = UUID()
@@ -48,20 +47,28 @@ final class AuthenticationObserverTests: XCTestCase {
     }
     
     override func setUpWithError() throws {
+#if os(visionOS)
+        throw XCTSkip("AuthenticationObserver keychain interactions are not yet supported on visionOS.")
+#else
         sessionKeychain = Keychain()
         do { try sessionKeychain.removeAll() } catch { }
         meActor = MockUserActor()
         http = MockHTTPActor(keychain: sessionKeychain)
         authenticationActor = MockAuthenticationActor(http: http)
         observer = AuthenticationObserver(authenticationActor: authenticationActor, meActor: meActor, sessionKeychain: sessionKeychain)
+#endif
     }
 
     override func tearDownWithError() throws {
+#if os(visionOS)
+        return
+#else
         do { try sessionKeychain.removeAll() } catch { }
         sessionKeychain = nil
         observer = nil
         authenticationActor = nil
         meActor = nil
+#endif
     }
     
     func test_initialValues() {

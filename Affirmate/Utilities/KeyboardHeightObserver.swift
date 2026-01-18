@@ -6,12 +6,19 @@
 //
 
 import Combine
+import Observation
 import SwiftUI
 
 #if os(iOS)
-public class KeyboardHeightObserver: ObservableObject {
-    
-    @Published public var height: CGFloat = 0
+@MainActor
+@Observable
+public class KeyboardHeightObserver {
+
+    public var height: CGFloat = 0
+
+    public init() {
+        setSink()
+    }
 
     fileprivate var keyboardHeightPublisher: AnyPublisher<CGFloat, Never> {
         Publishers.Merge(
@@ -26,19 +33,17 @@ public class KeyboardHeightObserver: ObservableObject {
         .eraseToAnyPublisher()
     }
     
-    fileprivate var heightSink: AnyCancellable?
+    @ObservationIgnored fileprivate var heightSink: AnyCancellable?
     
     public func setSink() {
         heightSink = keyboardHeightPublisher.sink{ newHeight in
-            Task {
-                await self.set(newHeight: newHeight)
-            }
+            self.set(newHeight: newHeight)
         }
     }
-    
+
     @MainActor fileprivate func set(newHeight: CGFloat) {
         withAnimation(.spring()) {
-            self.height = height
+            self.height = newHeight
         }
     }
 }

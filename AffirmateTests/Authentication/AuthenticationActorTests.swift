@@ -11,8 +11,6 @@
 @testable import Affirmate
 #endif
 import AffirmateShared
-import Alamofire
-import KeychainAccess
 import XCTest
 
 final class AuthenticationActorTests: XCTestCase {

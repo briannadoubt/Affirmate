@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct NewParticipantsSelectionSection: View {
-    
-    @EnvironmentObject var newParticipantObserver: NewParticipantsObserver
+
+    @Environment(NewParticipantsObserver.self) private var newParticipantObserver
     
     var body: some View {
         if !newParticipantObserver.selectedParticipants.isEmpty {
@@ -29,6 +29,6 @@ struct NewParticipantsSelectionSection: View {
 struct NewParticipantsSelectionSection_Previews: PreviewProvider {
     static var previews: some View {
         NewParticipantsSelectionSection()
-            .environmentObject(NewParticipantsObserver())
+            .environment(NewParticipantsObserver())
     }
 }
