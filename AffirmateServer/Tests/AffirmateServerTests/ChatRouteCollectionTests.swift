@@ -7,16 +7,14 @@
 
 @testable import AffirmateServer
 import AffirmateShared
+import Fluent
 import Vapor
 import XCTVapor
 
 final class ChatRouteCollectionTests: XCTestCase {
-
     func test_joinChatUsesInvitationRole() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
-        defer { app.tearDown() }
+        let app = try await Application.makeConfiguredTestApplication(.testing)
+        defer { Task { await app.shutdownTestApplication() } }
 
         let adminPassword = try Bcrypt.hash("AdminPass123!")
         let participantPassword = try Bcrypt.hash("ParticipantPass123!")
@@ -66,7 +64,11 @@ final class ChatRouteCollectionTests: XCTestCase {
         )
         try await invitation.save(on: app.db)
 
-        let sessionToken = SessionToken(value: "test-session-token", userID: try participantUser.requireID())
+        let sessionToken = SessionToken(
+            value: "test-session-token",
+            userID: try participantUser.requireID(),
+            expiresAt: Date().addingTimeInterval(SessionToken.defaultExpirationInterval)
+        )
         try await sessionToken.save(on: app.db)
 
         let joinConfirmation = ChatInvitationJoin(
@@ -75,16 +77,19 @@ final class ChatRouteCollectionTests: XCTestCase {
             encryptionKey: Data("participant-encryption".utf8)
         )
 
-        try await app.test(.POST, "/chats/\(try chat.requireID().uuidString)/join/") { request in
+        try await app.testable().test(.POST, "/chats/\(try chat.requireID().uuidString)/join/") { request async throws in
             request.headers.bearerAuthorization = BearerAuthorization(token: sessionToken.value)
             try request.content.encode(joinConfirmation, using: JSONEncoder())
-        } afterResponse: { response in
+        } afterResponse: { response async throws in
             XCTAssertEqual(response.status, .ok)
         }
 
+        let chatID = try chat.requireID()
+        let participantUserID = try participantUser.requireID()
+
         let persistedParticipant = try await Participant.query(on: app.db)
-            .filter(\.$chat.$id == try chat.requireID())
-            .filter(\.$user.$id == try participantUser.requireID())
+            .filter(\.$chat.$id == chatID)
+            .filter(\.$user.$id == participantUserID)
             .first()
 
         let participant = try XCTUnwrap(persistedParticipant)
@@ -92,12 +97,9 @@ final class ChatRouteCollectionTests: XCTestCase {
     }
 
     func testSyncDeletesOnlyMessagesForCurrentUser() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
-        defer { app.tearDown() }
+        let app = try await Application.makeConfiguredTestApplication(.testing)
+        defer { Task { await app.shutdownTestApplication() } }
 
-        // Create two users.
         let passwordHash = try Bcrypt.hash("Test123$")
         let userOne = User(firstName: "First", lastName: "User", username: "user1", email: "user1@example.com", passwordHash: passwordHash)
         try await userOne.save(on: app.db)
@@ -142,9 +144,9 @@ final class ChatRouteCollectionTests: XCTestCase {
         let sessionToken = try userOne.generateToken()
         try await sessionToken.save(on: app.db)
 
-        try await app.test(.GET, "/chats") { request in
+        try await app.testable().test(.GET, "/chats") { request async throws in
             request.headers.bearerAuthorization = BearerAuthorization(token: sessionToken.value)
-        } afterResponse: { response in
+        } afterResponse: { response async throws in
             XCTAssertEqual(response.status, .ok)
             let chatResponses = try response.content.decode([ChatResponse].self)
             XCTAssertEqual(chatResponses.count, 1)

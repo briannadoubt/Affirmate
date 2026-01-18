@@ -16,7 +16,7 @@ final class Chat: Model, Content {
     static let schema = "chat"
     
     /// The id for the database.
-    @ID(key: FieldKey.id) var id: UUID?
+    @ID(key: .id) var id: UUID?
     
     /// The name of the chat.
     @OptionalField(key: "name") var name: String?
@@ -69,7 +69,9 @@ final class Chat: Model, Content {
     }
 }
 
-extension ChatCreate: Content, Validatable {
+extension Chat: @unchecked Sendable {}
+
+extension ChatCreate: @retroactive Content, @retroactive Validatable {
     /// Conform to `Validatable`
     /// - Parameter validations: The validations to validate.
     public static func validations(_ validations: inout Validations) {
@@ -82,8 +84,8 @@ extension ChatCreate: Content, Validatable {
     }
 }
 
-extension ChatResponse: Content { }
+extension ChatResponse: @retroactive Content { }
 
-extension ChatParticipantResponse: Content { }
+extension ChatParticipantResponse: @retroactive Content { }
 
-extension ChatMessageResponse: Content { }
+extension ChatMessageResponse: @retroactive Content { }

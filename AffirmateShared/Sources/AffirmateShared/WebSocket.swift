@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// A message identifying which clent the message was intended for, and a codable object.
-public struct WebSocketMessage<T: Codable>: Codable {
+/// A message identifying which client the message was intended for, and a codable object.
+public struct WebSocketMessage<T: Codable & Sendable>: Codable, Sendable {
     /// The client that the message was intended for.
     public let client: UUID
     /// The data of the message.
@@ -25,7 +25,7 @@ public struct WebSocketMessage<T: Codable>: Codable {
 }
 
 /// A request from the client to the server to connect to a chat, to confirm the websocket connection has been established.
-public struct Connect: Codable, Hashable, Equatable {
+public struct Connect: Codable, Hashable, Equatable, Sendable {
     /// The chat to connect to.
     public let chatId: UUID
     
@@ -37,7 +37,7 @@ public struct Connect: Codable, Hashable, Equatable {
 }
 
 /// An object used to confirm whether or not a connection was established.
-public struct ConfirmConnection: Codable {
+public struct ConfirmConnection: Codable, Sendable {
     /// Whether or not the connection was established.
     public var connected: Bool
     

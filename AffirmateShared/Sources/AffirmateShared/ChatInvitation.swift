@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import _Concurrency
 
 /// Create a new chat invitation.
-public struct ChatInvitationCreate: Codable {
+public struct ChatInvitationCreate: Codable, Sendable {
     /// The value denoting the prospective permissions of the invited user.
     public var role: ParticipantRole
     /// The id of the invited user
@@ -70,7 +71,7 @@ public struct ChatInvitationResponse: IdentifiableObject {
 }
 
 /// Decline a chat
-public struct ChatInvitationDecline: Codable {
+public struct ChatInvitationDecline: Codable, Sendable {
     /// The id of the chat invitation.
     public var id: UUID
     
@@ -82,7 +83,7 @@ public struct ChatInvitationDecline: Codable {
 }
 
 /// Join a chat.
-public struct ChatInvitationJoin: Codable {
+public struct ChatInvitationJoin: Codable, Sendable {
     /// The id of the chat invitation.
     public var id: UUID
     /// The public signing key for the new `Participant`.
