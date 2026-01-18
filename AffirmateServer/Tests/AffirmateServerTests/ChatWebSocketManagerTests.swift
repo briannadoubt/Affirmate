@@ -12,10 +12,8 @@ import XCTest
 final class ChatWebSocketManagerTests: XCTestCase {
 
     func testDeleteMessageIfAuthorizedOnlyDeletesRecipientMessages() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
-        defer { app.tearDown() }
+        let app = try await Application.makeConfiguredTestApplication(.testing)
+        defer { Task { await app.shutdownTestApplication() } }
 
         let passwordHash = try Bcrypt.hash("Test123$")
         let userOne = User(firstName: "First", lastName: "User", username: "user1", email: "user1@example.com", passwordHash: passwordHash)

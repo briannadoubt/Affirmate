@@ -6,7 +6,6 @@
 //
 
 import AffirmateShared
-import APNS
 import Fluent
 import Vapor
 
@@ -17,7 +16,7 @@ final class Message: Model, Content {
     static let schema = "message"
     
     /// The id for the database.
-    @ID(key: FieldKey.id) var id: UUID?
+    @ID(key: .id) var id: UUID?
     
     /// The ephemeral public key portion of the encrypted message.
     @Field(key: "ephemeralPublicKeyData") var ephemeralPublicKeyData: Data
@@ -93,7 +92,9 @@ final class Message: Model, Content {
     }
 }
 
-extension MessageCreate: Content, Validatable {
+extension Message: @unchecked Sendable {}
+
+extension MessageCreate: @retroactive Content, @retroactive Validatable {
     /// Conform to `Validatable`
     /// - Parameter validations: The validations to validate.
     public static func validations(_ validations: inout Validations) {
@@ -102,9 +103,9 @@ extension MessageCreate: Content, Validatable {
     }
 }
 
-extension MessageResponse: Content { }
+extension MessageResponse: @retroactive Content { }
 
-extension MessageReceivedConfirmation: Content, Validatable {
+extension MessageRecievedConfirmation: @retroactive Content, @retroactive Validatable {
     /// Conform to `Validatable`
     /// - Parameter validations: The validations to validate.
     public static func validations(_ validations: inout Validations) {

@@ -16,7 +16,7 @@ final class Participant: Model, Content {
     static let schema = "participant"
     
     /// The id for the database.
-    @ID(key: FieldKey.id) var id: UUID?
+    @ID(key: .id) var id: UUID?
     
     /// The value denoting the permissions of the user.
     @Field(key: "role") var role: ParticipantRole
@@ -73,7 +73,9 @@ final class Participant: Model, Content {
     }
 }
 
-extension ParticipantCreate: Content, Validatable {
+extension Participant: @unchecked Sendable {}
+
+extension ParticipantCreate: @retroactive Content, @retroactive Validatable {
     /// Conform to `Validatable`
     /// - Parameter validations: The validations to validate.
     public static func validations(_ validations: inout Validations) {
@@ -82,4 +84,4 @@ extension ParticipantCreate: Content, Validatable {
     }
 }
 
-extension ParticipantResponse: Content { }
+extension ParticipantResponse: @retroactive Content { }

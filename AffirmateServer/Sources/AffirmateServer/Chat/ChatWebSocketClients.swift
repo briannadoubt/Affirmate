@@ -86,16 +86,4 @@ actor ChatWebSocketClients {
         active().filter({ $0.value.chatId == chatId })
     }
 
-    /// Assure that all event loop futures are closed when this object deinits.
-    deinit {
-        let futures = self.storage.values
-            .map {
-                $0.socket.close()
-            }
-        do {
-            try self.eventLoop.flatten(futures).wait()
-        } catch {
-            print("Failed to flatten WebSocket futures:", error)
-        }
-    }
 }

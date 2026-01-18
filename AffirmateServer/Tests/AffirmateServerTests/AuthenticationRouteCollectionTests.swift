@@ -12,117 +12,92 @@ import XCTest
 import XCTVapor
 
 final class AuthenticationRouteCollectionTests: XCTestCase {
-    
     // MARK: /auth/new
     func test_newUser() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
-        
+        let app = try await Application.makeConfiguredTestApplication(.testing)
+        defer { Task { await app.shutdownTestApplication() } }
+
         try await app.signUp()
-        
-        app.tearDown()
     }
-    
+
     // MARK: /auth/login
     func test_login() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
-        
-        try await app
-            .signUp()
-            .login()
-        
-        app.tearDown()
+        let app = try await Application.makeConfiguredTestApplication(.testing)
+        defer { Task { await app.shutdownTestApplication() } }
+
+        try await app.signUp()
+        try await app.login()
     }
-    
+
     // MARK: /auth/logout
     func test_logout() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
+        let app = try await Application.makeConfiguredTestApplication(.testing)
+        defer { Task { await app.shutdownTestApplication() } }
 
-        try await app
-            .signUp()
-            .login()
-            .logout()
-
-        app.tearDown()
+        try await app.signUp()
+        try await app.login()
+        try await app.logout()
     }
 
     // MARK: /auth/refresh
     func test_refresh() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
+        let app = try await Application.makeConfiguredTestApplication(.testing)
+        defer { Task { await app.shutdownTestApplication() } }
 
-        try await app
-            .signUp()
-            .login()
-            .refresh()
-      
+        try await app.signUp()
+        try await app.login()
+
         let optionalToken = try await SessionToken.query(on: app.db).with(\.$user).first()
         let token = try XCTUnwrap(optionalToken)
         token.expiresAt = Date(timeIntervalSince1970: 0)
         try await token.save(on: app.db)
 
-        try await app.test(.POST, "/auth/logout/") { request in
+        try await app.testable().test(.POST, "/auth/logout/") { request async throws in
             request.headers.bearerAuthorization = BearerAuthorization(token: token.value)
-        } afterResponse: { response in
+        } afterResponse: { response async throws in
             XCTAssertEqual(response.status, .unauthorized)
             let tokens = try await SessionToken.query(on: app.db).all()
             XCTAssertTrue(tokens.isEmpty)
         }
-
-        app.tearDown()
     }
 
     func test_freshTokenAuthenticatesProtectedRoute() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
+        let app = try await Application.makeConfiguredTestApplication(.testing)
+        defer { Task { await app.shutdownTestApplication() } }
 
-        try await app
-            .signUp()
-            .login()
+        try await app.signUp()
+        try await app.login()
 
         let optionalToken = try await SessionToken.query(on: app.db).first()
         let token = try XCTUnwrap(optionalToken)
         XCTAssertNotNil(token.expiresAt)
         XCTAssertTrue(token.isValid)
 
-        try await app.test(.POST, "/auth/logout/") { request in
+        try await app.testable().test(.POST, "/auth/logout/") { request async throws in
             request.headers.bearerAuthorization = BearerAuthorization(token: token.value)
-        } afterResponse: { response in
+        } afterResponse: { response async throws in
             XCTAssertEqual(response.status, .ok)
         }
-        app.tearDown()
     }
 
     func test_expiredTokenIsRejectedAndPruned() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
+        let app = try await Application.makeConfiguredTestApplication(.testing)
+        defer { Task { await app.shutdownTestApplication() } }
 
-        try await app
-            .signUp()
-            .login()
+        try await app.signUp()
+        try await app.login()
 
         let optionalToken = try await SessionToken.query(on: app.db).with(\.$user).first()
         let token = try XCTUnwrap(optionalToken)
         token.expiresAt = Date(timeIntervalSince1970: 0)
         try await token.save(on: app.db)
 
-        try await app.test(.POST, "/auth/logout/") { request in
+        try await app.testable().test(.POST, "/auth/logout/") { request async throws in
             request.headers.bearerAuthorization = BearerAuthorization(token: token.value)
-        } afterResponse: { response in
+        } afterResponse: { response async throws in
             XCTAssertEqual(response.status, .unauthorized)
             let tokens = try await SessionToken.query(on: app.db).all()
             XCTAssertTrue(tokens.isEmpty)
         }
-
-        app.tearDown()
     }
-
 }

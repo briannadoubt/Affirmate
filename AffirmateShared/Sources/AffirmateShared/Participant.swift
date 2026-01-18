@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import _Concurrency
 
 /// The value denoting the permissions of the user.
-public enum ParticipantRole: String, CaseIterable, Codable, Equatable, Identifiable {
+public enum ParticipantRole: String, CaseIterable, Codable, Equatable, Identifiable, Sendable {
     /// Has permissions to update and delete messages, or add new participants to the chat.
     case admin
     /// Only has permissions to send and read messages.
@@ -29,7 +30,7 @@ public enum ParticipantRole: String, CaseIterable, Codable, Equatable, Identifia
 }
 
 /// Create a new participant for a chat.
-public struct ParticipantCreate: Equatable, Hashable, Codable {
+public struct ParticipantCreate: Equatable, Hashable, Codable, Sendable {
     /// The value denoting the permissions of the user.
     public var role: ParticipantRole
     /// The id of the user who operates this participant.
@@ -42,7 +43,7 @@ public struct ParticipantCreate: Equatable, Hashable, Codable {
 }
 
 /// The response included in an HTTP GET response.
-public struct ParticipantResponse: Identifiable, Codable, Equatable {
+public struct ParticipantResponse: Identifiable, Codable, Equatable, Sendable {
     /// The id for the database.
     public var id: UUID
     /// The value denoting the permissions of the user.
@@ -79,7 +80,7 @@ public struct ParticipantResponse: Identifiable, Codable, Equatable {
 }
 
 /// A draft participant, used on the client.
-public struct ParticipantDraft: Codable, Equatable, Hashable {
+public struct ParticipantDraft: Codable, Equatable, Hashable, Sendable {
     /// The value denoting the permissions of the user.
     public var role: ParticipantRole
     /// The user who operates this participant.

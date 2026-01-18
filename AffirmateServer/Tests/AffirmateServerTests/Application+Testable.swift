@@ -5,27 +5,46 @@
 //  Created by Bri on 8/6/22.
 //
 
-import XCTVapor
-@testable import AffirmateServer
 import AffirmateShared
+@testable import AffirmateServer
+import XCTVapor
 
 extension Application {
-    func setUp() throws {
-        try configure(self)
-        do { try autoRevert().wait() } catch { print("Failed to auto revert", error) }
-        do { try autoMigrate().wait() } catch { print("Failed to auto migrate:", error) }
+    static func makeTestApplication(_ environment: Environment = .testing) async throws -> Application {
+        try await Application.make(environment)
     }
 
-    func tearDown() {
-        do { try autoRevert().wait() } catch { print("Failed to auto revert", error) }
+    static func makeConfiguredTestApplication(_ environment: Environment = .testing) async throws -> Application {
+        let app = try await makeTestApplication(environment)
+        try await app.setUp()
+        return app
+    }
+
+    func setUp() async throws {
+        try await configure(self)
+        do { try await autoRevert().get() } catch { print("Failed to auto revert", error) }
+        do { try await autoMigrate().get() } catch { print("Failed to auto migrate:", error) }
+    }
+
+    func tearDown() async {
+        do { try await autoRevert().get() } catch { print("Failed to auto revert", error) }
+    }
+
+    func shutdownTestApplication() async {
+        await tearDown()
+        do {
+            try await asyncShutdown()
+        } catch {
+            print("Failed to async shutdown application:", error)
+        }
     }
 
     @discardableResult
     func signUp(firstName: String = "Meow", lastName: String = "Face", username: String = "meowface", email: String = "meow@fake.com", password: String = "Test123$", confirmPassword: String = "Test123$") async throws -> Application {
-        try await test(.POST, "/auth/new/") { request in
+        try await self.testable().test(.POST, "/auth/new/") { request async throws in
             let userCreate = UserCreate(firstName: firstName, lastName: lastName, username: username, email: email, password: password, confirmPassword: password)
             try request.content.encode(userCreate, using: JSONEncoder())
-        } afterResponse: { response in
+        } afterResponse: { response async throws in
             XCTAssertEqual(response.status, .ok)
 
             let optionalUser = try await User.query(on: db).all().first
@@ -41,9 +60,9 @@ extension Application {
 
     @discardableResult
     func login(firstName: String = "Meow", lastName: String = "Face", username: String = "meowface", email: String = "meow@fake.com", password: String = "Test123$") async throws -> Application {
-        try await test(.GET, "/auth/login/") { request in
+        try await self.testable().test(.GET, "/auth/login/") { request async throws in
             request.headers.basicAuthorization = BasicAuthorization(username: username, password: password)
-        } afterResponse: { response in
+        } afterResponse: { response async throws in
             XCTAssertEqual(response.status, .ok)
 
             let optionalSessionToken = try await SessionToken.query(on: db).all().first
@@ -70,11 +89,11 @@ extension Application {
 
     @discardableResult
     func logout() async throws -> Application {
-        try await test(.POST, "/auth/logout/") { request in
+        try await self.testable().test(.POST, "/auth/logout/") { request async throws in
             let optionalSessionToken = try await SessionToken.query(on: db).all().first
             let sessionToken = try XCTUnwrap(optionalSessionToken)
             request.headers.bearerAuthorization = BearerAuthorization(token: sessionToken.value)
-        } afterResponse: { response in
+        } afterResponse: { response async throws in
             XCTAssertEqual(response.status, .ok)
             let optionalSessionToken = try await SessionToken.query(on: db).all().first
             XCTAssertNil(optionalSessionToken)
@@ -87,7 +106,7 @@ extension Application {
         var previousTokenID: UUID?
         var previousTokenValue: String?
 
-        try await test(.POST, "/auth/refresh/") { request in
+        try await self.testable().test(.POST, "/auth/refresh/") { request async throws in
             let optionalSessionToken = try await SessionToken.query(on: db).all().first
             let sessionToken = try XCTUnwrap(optionalSessionToken)
 
@@ -95,7 +114,7 @@ extension Application {
             previousTokenValue = sessionToken.value
 
             request.headers.bearerAuthorization = BearerAuthorization(token: sessionToken.value)
-        } afterResponse: { response in
+        } afterResponse: { response async throws in
             XCTAssertEqual(response.status, .ok)
 
             let refreshResponse = try response.content.decode(SessionTokenResponse.self)
@@ -114,9 +133,9 @@ extension Application {
             if let previousTokenValue {
                 XCTAssertNotEqual(storedToken.value, previousTokenValue)
 
-                try await self.test(.POST, "/auth/logout/") { request in
+                try await self.testable().test(.POST, "/auth/logout/") { request async throws in
                     request.headers.bearerAuthorization = BearerAuthorization(token: previousTokenValue)
-                } afterResponse: { response in
+                } afterResponse: { response async throws in
                     XCTAssertEqual(response.status, .unauthorized)
                 }
             }

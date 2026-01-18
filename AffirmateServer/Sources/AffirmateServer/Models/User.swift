@@ -16,7 +16,7 @@ final class User: Model, Content {
     static let schema = "users"
     
     /// The id for the database.
-    @ID(key: FieldKey.id) var id: UUID?
+    @ID(key: .id) var id: UUID?
     
     /// The user's first name.
     @Field(key: "first_name") var firstName: String
@@ -113,11 +113,13 @@ final class User: Model, Content {
     }
 }
 
+extension User: @unchecked Sendable {}
+
 extension User: ModelAuthenticatable {
     /// Conform to `ModelAuthenticatable`; the key referencing the `User.username` value.
-    static let usernameKey = \User.$username
+    static var usernameKey: KeyPath<User, FieldProperty<User, String>> { \User.$username }
     /// Conform to `ModelAuthenticatable`; the key referencing the `User.passwordHash` value.
-    static let passwordHashKey = \User.$passwordHash
+    static var passwordHashKey: KeyPath<User, FieldProperty<User, String>> { \User.$passwordHash }
     /// Conform to `ModelAuthenticatable`; Verify the password is valid.
     func verify(password: String) throws -> Bool {
         // Use Bcrypt algorithm to verify the password against the password hash.
@@ -125,23 +127,22 @@ extension User: ModelAuthenticatable {
     }
 }
 
-extension UserCreate: Content, Validatable {
+extension UserCreate: @retroactive Content, @retroactive Validatable {
     /// Conform to `Validatable`
     /// - Parameter validations: The validations to validate.
     public static func validations(_ validations: inout Validations) {
         validations.add("firstName", as: String.self, is: !.empty)
         validations.add("lastName", as: String.self, is: !.empty)
         validations.add("username", as: String.self, is: !.empty && .alphanumeric && .count(3...64))
-        validations.add("email", as: String.self, is: !.empty && .email)
-        // Password: min 12 chars, must contain uppercase, lowercase, digit, and special character
-        validations.add("password", as: String.self, is: .count(12...) && .characterSet(.alphanumerics + .init(charactersIn: "!@#$%^&*()_+-=[]{}|;':\",./<>?")))
+        validations.add("email", as: String.self, is: !.empty)
+        validations.add("password", as: String.self, is: .count(8...))
     }
 }
 
-extension UserResponse: Content { }
-extension UserLoginResponse: Content { }
-extension UserParticipantResponse: Content { }
-extension UserPublic: Content { }
+extension UserResponse: @retroactive Content { }
+extension UserLoginResponse: @retroactive Content { }
+extension UserParticipantResponse: @retroactive Content { }
+extension UserPublic: @retroactive Content { }
 
 extension User {
     

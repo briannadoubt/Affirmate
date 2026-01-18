@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import _Concurrency
 
 /// The response representing a SessionToken
-public struct SessionTokenResponse: Codable {
+public struct SessionTokenResponse: Codable, Sendable {
     /// The id in the database
     public var id: UUID
     /// The value of the token

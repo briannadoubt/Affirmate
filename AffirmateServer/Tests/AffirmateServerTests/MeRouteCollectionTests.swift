@@ -1,21 +1,20 @@
 import AffirmateShared
 import XCTVapor
+import Fluent
 @testable import AffirmateServer
 
 final class MeRouteCollectionTests: XCTestCase {
     func test_deleteMeDeletesCurrentUserAndRelatedRecords() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try! app.setUp()
+        let app = try await Application.makeConfiguredTestApplication(.testing)
+        defer { Task { await app.shutdownTestApplication() } }
 
-        try await app
-            .signUp()
-            .login()
+        try await app.signUp()
+        try await app.login()
 
-        let optionalSessionToken = try await SessionToken.query(on: app.db).first
+        let optionalSessionToken = try await SessionToken.query(on: app.db).first()
         let sessionToken = try XCTUnwrap(optionalSessionToken)
 
-        let optionalUser = try await User.query(on: app.db).first
+        let optionalUser = try await User.query(on: app.db).first()
         let user = try XCTUnwrap(optionalUser)
         let userID = try user.requireID()
 
@@ -95,13 +94,16 @@ final class MeRouteCollectionTests: XCTestCase {
         )
         try await invitationFromCurrentUser.create(on: app.db)
 
-        try await app.test(.DELETE, "/me") { request in
+        try await app.testable().test(.DELETE, "/me") { request async throws in
             request.headers.bearerAuthorization = .init(token: sessionToken.value)
-        } afterResponse: { response in
+        } afterResponse: { response async throws in
             XCTAssertEqual(response.status, .noContent)
 
-            XCTAssertNil(try await User.find(userID, on: app.db))
-            XCTAssertNotNil(try await User.find(otherUserID, on: app.db))
+            let deletedUser = try await User.find(userID, on: app.db)
+            XCTAssertNil(deletedUser)
+
+            let remainingUser = try await User.find(otherUserID, on: app.db)
+            XCTAssertNotNil(remainingUser)
 
             let remainingTokens = try await SessionToken.query(on: app.db)
                 .filter(\.$user.$id == userID)
@@ -138,7 +140,5 @@ final class MeRouteCollectionTests: XCTestCase {
                 .all()
             XCTAssertTrue(invitationsFromUser.isEmpty)
         }
-
-        app.tearDown()
     }
 }

@@ -6,7 +6,8 @@
 //
 
 import Foundation
+import _Concurrency
 
-protocol Object: Codable, Equatable, Hashable { }
+protocol Object: Codable, Equatable, Hashable, Sendable { }
 
 protocol IdentifiableObject: Object, Identifiable { }

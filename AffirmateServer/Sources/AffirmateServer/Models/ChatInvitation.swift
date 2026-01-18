@@ -16,7 +16,7 @@ final class ChatInvitation: Model, Content {
     static let schema = "chat_invitations"
     
     /// The id for the database.
-    @ID(key: FieldKey.id) var id: UUID?
+    @ID(key: .id) var id: UUID?
     
     /// The value denoting the prospective permissions of the invited user.
     @Field(key: "role") var role: ParticipantRole
@@ -73,7 +73,9 @@ final class ChatInvitation: Model, Content {
     }
 }
 
-extension ChatInvitationCreate: Content, Validatable {
+extension ChatInvitation: @unchecked Sendable {}
+
+extension ChatInvitationCreate: @retroactive Content, @retroactive Validatable {
     /// Conform to `Validatable`
     /// - Parameter validations: The validations to validate.
     public static func validations(_ validations: inout Validations) {
@@ -82,9 +84,9 @@ extension ChatInvitationCreate: Content, Validatable {
     }
 }
 
-extension ChatInvitationResponse: Content { }
+extension ChatInvitationResponse: @retroactive Content { }
 
-extension ChatInvitationDecline: Content, Validatable {
+extension ChatInvitationDecline: @retroactive Content, @retroactive Validatable {
     /// Conform to `Validatable`
     /// - Parameter validations: The validations to validate.
     public static func validations(_ validations: inout Validations) {
@@ -92,7 +94,7 @@ extension ChatInvitationDecline: Content, Validatable {
     }
 }
 
-extension ChatInvitationJoin: Content, Validatable {
+extension ChatInvitationJoin: @retroactive Content, @retroactive Validatable {
     /// Conform to `Validatable`
     /// - Parameter validations: The validations to validate.
     public static func validations(_ validations: inout Validations) {

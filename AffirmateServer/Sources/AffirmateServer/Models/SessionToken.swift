@@ -78,19 +78,20 @@ final class SessionToken: Model, Content {
         }
 
         func revert(on database: Database) async throws {
-            try await database.schema(SessionToken.schema)
+            database.schema(SessionToken.schema)
                 .deleteField("expires_at")
         }
     }
 }
 
 extension SessionToken: ModelTokenAuthenticatable {
+    typealias User = AffirmateServer.User
 
     /// Reference the value of the token
-    static let valueKey = \SessionToken.$value
+    static var valueKey: KeyPath<SessionToken, FieldProperty<SessionToken, String>> { \SessionToken.$value }
 
     /// Reference the user who owns the token
-    static let userKey = \SessionToken.$user
+    static var userKey: KeyPath<SessionToken, ParentProperty<SessionToken, User>> { \SessionToken.$user }
 
     /// Assert whether the token is still valid.
     var isValid: Bool {
@@ -135,3 +136,5 @@ extension SessionToken {
         ExpirationMiddleware()
     }
 }
+
+extension SessionToken: @unchecked Sendable {}

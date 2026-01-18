@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import _Concurrency
 
 /// Create a new `Chat`
-public struct ChatCreate: Codable {
+public struct ChatCreate: Codable, Sendable {
     /// The id for the database.
     public var id: UUID
     /// The name of the chat. Optional.
@@ -41,7 +42,7 @@ public struct ChatCreate: Codable {
 }
 
 /// The response included in an HTTP GET response.
-public struct ChatResponse: Identifiable, Codable, Equatable {
+public struct ChatResponse: Identifiable, Codable, Equatable, Sendable {
     /// The id for the database.
     public var id: UUID
     /// The name of the chat. Optional.
@@ -74,7 +75,7 @@ public struct ChatResponse: Identifiable, Codable, Equatable {
 }
 
 /// The response included in an HTTP GET response, embedded in a `ParticipantResponse` object.
-public struct ChatParticipantResponse: Codable, Equatable {
+public struct ChatParticipantResponse: Codable, Equatable, Sendable {
     /// The id for the database.
     public var id: UUID
     
@@ -86,7 +87,7 @@ public struct ChatParticipantResponse: Codable, Equatable {
 }
 
 /// The response included in an HTTP GET response, embedded in a `MessageResponse` object.
-public struct ChatMessageResponse: Codable {
+public struct ChatMessageResponse: Codable, Sendable {
     /// The id for the database.
     public var id: UUID
     
