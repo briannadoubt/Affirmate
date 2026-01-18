@@ -6,7 +6,7 @@ A place for things ❤️‍🔥
 
 An encrypted chat app, inspired by Signal's implementation of encryption, but much less securely implemented. Don't use this for anything serious unless you have experience with encryption and have a thorough system for vetting your stuff.
 
-But the system is all built purely in Swift. There's a Vapor server that stands up a PostgreSQL database, and a good start on a universal Swift chat app that syncs encrypted chats to other devices through CloudKit.
+But the system is all built purely in Swift. There's a Vapor server that stands up a mongo database, and a good start on a universal Swift chat app that syncs encrypted chats to other devices through CloudKit.
 
 Real-time chat features (including typing indicators and incoming messages when the app is open) are managed through a custom websocket connection.
 
@@ -14,7 +14,7 @@ All in all, it was a big lift, and a fun project to work on!
 
 ## Set Up Server Development Environment
 
-In order to build and run the server locally you will need to pass in a variety of Arguments and Environment Variables. The Environment Variables are also recommended on a production server as well, but this repo isn't there yet.
+In order to build and run the server locally you will need to pass in a variety of Arguments and Environment Variables. The Environment Variables are also reccomended on a production server as well, but this repo isn't there yet.
 
 ### You will need
 
@@ -66,6 +66,35 @@ You should see `[ NOTICE ] Server starting on http://0.0.0.0:8080 (Vapor/HTTPSer
 ## Run one of the clients
 
 Now that the database and the server are up and running you can build and run the iOS, watchOS, or macOS apps and they should connect to the same database/server instance running on your Mac.
+
+## Launch the server inside an Apple Container
+
+macOS 15 (Darwin 26) adds Apple’s Containerization APIs for running lightweight Linux virtual machines on Apple silicon. The `Run` target can now bootstrap the Vapor server inside one of these containers when the correct environment is provided. This is helpful for local testing of the Linux build without maintaining a separate Docker setup.
+
+1. Install the Containerization Swift package prerequisites (Xcode 16 beta, macOS 15 beta) and fetch a compatible Linux kernel image such as the Kata Containers `vmlinux.container`. Place the kernel somewhere accessible on disk, for example `~/Kernels/vmlinux.container`.
+2. From the repository root, export the container environment and run the existing `Run` executable:
+
+    ```shell
+    export AFFIRMATE_CONTAINERIZE=1
+    export AFFIRMATE_CONTAINER_KERNEL=~/Kernels/vmlinux.container
+    export AFFIRMATE_CONTAINER_PROJECT_ROOT="$(pwd)"
+    # Optional overrides:
+    # export AFFIRMATE_CONTAINER_IMAGE=docker.io/library/swift:6.0-jammy
+    # export AFFIRMATE_CONTAINER_COMMAND="swift run --configuration release Run serve --hostname 0.0.0.0 --port 8080"
+    swift run Run
+    ```
+
+3. While `AFFIRMATE_CONTAINERIZE=1` the launcher builds a `ContainerizedServerService`, downloads the configured OCI image, mounts the project at `/workspace`, and executes the command inside the virtual machine. When the container exits the temporary state under `~/Library/Application Support/Affirmate/ContainerRuntime` is removed automatically.
+
+Additional knobs are available through environment variables:
+
+- `AFFIRMATE_CONTAINER_ROOTFS_MB` (default `4096`) — size of the writable root filesystem in MiB.
+- `AFFIRMATE_CONTAINER_CPUS` / `AFFIRMATE_CONTAINER_MEMORY_MB` — CPU and memory limits for the virtual machine.
+- `AFFIRMATE_CONTAINER_MOUNTS` — semicolon separated `hostPath:containerPath[:options]` entries to share extra directories; options can include `ro` for read-only.
+- `AFFIRMATE_CONTAINER_NAMESERVERS`, `AFFIRMATE_CONTAINER_IP`, and `AFFIRMATE_CONTAINER_GATEWAY` — optional networking overrides.
+- `AFFIRMATE_CONTAINER_STATE_ROOT` — custom path for container state and cached image layers.
+
+Unset `AFFIRMATE_CONTAINERIZE` to return to the standard macOS-hosted Vapor server.
 
 ## Account deletion
 

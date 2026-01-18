@@ -22,7 +22,6 @@
 		03584BBA28F8E3FF0068D612 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03584BB928F8E3FF0068D612 /* Log.swift */; };
 		03584BBB28F8E3FF0068D612 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03584BB928F8E3FF0068D612 /* Log.swift */; };
 		0358D0FA28B2C4BA005FA999 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0358D0F928B2C4BA005FA999 /* AppDelegate.swift */; };
-		035CE65A289F47D400B8C7A5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 035CE659289F47D400B8C7A5 /* Alamofire */; };
 		036A2F1A28F1554C000B8DA4 /* ChatsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036A2F1928F1554C000B8DA4 /* ChatsList.swift */; };
 		036A2F1B28F15551000B8DA4 /* ChatsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036A2F1928F1554C000B8DA4 /* ChatsList.swift */; };
 		036A2F1F28F1591B000B8DA4 /* PopulateChatsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036A2F1E28F15918000B8DA4 /* PopulateChatsList.swift */; };
@@ -70,7 +69,6 @@
 		038B3A0428F7633600C7AC0A /* ChatInvitationsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038B3A0328F7633600C7AC0A /* ChatInvitationsObserver.swift */; };
 		038B3A0628F7680E00C7AC0A /* ChatInvitationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038B3A0028F7531200C7AC0A /* ChatInvitationsView.swift */; };
 		038B3A0728F7851A00C7AC0A /* ChatInvitationsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038B3A0328F7633600C7AC0A /* ChatInvitationsObserver.swift */; };
-		0397773F2903640700246260 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 0397773E2903640700246260 /* KeychainAccess */; };
 		039777412903BDC200246260 /* AppDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039777402903BDC200246260 /* AppDelegateTests.swift */; };
 		039777492903C83700246260 /* AffirmateKeychainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039777482903C83700246260 /* AffirmateKeychainTests.swift */; };
 		0397774B2903CE8300246260 /* AffirmateCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397774A2903CE8300246260 /* AffirmateCryptoTests.swift */; };
@@ -83,7 +81,6 @@
 		0397775D2904B84C00246260 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397775B2904B84C00246260 /* Persistence.swift */; };
 		0397C7C328FA89F800FE8693 /* EncodedMessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397C7C228FA89F800FE8693 /* EncodedMessageBubble.swift */; };
 		0397C7C428FA89F800FE8693 /* EncodedMessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397C7C228FA89F800FE8693 /* EncodedMessageBubble.swift */; };
-		0397C7C728FA943D00FE8693 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 0397C7C628FA943D00FE8693 /* KeychainAccess */; };
 		0397C7C928FA953400FE8693 /* AffirmateKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397C7C828FA953400FE8693 /* AffirmateKeychain.swift */; };
 		0397C7CA28FA953400FE8693 /* AffirmateKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397C7C828FA953400FE8693 /* AffirmateKeychain.swift */; };
 		03A2017028A6D62200573848 /* HTTPActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A2016F28A6D62200573848 /* HTTPActor.swift */; };
@@ -93,9 +90,6 @@
 		03AE207B28FF719800B4C392 /* AffirmateCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE207A28FF719800B4C392 /* AffirmateCrypto.swift */; };
 		03AE207C28FF719800B4C392 /* AffirmateCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE207A28FF719800B4C392 /* AffirmateCrypto.swift */; };
 		03C366C428C8E9CE0027CA1F /* AuthenticationActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C366C328C8E9CE0027CA1F /* AuthenticationActor.swift */; };
-		03D9C8E228F12D2E00FCFAE7 /* WatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D9C8E128F12D2E00FCFAE7 /* WatchTests.swift */; };
-		03D9C8EC28F12D2E00FCFAE7 /* AffirmateWatchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D9C8EB28F12D2E00FCFAE7 /* AffirmateWatchUITests.swift */; };
-		03D9C8EE28F12D2E00FCFAE7 /* AffirmateWatchUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D9C8ED28F12D2E00FCFAE7 /* AffirmateWatchUITestsLaunchTests.swift */; };
 		03D9C8FE28F12DBA00FCFAE7 /* ChatInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037430B528CD21B1002DE8AA /* ChatInputBar.swift */; };
 		03D9C90128F12DBA00FCFAE7 /* MessageBubbleShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1923528AEA60D00876C5D /* MessageBubbleShape.swift */; };
 		03D9C90228F12DBA00FCFAE7 /* HTTPActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A2016F28A6D62200573848 /* HTTPActor.swift */; };
@@ -127,9 +121,7 @@
 		03D9C92B28F12DBB00FCFAE7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C9A28975CAB001DAE4B /* Constants.swift */; };
 		03D9C92D28F12DBB00FCFAE7 /* ThrowingTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03772C96289759A3001DAE4B /* ThrowingTaskButton.swift */; };
 		03D9C92E28F12DBB00FCFAE7 /* ServerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031FF1F228A08015008343CA /* ServerError.swift */; };
-		03D9C93328F12E0400FCFAE7 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 03D9C93228F12E0400FCFAE7 /* Alamofire */; };
 		03D9C93528F12E0400FCFAE7 /* ReversedScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = 03D9C93428F12E0400FCFAE7 /* ReversedScrollView */; };
-		03D9C93728F12E0400FCFAE7 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 03D9C93628F12E0400FCFAE7 /* Starscream */; };
 		03DEF15A292CDF31009AA00E /* AuthenticationScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF159292CDF31009AA00E /* AuthenticationScrollView.swift */; };
 		03DEF15B292CDF31009AA00E /* AuthenticationScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF159292CDF31009AA00E /* AuthenticationScrollView.swift */; };
 		03DEF15D292CE3A7009AA00E /* AuthenticationContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF15C292CE3A7009AA00E /* AuthenticationContent.swift */; };
@@ -150,17 +142,6 @@
 		03DEF173292CE43A009AA00E /* AffirmateLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF171292CE43A009AA00E /* AffirmateLogo.swift */; };
 		03DEF175292D45A1009AA00E /* AuthenticationActorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF174292D45A1009AA00E /* AuthenticationActorTests.swift */; };
 		03DEF177292D46E8009AA00E /* MockHTTPActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF176292D46E8009AA00E /* MockHTTPActor.swift */; };
-		03DEF178292D8F52009AA00E /* AuthenticationObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033A92C8292AF997001FCB1E /* AuthenticationObserverTests.swift */; };
-		03DEF179292D8F52009AA00E /* MockHTTPActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF176292D46E8009AA00E /* MockHTTPActor.swift */; };
-		03DEF17A292D8F52009AA00E /* MockAffirmateUserActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033A92CC292AFED8001FCB1E /* MockAffirmateUserActor.swift */; };
-		03DEF17B292D8F52009AA00E /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039777512904713800246260 /* MockURLProtocol.swift */; };
-		03DEF17C292D8F52009AA00E /* AffirmateAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0389BC9D286FAB2B00CBDC3B /* AffirmateAppTests.swift */; };
-		03DEF17E292D8F52009AA00E /* AffirmateCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397774A2903CE8300246260 /* AffirmateCryptoTests.swift */; };
-		03DEF17F292D8F52009AA00E /* AuthenticationActorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03DEF174292D45A1009AA00E /* AuthenticationActorTests.swift */; };
-		03DEF180292D8F52009AA00E /* MockAuthenticationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397775329049F5B00246260 /* MockAuthenticationObserver.swift */; };
-		03DEF181292D8F52009AA00E /* AffirmateKeychainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039777482903C83700246260 /* AffirmateKeychainTests.swift */; };
-		03DEF182292D8F52009AA00E /* MockAuthenticationActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033A92CA292AFA9A001FCB1E /* MockAuthenticationActor.swift */; };
-		03DEF183292D8F52009AA00E /* HTTPActorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0397774E29046EDB00246260 /* HTTPActorTests.swift */; };
 		03E1922928AEA2B600876C5D /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1922828AEA2B600876C5D /* ChatView.swift */; };
 		03E1922C28AEA30B00876C5D /* ReversedScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = 03E1922B28AEA30B00876C5D /* ReversedScrollView */; };
 		03E1922E28AEA3B000876C5D /* KeyboardHeightObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1922D28AEA3B000876C5D /* KeyboardHeightObserver.swift */; };
@@ -176,7 +157,6 @@
 		03FE3BBE2897220F00208D5D /* MeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBD2897220F00208D5D /* MeView.swift */; };
 		03FE3BC02897222D00208D5D /* AffirmateTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BBF2897222D00208D5D /* AffirmateTabView.swift */; };
 		03FE3BC22897273A00208D5D /* AuthenticationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FE3BC12897273A00208D5D /* AuthenticationObserver.swift */; };
-		03FF26B528B429BF00DB5433 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 03FF26B428B429BF00DB5433 /* Starscream */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -193,20 +173,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0389BC87286FAB2A00CBDC3B;
 			remoteInfo = Affirmate;
-		};
-		03D9C8DE28F12D2E00FCFAE7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0389BC80286FAB2A00CBDC3B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 03D9C8CA28F12D2D00FCFAE7;
-			remoteInfo = "Affirmate.Watch Watch App";
-		};
-		03D9C8E828F12D2E00FCFAE7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0389BC80286FAB2A00CBDC3B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 03D9C8CA28F12D2D00FCFAE7;
-			remoteInfo = "Affirmate.Watch Watch App";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -280,9 +246,7 @@
 		03C366C328C8E9CE0027CA1F /* AuthenticationActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationActor.swift; sourceTree = "<group>"; };
 		03CB0DFE28C02BA700B1E26F /* AffirmateServer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AffirmateServer; sourceTree = "<group>"; };
 		03D9C8CB28F12D2D00FCFAE7 /* AffirmateWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AffirmateWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		03D9C8DD28F12D2E00FCFAE7 /* AffirmateWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D9C8E128F12D2E00FCFAE7 /* WatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTests.swift; sourceTree = "<group>"; };
-		03D9C8E728F12D2E00FCFAE7 /* AffirmateWatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AffirmateWatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D9C8EB28F12D2E00FCFAE7 /* AffirmateWatchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateWatchUITests.swift; sourceTree = "<group>"; };
 		03D9C8ED28F12D2E00FCFAE7 /* AffirmateWatchUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffirmateWatchUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		03DEF159292CDF31009AA00E /* AuthenticationScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationScrollView.swift; sourceTree = "<group>"; };
@@ -307,6 +271,7 @@
 		03E1923D28AEAB0300876C5D /* UserActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActor.swift; sourceTree = "<group>"; };
 		03EEAAC12903550D00A13A03 /* AffirmateWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AffirmateWatch.entitlements; sourceTree = "<group>"; };
 		03EEAAC22903551200A13A03 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		03F624272EA5AD0700692913 /* Affirmate.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Affirmate.xctestplan; sourceTree = "<group>"; };
 		03FE3BB92897214700208D5D /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		03FE3BBB289721A500208D5D /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
 		03FE3BBD2897220F00208D5D /* MeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeView.swift; sourceTree = "<group>"; };
@@ -320,10 +285,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03E1922C28AEA30B00876C5D /* ReversedScrollView in Frameworks */,
-				035CE65A289F47D400B8C7A5 /* Alamofire in Frameworks */,
 				037BBCC5292C8BFC00A9EA33 /* AffirmateShared in Frameworks */,
-				03FF26B528B429BF00DB5433 /* Starscream in Frameworks */,
-				0397C7C728FA943D00FE8693 /* KeychainAccess in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,25 +307,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0397773F2903640700246260 /* KeychainAccess in Frameworks */,
 				03D9C93528F12E0400FCFAE7 /* ReversedScrollView in Frameworks */,
 				037BBCC7292C8C0100A9EA33 /* AffirmateShared in Frameworks */,
-				03D9C93328F12E0400FCFAE7 /* Alamofire in Frameworks */,
-				03D9C93728F12E0400FCFAE7 /* Starscream in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		03D9C8DA28F12D2E00FCFAE7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		03D9C8E428F12D2E00FCFAE7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,6 +475,7 @@
 		0389BC7F286FAB2A00CBDC3B = {
 			isa = PBXGroup;
 			children = (
+				03F624272EA5AD0700692913 /* Affirmate.xctestplan */,
 				0389BC8A286FAB2A00CBDC3B /* Affirmate */,
 				0389BC9C286FAB2A00CBDC3B /* AffirmateTests */,
 				0389BCA6286FAB2B00CBDC3B /* AffirmateUITests */,
@@ -549,8 +495,6 @@
 				0389BC99286FAB2A00CBDC3B /* AffirmateTests.xctest */,
 				0389BCA3286FAB2B00CBDC3B /* AffirmateUITests.xctest */,
 				03D9C8CB28F12D2D00FCFAE7 /* AffirmateWatch.app */,
-				03D9C8DD28F12D2E00FCFAE7 /* AffirmateWatchTests.xctest */,
-				03D9C8E728F12D2E00FCFAE7 /* AffirmateWatchUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -718,10 +662,7 @@
 			);
 			name = Affirmate;
 			packageProductDependencies = (
-				035CE659289F47D400B8C7A5 /* Alamofire */,
 				03E1922B28AEA30B00876C5D /* ReversedScrollView */,
-				03FF26B428B429BF00DB5433 /* Starscream */,
-				0397C7C628FA943D00FE8693 /* KeychainAccess */,
 				037BBCC4292C8BFC00A9EA33 /* AffirmateShared */,
 			);
 			productName = Affirmate;
@@ -778,51 +719,12 @@
 			);
 			name = AffirmateWatch;
 			packageProductDependencies = (
-				03D9C93228F12E0400FCFAE7 /* Alamofire */,
 				03D9C93428F12E0400FCFAE7 /* ReversedScrollView */,
-				03D9C93628F12E0400FCFAE7 /* Starscream */,
-				0397773E2903640700246260 /* KeychainAccess */,
 				037BBCC6292C8C0100A9EA33 /* AffirmateShared */,
 			);
 			productName = "Affirmate.Watch Watch App";
 			productReference = 03D9C8CB28F12D2D00FCFAE7 /* AffirmateWatch.app */;
 			productType = "com.apple.product-type.application";
-		};
-		03D9C8DC28F12D2E00FCFAE7 /* AffirmateWatchTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 03D9C8FA28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "AffirmateWatchTests" */;
-			buildPhases = (
-				03D9C8D928F12D2E00FCFAE7 /* Sources */,
-				03D9C8DA28F12D2E00FCFAE7 /* Frameworks */,
-				03D9C8DB28F12D2E00FCFAE7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				03D9C8DF28F12D2E00FCFAE7 /* PBXTargetDependency */,
-			);
-			name = AffirmateWatchTests;
-			productName = "Affirmate.Watch Watch AppTests";
-			productReference = 03D9C8DD28F12D2E00FCFAE7 /* AffirmateWatchTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		03D9C8E628F12D2E00FCFAE7 /* AffirmateWatchUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 03D9C8FB28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "AffirmateWatchUITests" */;
-			buildPhases = (
-				03D9C8E328F12D2E00FCFAE7 /* Sources */,
-				03D9C8E428F12D2E00FCFAE7 /* Frameworks */,
-				03D9C8E528F12D2E00FCFAE7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				03D9C8E928F12D2E00FCFAE7 /* PBXTargetDependency */,
-			);
-			name = AffirmateWatchUITests;
-			productName = "Affirmate.Watch Watch AppUITests";
-			productReference = 03D9C8E728F12D2E00FCFAE7 /* AffirmateWatchUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -832,7 +734,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1400;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					0389BC87286FAB2A00CBDC3B = {
 						CreatedOnToolsVersion = 14.0;
@@ -848,14 +750,6 @@
 					03D9C8CA28F12D2D00FCFAE7 = {
 						CreatedOnToolsVersion = 14.0.1;
 					};
-					03D9C8DC28F12D2E00FCFAE7 = {
-						CreatedOnToolsVersion = 14.0.1;
-						TestTargetID = 03D9C8CA28F12D2D00FCFAE7;
-					};
-					03D9C8E628F12D2E00FCFAE7 = {
-						CreatedOnToolsVersion = 14.0.1;
-						TestTargetID = 03D9C8CA28F12D2D00FCFAE7;
-					};
 				};
 			};
 			buildConfigurationList = 0389BC83286FAB2A00CBDC3B /* Build configuration list for PBXProject "Affirmate" */;
@@ -868,10 +762,7 @@
 			);
 			mainGroup = 0389BC7F286FAB2A00CBDC3B;
 			packageReferences = (
-				035CE658289F47D400B8C7A5 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				03E1922A28AEA30B00876C5D /* XCRemoteSwiftPackageReference "ReversedScrollView" */,
-				03FF26B328B429BF00DB5433 /* XCRemoteSwiftPackageReference "Starscream" */,
-				0397C7C528FA943C00FE8693 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 			);
 			productRefGroup = 0389BC89286FAB2A00CBDC3B /* Products */;
 			projectDirPath = "";
@@ -881,8 +772,6 @@
 				0389BC98286FAB2A00CBDC3B /* AffirmateTests */,
 				0389BCA2286FAB2B00CBDC3B /* AffirmateUITests */,
 				03D9C8CA28F12D2D00FCFAE7 /* AffirmateWatch */,
-				03D9C8DC28F12D2E00FCFAE7 /* AffirmateWatchTests */,
-				03D9C8E628F12D2E00FCFAE7 /* AffirmateWatchUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -917,20 +806,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				036A2F2E28F15E78000B8DA4 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		03D9C8DB28F12D2E00FCFAE7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		03D9C8E528F12D2E00FCFAE7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1107,34 +982,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		03D9C8D928F12D2E00FCFAE7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				03DEF180292D8F52009AA00E /* MockAuthenticationObserver.swift in Sources */,
-				03DEF17E292D8F52009AA00E /* AffirmateCryptoTests.swift in Sources */,
-				03DEF17F292D8F52009AA00E /* AuthenticationActorTests.swift in Sources */,
-				03DEF17A292D8F52009AA00E /* MockAffirmateUserActor.swift in Sources */,
-				03DEF181292D8F52009AA00E /* AffirmateKeychainTests.swift in Sources */,
-				03DEF183292D8F52009AA00E /* HTTPActorTests.swift in Sources */,
-				03DEF17C292D8F52009AA00E /* AffirmateAppTests.swift in Sources */,
-				03DEF179292D8F52009AA00E /* MockHTTPActor.swift in Sources */,
-				03DEF182292D8F52009AA00E /* MockAuthenticationActor.swift in Sources */,
-				03DEF17B292D8F52009AA00E /* MockURLProtocol.swift in Sources */,
-				03D9C8E228F12D2E00FCFAE7 /* WatchTests.swift in Sources */,
-				03DEF178292D8F52009AA00E /* AuthenticationObserverTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		03D9C8E328F12D2E00FCFAE7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				03D9C8EE28F12D2E00FCFAE7 /* AffirmateWatchUITestsLaunchTests.swift in Sources */,
-				03D9C8EC28F12D2E00FCFAE7 /* AffirmateWatchUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1147,16 +994,6 @@
 			isa = PBXTargetDependency;
 			target = 0389BC87286FAB2A00CBDC3B /* Affirmate */;
 			targetProxy = 0389BCA4286FAB2B00CBDC3B /* PBXContainerItemProxy */;
-		};
-		03D9C8DF28F12D2E00FCFAE7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 03D9C8CA28F12D2D00FCFAE7 /* AffirmateWatch */;
-			targetProxy = 03D9C8DE28F12D2E00FCFAE7 /* PBXContainerItemProxy */;
-		};
-		03D9C8E928F12D2E00FCFAE7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 03D9C8CA28F12D2D00FCFAE7 /* AffirmateWatch */;
-			targetProxy = 03D9C8E828F12D2E00FCFAE7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1196,8 +1033,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = LU6454UVH5;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1215,8 +1054,13 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_MEMORY_SAFETY = YES;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -1255,8 +1099,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = LU6454UVH5;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1267,8 +1113,13 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_MEMORY_SAFETY = YES;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
@@ -1288,8 +1139,11 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Affirmate/Preview Content\"";
 				DEVELOPMENT_TEAM = LU6454UVH5;
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Affirmate/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Affirmate;
@@ -1306,13 +1160,15 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.affirmate.Affirmate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG DEVELOPMENT";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,7";
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
@@ -1332,8 +1188,11 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Affirmate/Preview Content\"";
 				DEVELOPMENT_TEAM = LU6454UVH5;
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Affirmate/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Affirmate;
@@ -1350,25 +1209,25 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.affirmate.Affirmate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = PRODUCTION;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,7";
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
 		0389BCB1286FAB2B00CBDC3B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = LU6454UVH5;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
@@ -1376,24 +1235,23 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.briannadoubt.AffirmateTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Affirmate.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Affirmate";
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
 		0389BCB2286FAB2B00CBDC3B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = LU6454UVH5;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
@@ -1401,23 +1259,22 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.briannadoubt.AffirmateTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Affirmate.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Affirmate";
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
 		0389BCB4286FAB2B00CBDC3B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = LU6454UVH5;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
@@ -1425,23 +1282,23 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.briannadoubt.AffirmateUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 				TEST_TARGET_NAME = Affirmate;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
 		0389BCB5286FAB2B00CBDC3B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = LU6454UVH5;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
@@ -1449,12 +1306,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.briannadoubt.AffirmateUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 				TEST_TARGET_NAME = Affirmate;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -1468,7 +1327,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "Affirmate/Preview\\ Content";
-				DEVELOPMENT_TEAM = LU6454UVH5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AffirmateWatch/Info.plist;
@@ -1485,7 +1343,7 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
@@ -1501,7 +1359,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "Affirmate/Preview\\ Content";
-				DEVELOPMENT_TEAM = LU6454UVH5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AffirmateWatch/Info.plist;
@@ -1518,96 +1375,8 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 26.0;
-			};
-			name = Release;
-		};
-		03D9C8F428F12D2E00FCFAE7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LU6454UVH5;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.briannadoubt.Affirmate-Watch-Watch-AppTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AffirmateWatch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AffirmateWatch";
-				WATCHOS_DEPLOYMENT_TARGET = 26.0;
-			};
-			name = Debug;
-		};
-		03D9C8F528F12D2E00FCFAE7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LU6454UVH5;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.briannadoubt.Affirmate-Watch-Watch-AppTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AffirmateWatch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AffirmateWatch";
-				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 26.0;
-			};
-			name = Release;
-		};
-		03D9C8F628F12D2E00FCFAE7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LU6454UVH5;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.briannadoubt.Affirmate-Watch-Watch-AppUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_TARGET_NAME = "Affirmate.Watch Watch App";
-				WATCHOS_DEPLOYMENT_TARGET = 26.0;
-			};
-			name = Debug;
-		};
-		03D9C8F728F12D2E00FCFAE7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LU6454UVH5;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.briannadoubt.Affirmate-Watch-Watch-AppUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_TARGET_NAME = "Affirmate.Watch Watch App";
 				VALIDATE_PRODUCT = YES;
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
@@ -1661,43 +1430,9 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03D9C8FA28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "AffirmateWatchTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				03D9C8F428F12D2E00FCFAE7 /* Debug */,
-				03D9C8F528F12D2E00FCFAE7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		03D9C8FB28F12D2F00FCFAE7 /* Build configuration list for PBXNativeTarget "AffirmateWatchUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				03D9C8F628F12D2E00FCFAE7 /* Debug */,
-				03D9C8F728F12D2E00FCFAE7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		035CE658289F47D400B8C7A5 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
-		0397C7C528FA943C00FE8693 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.2.2;
-			};
-		};
 		03E1922A28AEA30B00876C5D /* XCRemoteSwiftPackageReference "ReversedScrollView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/briannadoubt/ReversedScrollView.git";
@@ -1706,22 +1441,9 @@
 				kind = branch;
 			};
 		};
-		03FF26B328B429BF00DB5433 /* XCRemoteSwiftPackageReference "Starscream" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/daltoniam/Starscream.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		035CE659289F47D400B8C7A5 /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 035CE658289F47D400B8C7A5 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
-		};
 		037BBCC4292C8BFC00A9EA33 /* AffirmateShared */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AffirmateShared;
@@ -1730,40 +1452,15 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = AffirmateShared;
 		};
-		0397773E2903640700246260 /* KeychainAccess */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0397C7C528FA943C00FE8693 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
-			productName = KeychainAccess;
-		};
-		0397C7C628FA943D00FE8693 /* KeychainAccess */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0397C7C528FA943C00FE8693 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
-			productName = KeychainAccess;
-		};
-		03D9C93228F12E0400FCFAE7 /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 035CE658289F47D400B8C7A5 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
-		};
 		03D9C93428F12E0400FCFAE7 /* ReversedScrollView */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 03E1922A28AEA30B00876C5D /* XCRemoteSwiftPackageReference "ReversedScrollView" */;
 			productName = ReversedScrollView;
 		};
-		03D9C93628F12E0400FCFAE7 /* Starscream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 03FF26B328B429BF00DB5433 /* XCRemoteSwiftPackageReference "Starscream" */;
-			productName = Starscream;
-		};
 		03E1922B28AEA30B00876C5D /* ReversedScrollView */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 03E1922A28AEA30B00876C5D /* XCRemoteSwiftPackageReference "ReversedScrollView" */;
 			productName = ReversedScrollView;
-		};
-		03FF26B428B429BF00DB5433 /* Starscream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 03FF26B328B429BF00DB5433 /* XCRemoteSwiftPackageReference "Starscream" */;
-			productName = Starscream;
 		};
 /* End XCSwiftPackageProductDependency section */
 
