@@ -7,8 +7,8 @@ on:
   pull_request:
 
 jobs:
-  client:
-    name: Client tests (${{ matrix.platform }})
+  client-build:
+    name: Client build (${{ matrix.platform }})
     runs-on: macos-26
     strategy:
       fail-fast: false
@@ -16,9 +16,6 @@ jobs:
         include:
           - platform: iOS
             destination: "generic/platform=iOS Simulator"
-            scheme: Affirmate
-          - platform: macOS
-            destination: "platform=macOS"
             scheme: Affirmate
           - platform: tvOS
             destination: "generic/platform=tvOS Simulator"
@@ -30,13 +27,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build
+        run: |
+          set -o pipefail
+          xcodebuild build-for-testing \
+            -project Affirmate.xcodeproj \
+            -scheme "${{ matrix.scheme }}" \
+            -destination "${{ matrix.destination }}" \
+            -skipPackagePluginValidation
+
+  client-test:
+    name: Client tests (macOS)
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Build and test
         run: |
           set -o pipefail
           xcodebuild test \
             -project Affirmate.xcodeproj \
-            -scheme "${{ matrix.scheme }}" \
-            -destination "${{ matrix.destination }}" \
+            -scheme Affirmate \
+            -destination "platform=macOS" \
             -skipPackagePluginValidation
 
   server:
