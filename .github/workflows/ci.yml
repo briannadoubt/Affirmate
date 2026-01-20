@@ -34,7 +34,8 @@ jobs:
             -project Affirmate.xcodeproj \
             -scheme "${{ matrix.scheme }}" \
             -destination "${{ matrix.destination }}" \
-            -skipPackagePluginValidation
+            -skipPackagePluginValidation \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
   client-test:
     name: Client tests (macOS)
@@ -50,7 +51,8 @@ jobs:
             -project Affirmate.xcodeproj \
             -scheme Affirmate \
             -destination "platform=macOS" \
-            -skipPackagePluginValidation
+            -skipPackagePluginValidation \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
   server:
     name: Server tests (${{ matrix.os }})
@@ -154,7 +156,8 @@ jobs:
             -project Affirmate.xcodeproj \
             -scheme Affirmate \
             -destination 'platform=macOS' \
-            -skipPackagePluginValidation
+            -skipPackagePluginValidation \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
       - name: Shutdown server
         if: always()
