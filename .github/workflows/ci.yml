@@ -15,16 +15,16 @@ jobs:
       matrix:
         include:
           - platform: iOS
-            destination: "platform=iOS Simulator,OS=latest,name=iPhone 16"
+            destination: "generic/platform=iOS Simulator"
             scheme: Affirmate
           - platform: macOS
             destination: "platform=macOS"
             scheme: Affirmate
           - platform: tvOS
-            destination: "platform=tvOS Simulator,OS=latest,name=Apple TV 4K (3rd generation)"
+            destination: "generic/platform=tvOS Simulator"
             scheme: Affirmate
           - platform: watchOS
-            destination: "platform=watchOS Simulator,OS=latest,name=Apple Watch Series 10 (46mm)"
+            destination: "generic/platform=watchOS Simulator"
             scheme: AffirmateWatch
     steps:
       - name: Checkout
