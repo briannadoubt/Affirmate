@@ -9,7 +9,7 @@ on:
 jobs:
   client:
     name: Client tests (${{ matrix.platform }})
-    runs-on: macos-15
+    runs-on: macos-26
     strategy:
       fail-fast: false
       matrix:
@@ -41,7 +41,7 @@ jobs:
 
   server:
     name: Server tests
-    runs-on: macos-15
+    runs-on: macos-26
     # TODO: Remove continue-on-error once vapor/redis is updated (NIOLock compatibility)
     continue-on-error: true
     steps:
@@ -84,7 +84,7 @@ jobs:
 
   integration:
     name: Integration tests
-    runs-on: macos-15
+    runs-on: macos-26
     # TODO: Remove continue-on-error once vapor/redis is updated (NIOLock compatibility)
     continue-on-error: true
     steps:
