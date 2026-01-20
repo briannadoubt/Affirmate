@@ -40,10 +40,14 @@ jobs:
             -skipPackagePluginValidation
 
   server:
-    name: Server tests
-    runs-on: macos-26
+    name: Server tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     # TODO: Remove continue-on-error once vapor/redis is updated (NIOLock compatibility)
     continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
