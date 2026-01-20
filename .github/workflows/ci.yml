@@ -57,8 +57,6 @@ jobs:
   server:
     name: Server tests (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    # TODO: Remove continue-on-error once vapor/redis is updated (NIOLock compatibility)
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -104,8 +102,6 @@ jobs:
   integration:
     name: Integration tests
     runs-on: macos-26
-    # TODO: Remove continue-on-error once vapor/redis is updated (NIOLock compatibility)
-    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4

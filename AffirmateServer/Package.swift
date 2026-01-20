@@ -15,7 +15,6 @@ let package = Package(
         .package(url: "https://github.com/vapor/leaf.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/apns.git", from: "3.0.0"),
         .package(url: "https://github.com/vapor/jwt.git", from: "4.0.0"),
-        .package(url: "https://github.com/vapor/redis.git", from: "4.0.0"),
     ],
     targets: [
         .target(
@@ -28,7 +27,6 @@ let package = Package(
                 .product(name: "APNS", package: "apns"),
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "JWT", package: "jwt"),
-                .product(name: "Redis", package: "redis"),
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of

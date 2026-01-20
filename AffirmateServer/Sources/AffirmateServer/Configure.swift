@@ -5,7 +5,6 @@ import Vapor
 import APNS
 import APNSwift
 import JWT
-import Redis
 
 fileprivate func configureDatabase(for app: Application) {
     // Use PostGreSQL as a database. Connect to localhost if running in DEBUG, otherwise use environment variables for an integrated environment.
