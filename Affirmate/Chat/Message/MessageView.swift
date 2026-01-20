@@ -8,8 +8,8 @@
 import SwiftUI
 
 public struct MessageView: View {
-    
-    @EnvironmentObject var chatObserver: ChatObserver
+
+    @Environment(ChatObserver.self) private var chatObserver
     
     init(currentParticipantId: UUID, withTail: Bool = false, message: Message) {
         self.currentParticipantId = currentParticipantId

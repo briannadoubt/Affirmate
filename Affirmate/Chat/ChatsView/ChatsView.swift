@@ -9,19 +9,19 @@ import CoreData
 import SwiftUI
 
 struct ChatsView: View {
-    
+
     @FetchRequest(sortDescriptors: []) var chats: FetchedResults<Chat>
-    
-    @StateObject var chatsObserver: ChatsObserver
-    
-    @EnvironmentObject var authenticationObserver: AuthenticationObserver
+
+    @State private var chatsObserver: ChatsObserver
+
+    @Environment(AuthenticationObserver.self) private var authenticationObserver
     
     let currentUserId: UUID
     
     init(currentUserId: UUID, managedObjectContext: NSManagedObjectContext) {
         self.currentUserId = currentUserId
-        _chatsObserver = StateObject(
-            wrappedValue: ChatsObserver(
+        _chatsObserver = State(
+            initialValue: ChatsObserver(
                 currentUserId: currentUserId,
                 managedObjectContext: managedObjectContext
             )
@@ -45,35 +45,35 @@ struct ChatsView: View {
     var body: some View {
         Group {
             let chat = Group {
-                if
-                    let selectedChat,
-                    let selectedChatId = selectedChat.id,
-                    let chatObserver = chatsObserver.chatObservers[selectedChatId]
-                {
-                    ChatView(chatId: selectedChatId)
-                        .environmentObject(chatObserver)
-                } else {
-                    Text("👈 Select a chat on the left")
+                    if
+                        let selectedChat,
+                        let selectedChatId = selectedChat.id,
+                        let chatObserver = chatsObserver.chatObservers[selectedChatId]
+                    {
+                        ChatView(chatId: selectedChatId)
+                            .environment(chatObserver)
+                    } else {
+                        Text("👈 Select a chat on the left")
+                    }
                 }
-            }
             #if os(watchOS)
             NavigationStack {
                 ChatsList(chats: Array(chats), getChats: getChats)
-                    .environmentObject(authenticationObserver)
-                    .environmentObject(chatsObserver)
+                    .environment(authenticationObserver)
+                    .environment(chatsObserver)
             }
             #elseif os(macOS)
             NavigationView {
                 ChatsList(chats: Array(chats), selectedChat: $selectedChat, getChats: getChats)
-                    .environmentObject(authenticationObserver)
-                    .environmentObject(chatsObserver)
+                    .environment(authenticationObserver)
+                    .environment(chatsObserver)
                 chat
             }
             #else
             NavigationSplitView(columnVisibility: $navigationSplitViewVisibility) {
                 ChatsList(chats: Array(chats), selectedChat: $selectedChat, getChats: getChats)
-                    .environmentObject(authenticationObserver)
-                    .environmentObject(chatsObserver)
+                    .environment(authenticationObserver)
+                    .environment(chatsObserver)
                     .navigationSplitViewColumnWidth(ideal: 320)
             } detail: {
                 chat

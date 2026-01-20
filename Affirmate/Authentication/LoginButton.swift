@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LoginButton: View {
-    @EnvironmentObject var authentication: AuthenticationObserver
+    @Environment(AuthenticationObserver.self) private var authentication
     
     @Binding var username: String
     @Binding var password: String

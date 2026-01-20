@@ -11,7 +11,6 @@
 @testable import Affirmate
 #endif
 import CryptoKit
-import KeychainAccess
 import XCTest
 
 final class AffirmateCryptoTests: XCTestCase {

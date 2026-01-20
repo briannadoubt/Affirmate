@@ -7,27 +7,32 @@
 
 import AffirmateShared
 import Foundation
-import Starscream
+import Observation
 import SwiftUI
 
 /// An object that manages a WebSocket connection to a server for a View.
-protocol WebSocketObserver: ObservableObject, WebSocketDelegate {
+protocol WebSocketObserver: AnyObject, Observable {
     /// Whether or not the client is connected.
     var isConnected: Bool { get set }
-    /// The `WebSocket` instance.
-    var socket: WebSocket? { get set }
+    /// The `URLSessionWebSocketTask` instance.
+    var socket: URLSessionWebSocketTask? { get set }
+    /// The task responsible for streaming incoming messages.
+    var receiveTask: Task<Void, Never>? { get set }
     /// The key for the `clientId` assigned by the server.
     var clientIdKey: String { get }
     /// The current chat's ID
     var chatId: UUID { get set }
     /// Disconnect from the server and sever the connection.
     func disconnect()
-    /// Called when the connection receives a `Data` blob.
-    func received(_ data: Data)
-    /// Called when the connection receives a `String`.
-    func received(_ text: String)
-    /// Called when a WebSocket error occurs. Override to display errors in the UI.
-    func handleWebSocketError(_ error: Error?)
+    /// Called when the connection recieves a `Data` bloc.
+    func recieved(_ data: Data)
+    /// Called when the connection recieves a `String`.
+    func recieved(_ text: String)
+}
+
+/// Errors thrown by the default WebSocketObserver implementation.
+enum WebSocketObserverError: Error {
+    case socketUnavailable
 }
 
 extension WebSocketObserver {
@@ -39,53 +44,75 @@ extension WebSocketObserver {
             return UUID(uuidString: uuidString ?? "")
         }
         set {
+            let session = AffirmateKeychain.session
             if let newValue {
-                AffirmateKeychain.session[string: clientIdKey] = newValue.uuidString
+                do {
+                    try session
+                        .set(newValue.uuidString, key: clientIdKey)
+                } catch {
+                    print("Failed to set client id to keychain")
+                }
             } else {
-                AffirmateKeychain.session[clientIdKey] = nil
+                _ = try? session
+                    .remove(clientIdKey)
             }
         }
     }
     
     /// Instantiate the `WebSocket` connection with a `URLRequest`
     func start(_ urlRequest: URLRequest) {
-        socket = WebSocket(request: urlRequest)
-        socket?.delegate = self
+        disconnect()
+        let session = URLSession(configuration: .default)
+        let task = session.webSocketTask(with: urlRequest)
+        socket = task
+        task.resume()
+        receiveTask = Task {
+            set(isConnected: true)
+            do {
+                try await connect(chatId: chatId)
+            } catch {
+                print("WebSocket: Failed to send connect message:", error)
+            }
+            do {
+                try await streamMessages(from: task)
+            } catch {
+                print("WebSocket: Stream ended with error:", error)
+            }
+            set(isConnected: false)
+        }
     }
     
     /// Disconnect from the server and sever the connection.
     func disconnect() {
-        socket?.disconnect()
+        receiveTask?.cancel()
+        receiveTask = nil
+        socket?.cancel(with: .goingAway, reason: nil)
         socket = nil
     }
     
     /// Write a codable object to the server via the active `WebSocket` connection.
-    func write<T: Codable>(_ data: T) throws {
+    func write<T: Codable & Sendable>(_ data: T) async throws {
         guard let clientId else {
             clientId = nil
             clientId = UUID()
-            try write(data)
+            try await write(data)
             return
         }
         let webSocketMessage = WebSocketMessage<T>(client: clientId, data: data)
-        socket?.write(data: try JSONEncoder().encode(webSocketMessage)) {
-            print("Did write", T.self, "from client with ID", clientId)
+        guard let socket else {
+            throw WebSocketObserverError.socketUnavailable
         }
+        try await socket.send(.data(JSONEncoder().encode(webSocketMessage)))
+        print("Did write", T.self, "from client with ID", clientId)
     }
 
     func flushPendingConfirmationsIfPossible() async { }
-
-    /// Default implementation does nothing. Override to display errors in UI.
-    func handleWebSocketError(_ error: Error?) { }
     
     /// Initiate an individualized client connection.
-    func connect(chatId: UUID) throws {
+    func connect(chatId: UUID) async throws {
         self.chatId = chatId
-        if let socket {
-            socket.connect()
-            let connect = Connect(chatId: chatId)
-            try write(connect)
-        }
+        let connect = Connect(chatId: chatId)
+        try await write(connect)
     }
     
     /// Set `isConnected` via the MainActor.
@@ -98,67 +125,61 @@ extension WebSocketObserver {
             self.isConnected = isConnected
         }
     }
-    
-    /// Called by the `StarScream` library via the `WebSocketDelegate` conformance whenever an event is received from the active WebSocket connection.
-    /// - Parameters:
-    ///   - event: The `WebSocketEvent` that was received.
-    ///   - client: The currently active WebSocket connection represented by an object.
-    func didReceive(event: WebSocketEvent, client: WebSocket) {
-        switch event {
-        case .connected(let headers):
-            Task {
-                await self.set(isConnected: true)
-                await self.flushPendingConfirmationsIfPossible()
-            }
-            print("WebSocket: did connect: \(headers)")
+}
 
-            do {
-                let connect = Connect(chatId: chatId)
-                try write(connect)
-            } catch {
-                print("Connection message failed to send:", error)
+private extension WebSocketObserver {
+    func streamMessages(from task: URLSessionWebSocketTask) async throws {
+        let stream = AsyncThrowingStream<URLSessionWebSocketTask.Message, Error> { continuation in
+            let producer = Task {
+                while !Task.isCancelled {
+                    do {
+                        let message = try await task.receive()
+                        continuation.yield(message)
+                    } catch {
+                        continuation.finish(throwing: error)
+                        return
+                    }
+                }
+                continuation.finish()
             }
-        case .disconnected(let reason, let code):
-            Task {
-                await self.set(isConnected: false)
+            continuation.onTermination = { @Sendable _ in
+                producer.cancel()
             }
-            print("WebSocket: Did disconnect: \(reason) with code: \(code)")
-        case .text(let text):
-            print("WebSocket: Received text:", text)
-            received(text)
-        case .binary(let data):
-            if let connectionConfirmation = try? data.decodeWebSocketMessage(ConfirmConnection.self) {
-                clientId = nil
-                clientId = connectionConfirmation.client
-                Task { await self.flushPendingConfirmationsIfPossible() }
-                print("WebSocket: Connection confirmed!")
-            } else if let webSocketError = try? JSONDecoder().decode(WebSocketError.self, from: data) {
-                print("Received webSocket server error:", webSocketError)
-            } else {
-                print("WebSocket: Received data")
-                received(data)
+        }
+        do {
+            for try await message in stream {
+                await handle(message: message)
             }
-        case .ping(let data):
-            print("WebSocket: Received Ping:", data as Any)
-        case .pong(let data):
-            print("WebSocket: Received Pong:", data as Any)
-        case .viabilityChanged(let changed):
-            print("WebSocket: Visibility changed:", changed)
-        case .reconnectSuggested(let reconnectSuggested):
-            print("WebSocket: Reconnect suggested:", reconnectSuggested)
-            if reconnectSuggested {
-                client.connect()
-            }
-        case .cancelled:
-            Task {
-                await self.set(isConnected: false)
-            }
-            print("WebSocket: Connection was cancelled")
-        case .error(let error):
-            Task {
-                await self.set(isConnected: false)
-            }
-            handleWebSocketError(error)
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            throw error
+        }
+    }
+
+    func handle(message: URLSessionWebSocketTask.Message) async {
+        switch message {
+        case .data(let data):
+            await handle(data: data)
+        case .string(let text):
+            print("WebSocket: Recieved text:", text)
+            recieved(text)
+        @unknown default:
+            break
+        }
+    }
+
+    func handle(data: Data) async {
+        if let connectionConfirmation = try? data.decodeWebSocketMessage(ConfirmConnection.self) {
+            clientId = nil
+            clientId = connectionConfirmation.client
+            await flushPendingConfirmationsIfPossible()
+            print("WebSocket: Connection confirmed!")
+        } else if let webSocketError = try? JSONDecoder().decode(WebSocketError.self, from: data) {
+            print("Recieved webSocket server error:", webSocketError)
+        } else {
+            print("WebSocket: Recieved data")
+            recieved(data)
         }
     }
 }

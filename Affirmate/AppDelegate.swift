@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-extension Notification.Name {
-    static let backgroundNotificationReceived = Notification.Name("backgroundNotificationReceived")
-}
-
 #if os(macOS)
 import AppKit
 
@@ -50,29 +46,25 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) async -> UIBackgroundFetchResult {
-        print("Received remote notification:", userInfo)
+        print(userInfo)
         switch application.applicationState {
         case .active:
-            // App is in foreground - notification will be handled by the active view
-            return .noData
+            break
         case .background:
             guard
                 let aps = userInfo["aps"] as? [AnyHashable: Any],
-                let contentAvailable = aps["content-available"] as? Int,
-                contentAvailable == 1
+                let contentAvailable = aps["content-available"] as? String,
+                contentAvailable == "1"
             else {
                 return .noData
             }
-            // Background notification received - trigger data refresh
-            // The app will sync new messages when it becomes active
-            NotificationCenter.default.post(name: .backgroundNotificationReceived, object: userInfo)
-            return .newData
+            // TODO: Handle background notification
         case .inactive:
-            // App is transitioning states
-            return .noData
+            break
         @unknown default:
-            return .noData
+            assertionFailure()
         }
+        return .noData
     }
 }
 #endif

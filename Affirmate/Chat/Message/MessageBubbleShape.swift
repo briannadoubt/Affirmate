@@ -62,7 +62,7 @@ public struct MessageBubbleShape: Shape {
         return path
     }
     
-    public var tailPosition: MessageBubbleTailPosition = .sender
+    public let tailPosition: MessageBubbleTailPosition
     
     init(_ tailPosition: MessageBubbleTailPosition = .sender) {
         self.tailPosition = tailPosition

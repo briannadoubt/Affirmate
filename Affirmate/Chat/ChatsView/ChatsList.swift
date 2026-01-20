@@ -8,15 +8,14 @@
 import SwiftUI
 
 struct ChatsList: View {
-    
+
     var chats: [Chat]
-    
+
 #if !os(watchOS)
     @Binding var selectedChat: Chat?
 #endif
-    
-    @EnvironmentObject var chatsObserver: ChatsObserver
-    @EnvironmentObject var authenticationObserver: AuthenticationObserver
+
+    @Environment(ChatsObserver.self) private var chatsObserver
     
     @SceneStorage("chat.isShowingNewChat") var isShowingNewChat = false
     
@@ -36,7 +35,7 @@ struct ChatsList: View {
         .navigationDestination(for: Chat.self) { chat in
             if let chatId = chat.id, let chatObserver = chatsObserver.chatObservers[chatId] {
                 ChatView(chatId: chatId)
-                    .environmentObject(chatObserver)
+                    .environment(chatObserver)
             }
         }
 #endif

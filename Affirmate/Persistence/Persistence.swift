@@ -7,8 +7,10 @@
 
 import CoreData
 import Foundation
+import Observation
 
-class Persistence: ObservableObject {
+@Observable
+class Persistence {
     
     var container = NSPersistentCloudKitContainer(name: "Affirmate")
     

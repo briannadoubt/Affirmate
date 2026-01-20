@@ -6,12 +6,13 @@
 //
 
 import AffirmateShared
+import Observation
 import SwiftUI
-import KeychainAccess
 
-protocol AuthenticationObservable: ObservableObject {
+@MainActor
+protocol AuthenticationObservable: Observable {
     associatedtype _AuthenticationObservable
-    static var shared: _AuthenticationObservable { get set }
+    static var shared: _AuthenticationObservable { get }
     var state: AuthenticationObserver.State { get set }
     var currentUser: UserResponse? { get set }
     var authenticationActor: AuthenticationActable { get }
@@ -29,16 +30,18 @@ protocol AuthenticationObservable: ObservableObject {
     func store(sessionToken: SessionTokenResponse?) throws
 }
 
+@MainActor
+@Observable
 final class AuthenticationObserver: AuthenticationObservable {
+
+    static let shared = AuthenticationObserver()
     
-    static var shared = AuthenticationObserver()
-    
-    @Published var state: AuthenticationObserver.State = .initial
-    @Published var currentUser: UserResponse?
+    var state: AuthenticationObserver.State = .initial
+    var currentUser: UserResponse?
     
     let authenticationActor: AuthenticationActable
     let meActor: UserActable
-    let sessionKeychain: Keychain
+    @ObservationIgnored private let sessionKeychain: Keychain
     
     init(
         authenticationActor: AuthenticationActable = AuthenticationActor(),
@@ -51,7 +54,7 @@ final class AuthenticationObserver: AuthenticationObservable {
     }
     
     func setCurrentAuthenticationState() async {
-        await setState(to: sessionKeychain[Constants.KeyChain.Session.token] == nil ? .loggedOut : .loggedIn)
+        setState(to: sessionKeychain[Constants.KeyChain.Session.token] == nil ? .loggedOut : .loggedIn)
     }
     
     @MainActor func setState(to newState: AuthenticationObserver.State) {
@@ -73,6 +76,7 @@ final class AuthenticationObserver: AuthenticationObservable {
         }
     }
     
+    @concurrent
     func getCurrentUser() async throws {
         do {
             let me = try await meActor.me()
@@ -84,6 +88,7 @@ final class AuthenticationObserver: AuthenticationObservable {
         }
     }
     
+    @concurrent
     func signUp(user create: UserCreate) async throws {
         await setState(to: .loading(message: "Signing up..."))
         do {
@@ -95,26 +100,28 @@ final class AuthenticationObserver: AuthenticationObservable {
         try await login(username: create.username, password: create.password)
     }
     
+    @concurrent
     func login(username: String, password: String) async throws {
         do {
             await setState(to: .loading(message: "Logging in..."))
             let loginResponse = try await authenticationActor.login(username: username, password: password)
-            try store(sessionToken: loginResponse.sessionToken)
+            try await store(sessionToken: loginResponse.sessionToken)
             await setCurrentUser(to: loginResponse.user)
             await setState(to: .loggedIn)
         } catch {
-            try store(sessionToken: nil)
+            try await store(sessionToken: nil)
             await setCurrentUser(to: nil)
             await setState(to: .loggedOut)
             throw error
         }
     }
     
+    @concurrent
     func signOut(serverHasValidKey: Bool = true) async throws {
-        let previousState = state
+        let previousState = await state
         do {
             await setState(to: .loading(message: "Logging out..."))
-            try store(sessionToken: nil)
+            try await store(sessionToken: nil)
             await setCurrentUser(to: nil)
             await setState(to: .loggedOut)
         } catch {

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct MeView: View {
-    
-    @EnvironmentObject var authentication: AuthenticationObserver
+
+    @Environment(AuthenticationObserver.self) private var authentication
     
     func signOut() {
         Task {
@@ -36,7 +36,7 @@ struct MeView: View {
                     Section {
                         NavigationLink {
                             ChatInvitationsView(invitations: invitations)
-                                .environmentObject(authentication)
+                                .environment(authentication)
                         } label: {
                             Label("Chat Invitations", systemImage: "\(authentication.currentUser?.chatInvitations.count ?? 0).circle.fill")
                         }

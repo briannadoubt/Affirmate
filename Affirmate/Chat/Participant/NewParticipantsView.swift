@@ -9,9 +9,9 @@ import AffirmateShared
 import SwiftUI
 
 struct NewParticipantsView: View {
-    
-    @EnvironmentObject var chatObserver: ChatObserver
-    @StateObject var newParticipantsObserver = NewParticipantsObserver()
+
+    @Environment(ChatObserver.self) private var chatObserver
+    @State private var newParticipantsObserver = NewParticipantsObserver()
     
     var participants: Set<Participant>
     
@@ -34,7 +34,7 @@ struct NewParticipantsView: View {
             }
             .navigationTitle("New Participant")
         }
-        .environmentObject(newParticipantsObserver)
+        .environment(newParticipantsObserver)
     }
 }
 

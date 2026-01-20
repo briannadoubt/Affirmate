@@ -9,6 +9,6 @@ import Foundation
 
 enum LocalizedContent {
     enum Resources {
-        static var resources = NSLocalizedString("Resources", comment: "The resources that Affirmate offers")
+        static let resources = NSLocalizedString("Resources", comment: "The resources that Affirmate offers")
     }
 }
