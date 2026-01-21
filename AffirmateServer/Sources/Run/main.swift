@@ -6,15 +6,7 @@ import Vapor
 
 // Top-level entry point to avoid using @main in a module that has other top-level code.
 func main() async throws {
-    // Bridge async execute() to sync using a continuation to avoid capturing mutable state across Task boundaries.
-    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-        do {
-            try await execute()
-            continuation.resume()
-        } catch {
-            continuation.resume(throwing: error)
-        }
-    }
+    try await execute()
 }
 
 private func execute() async throws {
