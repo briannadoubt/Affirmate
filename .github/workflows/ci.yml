@@ -47,6 +47,7 @@ jobs:
           xcodebuild test \
             -project Affirmate.xcodeproj \
             -scheme Affirmate \
+            -testPlan Affirmate-CI \
             -destination "platform=macOS" \
             -skipPackagePluginValidation \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
@@ -144,6 +145,7 @@ jobs:
           xcodebuild test \
             -project Affirmate.xcodeproj \
             -scheme Affirmate \
+            -testPlan Affirmate-CI \
             -destination 'platform=macOS' \
             -skipPackagePluginValidation \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
