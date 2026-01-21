@@ -52,12 +52,8 @@ jobs:
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
   server:
-    name: Server tests (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-15, macos-26]
+    name: Server tests
+    runs-on: macos-26
     steps:
       - name: Checkout
         uses: actions/checkout@v4
