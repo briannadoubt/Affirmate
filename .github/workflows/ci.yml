@@ -17,9 +17,6 @@ jobs:
           - platform: iOS
             destination: "generic/platform=iOS Simulator"
             scheme: Affirmate
-          - platform: tvOS
-            destination: "generic/platform=tvOS Simulator"
-            scheme: Affirmate
           - platform: watchOS
             destination: "generic/platform=watchOS Simulator"
             scheme: AffirmateWatch
