@@ -46,6 +46,10 @@ final class AffirmateKeychainTests: XCTestCase {
     }
     
     func test_sessionSetAndGetString() throws {
+        // Skip keychain tests in CI (no code signing = no access group support)
+        if ProcessInfo.processInfo.environment["CI"] != nil || ProcessInfo.processInfo.environment["GITHUB_ACTIONS"] != nil {
+            throw XCTSkip("Keychain tests require code signing which is not available in CI.")
+        }
         let keychain = AffirmateKeychain.session
         let key = "tests.session.token"
         let value = UUID().uuidString
@@ -55,6 +59,10 @@ final class AffirmateKeychainTests: XCTestCase {
     }
 
     func test_chatSetAndGetData() throws {
+        // Skip keychain tests in CI (no code signing = no access group support)
+        if ProcessInfo.processInfo.environment["CI"] != nil || ProcessInfo.processInfo.environment["GITHUB_ACTIONS"] != nil {
+            throw XCTSkip("Keychain tests require code signing which is not available in CI.")
+        }
         let keychain = AffirmateKeychain.chat
         let key = "tests.chat.privateKey"
         let value = Data(UUID().uuidString.utf8)
