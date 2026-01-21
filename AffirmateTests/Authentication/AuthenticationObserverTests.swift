@@ -50,6 +50,10 @@ final class AuthenticationObserverTests: XCTestCase {
 #if os(visionOS)
         throw XCTSkip("AuthenticationObserver keychain interactions are not yet supported on visionOS.")
 #else
+        // Skip keychain tests in CI (no code signing = no access group support)
+        if ProcessInfo.processInfo.environment["CI"] != nil || ProcessInfo.processInfo.environment["GITHUB_ACTIONS"] != nil {
+            throw XCTSkip("Keychain tests require code signing which is not available in CI.")
+        }
         sessionKeychain = Keychain()
         do { try sessionKeychain.removeAll() } catch { }
         meActor = MockUserActor()

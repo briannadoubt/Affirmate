@@ -51,6 +51,10 @@ final class HTTPActorTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        // Skip keychain tests in CI (no code signing = no access group support)
+        if ProcessInfo.processInfo.environment["CI"] != nil || ProcessInfo.processInfo.environment["GITHUB_ACTIONS"] != nil {
+            throw XCTSkip("Keychain tests require code signing which is not available in CI.")
+        }
         configuration = .ephemeral
         configuration.protocolClasses = [MockURLProtocol.self] + (configuration.protocolClasses ?? [])
         session = URLSession(configuration: configuration)
