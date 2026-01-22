@@ -7,6 +7,8 @@
 
 import XCTest
 import Vapor
+import APNS
+import APNSCore
 @testable import AffirmateServer
 
 #if os(Linux)
@@ -18,24 +20,26 @@ import Darwin
 private enum APNSTestCredentials {
     static let keyIdentifier = "TESTKEY123"
     static let teamIdentifier = "TEAMID1234"
-    static let privateKeyPEM = """-----BEGIN EC PRIVATE KEY-----
+    static let privateKeyPEM = """
+-----BEGIN EC PRIVATE KEY-----
 MHcCAQEEIEdwjuRC2nlZ9xtv0mdmQJ3+ylwm46lJL52gy/I7gEKKoAoGCCqGSM49
 AwEHoUQDQgAEQevmuqaXzOK/qfBQiTFi+hsix4GosyNmJ0LbVj2yHusbger6ldg8
 9dcWtcuG4fVlRmGGwN1DPj0un/kvcnQruw==
------END EC PRIVATE KEY-----"""
+-----END EC PRIVATE KEY-----
+"""
 }
 
-private func withAPNSTestEnvironment(_ body: () throws -> Void) rethrows {
-    try withEnvironmentVariable(key: "APNS_KEY", value: APNSTestCredentials.privateKeyPEM.replacingOccurrences(of: "\n", with: "\\n")) {
-        try withEnvironmentVariable(key: "APNS_KEY_ID", value: APNSTestCredentials.keyIdentifier) {
-            try withEnvironmentVariable(key: "APNS_TEAM_ID", value: APNSTestCredentials.teamIdentifier) {
-                try body()
+private func withAPNSTestEnvironment<T>(_ body: () async throws -> T) async rethrows -> T {
+    try await withEnvironmentVariable(key: "APNS_KEY", value: APNSTestCredentials.privateKeyPEM.replacingOccurrences(of: "\n", with: "\\n")) {
+        try await withEnvironmentVariable(key: "APNS_KEY_ID", value: APNSTestCredentials.keyIdentifier) {
+            try await withEnvironmentVariable(key: "APNS_TEAM_ID", value: APNSTestCredentials.teamIdentifier) {
+                try await body()
             }
         }
     }
 }
 
-private func withEnvironmentVariable(key: String, value: String, _ body: () throws -> Void) rethrows {
+private func withEnvironmentVariable<T>(key: String, value: String, _ body: () async throws -> T) async rethrows -> T {
     let previousValue = getenv(key).flatMap { String(cString: $0) }
     setenv(key, value, 1)
     defer {
@@ -45,38 +49,40 @@ private func withEnvironmentVariable(key: String, value: String, _ body: () thro
             unsetenv(key)
         }
     }
-    try body()
+    return try await body()
 }
 
 class ConfigureTests: XCTestCase {
     func testAPNsEnvironmentUsesProductionForProductionApp() {
-        XCTAssertEqual(apnsEnvironment(for: .production), .production)
+        XCTAssertEqual(apnsEnvironment(for: .production).url, APNSEnvironment.production.url)
     }
 
-    func testAPNsEnvironmentUsesSandboxForNonProductionApps() {
-        XCTAssertEqual(apnsEnvironment(for: .testing), .sandbox)
-        XCTAssertEqual(apnsEnvironment(for: .development), .sandbox)
+    func testAPNsEnvironmentUsesDevelopmentForNonProductionApps() {
+        XCTAssertEqual(apnsEnvironment(for: .testing).url, APNSEnvironment.development.url)
+        XCTAssertEqual(apnsEnvironment(for: .development).url, APNSEnvironment.development.url)
     }
 
-    func testConfigureSetsProductionAPNsEnvironmentForProductionApp() throws {
-        try withAPNSTestEnvironment {
-            let app = Application(.production)
-            defer { app.shutdown() }
+    func testConfigureSetsProductionAPNsEnvironmentForProductionApp() async throws {
+        try await withAPNSTestEnvironment {
+            let app = try await Application.makeTestApplication(.production)
+            defer { Task { await app.shutdownTestApplication() } }
 
-            try configure(app)
+            try await configure(app)
 
-            XCTAssertEqual(app.apns.configuration?.environment, .production)
+            let container = await app.apns.containers.container(for: .production)
+            XCTAssertEqual(container?.configuration.environment.url, APNSEnvironment.production.url)
         }
     }
 
-    func testConfigureSetsSandboxAPNsEnvironmentForNonProductionApp() throws {
-        try withAPNSTestEnvironment {
-            let app = Application(.testing)
-            defer { app.shutdown() }
+    func testConfigureSetsSandboxAPNsEnvironmentForNonProductionApp() async throws {
+        try await withAPNSTestEnvironment {
+            let app = try await Application.makeTestApplication(.testing)
+            defer { Task { await app.shutdownTestApplication() } }
 
-            try configure(app)
+            try await configure(app)
 
-            XCTAssertEqual(app.apns.configuration?.environment, .sandbox)
+            let defaultContainer = await app.apns.containers.container()
+            XCTAssertEqual(defaultContainer?.configuration.environment.url, APNSEnvironment.development.url)
         }
     }
 }

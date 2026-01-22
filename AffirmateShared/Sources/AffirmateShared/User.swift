@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import _Concurrency
  
 /// The post parameter used to create a new user
-public struct UserCreate: Codable {
+public struct UserCreate: Codable, Sendable {
     /// The first name of the new user.
     public var firstName: String
     /// The last name of the new user.
@@ -74,7 +75,7 @@ public struct UserResponse: IdentifiableObject {
 }
 
 /// Sent when a user logs in or refreshes their authentication token.
-public struct UserLoginResponse: Codable {
+public struct UserLoginResponse: Codable, Sendable {
     /// The current session token, to be securely cached on the client and included on future requests.
     public var sessionToken: SessionTokenResponse
     /// A representation of the user
@@ -91,7 +92,7 @@ public struct UserLoginResponse: Codable {
 }
 
 /// The response included in an HTTP GET response, embedded in a `Participant.GetResponse` object.
-public struct UserParticipantResponse: Equatable, Codable {
+public struct UserParticipantResponse: Equatable, Codable, Sendable {
     /// The id for the database.
     public var id: UUID
     /// The user's username. Unique.

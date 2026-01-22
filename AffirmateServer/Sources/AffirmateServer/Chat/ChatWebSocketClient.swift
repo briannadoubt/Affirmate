@@ -34,3 +34,5 @@ open class ChatWebSocketClient {
         self.socket = socket
     }
 }
+
+extension ChatWebSocketClient: @unchecked Sendable {}

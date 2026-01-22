@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum MessageBubbleTailPosition: String, CaseIterable, Identifiable {
+public nonisolated enum MessageBubbleTailPosition: String, CaseIterable, Identifiable, Sendable {
     
     /// Tail is on bottom left of bubble and swoops to the left.
     /// This is the default for a chat UI representing anyone that is not the user

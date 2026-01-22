@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import _Concurrency
 
 /// Create a new message
-public struct MessageCreate: Codable {
+public struct MessageCreate: Codable, Sendable {
     /// The sealed content of the message.
     public var sealed: MessageSealed
     /// The id of the recipient participant of the message.
@@ -25,7 +26,7 @@ public struct MessageCreate: Codable {
 }
 
 /// The response included in an HTTP GET response.
-public struct MessageResponse: Codable {
+public struct MessageResponse: Codable, Sendable {
     /// The id for the database.
     public var id: UUID
     /// The sealed content of the message.
@@ -62,7 +63,7 @@ public struct MessageResponse: Codable {
 }
 
 /// The sealed content of a message.
-public struct MessageSealed: Codable {
+public struct MessageSealed: Codable, Sendable {
     /// The ephemeral public key portion of the encrypted message.
     public var ephemeralPublicKeyData: Data
     /// The ciphertext portion of the encrypted message.
@@ -82,13 +83,13 @@ public struct MessageSealed: Codable {
     }
 }
 
-/// Verify that the message was received by the client. When the server receives this object in a WebSocket connection the message will be deleted on the database. The client is expected to cache the data on the device in an encrypted format.
-public struct MessageReceivedConfirmation: Codable {
-    /// The id of the message that was received.
+/// Verify that the message was recieved by the client. When the server recieves this object in a WebSocket connection the message will be deleted on the database. The client is expected to cache the data on the device in an encrypted format.
+public struct MessageRecievedConfirmation: Codable, Sendable {
+    /// The id of the message that was recieved.
     public var messageId: UUID
-
-    /// Verify that the message was received by the client. When the server receives this object in a WebSocket connection the message will be deleted on the database. The client is expected to cache the data on the device in an encrypted format.
-    /// - Parameter messageId: The id of the message that was received.
+    
+    /// Verify that the message was recieved by the client. When the server recieves this object in a WebSocket connection the message will be deleted on the database. The client is expected to cache the data on the device in an encrypted format.
+    /// - Parameter messageId: The id of the message that was recieved.
     public init(messageId: UUID) {
         self.messageId = messageId
     }

@@ -6,13 +6,15 @@
 //
 
 import AffirmateShared
-import Combine
 import CoreData
 import Foundation
+import Observation
 import SwiftUI
 
 /// An object that manages a list of `Chat` objects updated from the REST API.
-final class ChatsObserver: ObservableObject {
+@MainActor
+@Observable
+final class ChatsObserver {
     
     /// Format: `[chatId: ChatObserver]
     var chatObservers: [UUID: ChatObserver] = [:]
@@ -157,9 +159,10 @@ final class ChatsObserver: ObservableObject {
 
         try managedObjectContext.save()
 
-        if let chatId = chat.id, let chatObserver = chatObservers[chatId] {
-            Task { @MainActor in
-                chatObserver.sendDeliveryConfirmation(for: messageContent.id)
+        if let chatId = chat.id {
+            Task { @MainActor [weak self, messageId = messageContent.id] in
+                guard let chatObserver = self?.chatObservers[chatId] else { return }
+                chatObserver.sendDeliveryConfirmation(for: messageId)
             }
         }
     }

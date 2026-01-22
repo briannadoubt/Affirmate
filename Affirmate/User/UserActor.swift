@@ -6,7 +6,6 @@
 //
 
 import AffirmateShared
-import Alamofire
 import SwiftUI
 
 protocol UserActable: Actor {
@@ -29,7 +28,7 @@ actor UserActor: UserActable {
 
 extension UserActor {
     
-    enum Request: URLRequestConvertible {
+    enum Request: URLRequestConvertible, Sendable {
         
         case me
         case find(username: String?)
@@ -42,7 +41,7 @@ extension UserActor {
         var meUrl: URL { Constants.baseURL.appending(component: "me") }
         #endif
         
-        var uri: URLConvertible? {
+        var uri: URL? {
             switch self {
             case .me:
                 return meUrl
@@ -69,21 +68,16 @@ extension UserActor {
             }
         }
         
-        var headers: HTTPHeaders {
-            var headers = HTTPHeaders()
-            headers.add(.defaultAcceptLanguage)
-            headers.add(.defaultUserAgent)
-            headers.add(.defaultAcceptEncoding)
-            headers.add(.contentType("application/json"))
-            headers.add(.accept("application/json"))
-            return headers
-        }
-        
+        @MainActor
         func asURLRequest() throws -> URLRequest {
             guard let requestURL = uri else {
                 throw ChatError.failedToBuildURL
             }
-            let request = try URLRequest(url: requestURL, method: method, headers: headers)
+            var request = URLRequest(url: requestURL)
+            request.httpMethod = method.rawValue
+            var headers = HTTPHeaders()
+            headers.addJSONDefaults()
+            headers.apply(to: &request)
             switch self {
             case .me, .find:
                 break

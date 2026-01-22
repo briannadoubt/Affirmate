@@ -15,7 +15,7 @@ final class PublicKey: Model, Content {
     static let schema = "public_key"
     
     /// The id for the database.
-    @ID(key: FieldKey.id) var id: UUID?
+    @ID(key: .id) var id: UUID?
     
     /// The public signing key data.
     @Field(key: "signing_key") var signingKey: Data
@@ -72,7 +72,9 @@ final class PublicKey: Model, Content {
     }
 }
 
-extension PublicKeyCreate: Content, Validatable {
+extension PublicKey: @unchecked Sendable {}
+
+extension PublicKeyCreate: @retroactive Content, @retroactive Validatable {
     /// Conform to `Validatable`
     /// - Parameter validations: The validations to validate.
     public static func validations(_ validations: inout Validations) {

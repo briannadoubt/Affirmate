@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Constants {
+nonisolated enum Constants {
 #if targetEnvironment(simulator) && DEBUG
     /// The URL to use when making HTTP requests from the simulator.
     ///
@@ -61,11 +61,15 @@ enum Constants {
         enum Session {
             /// The key referencing the user's session token, stored on the KeyChain.
             static let token = "org.affirmate.keys.session.token"
-
+            
             /// The key referencing the server's JSON Web Token, stored on the KeyChain.
             static let jwt = "org.affirmate.keys.session.jwt"
         }
-
+        
+        enum Password {
+            
+        }
+        
         enum Chat {
             /// 
             static let publicKey = "org.affirmate.keys.chat.publicKey"

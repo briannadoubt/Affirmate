@@ -11,14 +11,16 @@
 @testable import Affirmate
 #endif
 import AffirmateShared
-import KeychainAccess
 import Foundation
+import Observation
 
+@MainActor
+@Observable
 class MockAuthenticationObserver: AuthenticationObservable {
     static var shared = MockAuthenticationObserver(authenticationActor: MockAuthenticationActor(http: MockHTTPActor()), meActor: MockUserActor())
     
-    @Published var state: AuthenticationObserver.State = .initial
-    @Published var currentUser: UserResponse? = nil
+    var state: AuthenticationObserver.State = .initial
+    var currentUser: UserResponse? = nil
     
     let authenticationActor: AuthenticationActable
     let meActor: UserActable

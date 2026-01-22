@@ -28,6 +28,9 @@ extension NSManagedObjectContext {
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         fetchRequest.includesSubentities = false
         let exists = try count(for: fetchRequest) > 0
+        if !exists {
+            try fetch(fetchRequest).forEach({ delete($0) })
+        }
         return exists
     }
     

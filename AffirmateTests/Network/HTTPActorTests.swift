@@ -11,9 +11,7 @@
 @testable import Affirmate
 #endif
 import AffirmateShared
-import Alamofire
 import Foundation
-import KeychainAccess
 import XCTest
 
 final class HTTPActorTests: XCTestCase {
@@ -21,7 +19,7 @@ final class HTTPActorTests: XCTestCase {
     var http: HTTPActor!
     
     var configuration: URLSessionConfiguration!
-    var session: Session!
+    var session: URLSession!
     var keychain: Keychain!
     var authentication: MockAuthenticationObserver!
     var authenticationActor: MockAuthenticationActor!
@@ -53,11 +51,15 @@ final class HTTPActorTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        configuration = URLSessionConfiguration.af.default
+        // Skip keychain tests in CI (no code signing = no access group support)
+        if ProcessInfo.processInfo.environment["CI"] != nil || ProcessInfo.processInfo.environment["GITHUB_ACTIONS"] != nil {
+            throw XCTSkip("Keychain tests require code signing which is not available in CI.")
+        }
+        configuration = .ephemeral
         configuration.protocolClasses = [MockURLProtocol.self] + (configuration.protocolClasses ?? [])
-        session = Session(configuration: configuration)
+        session = URLSession(configuration: configuration)
         keychain = Keychain()
-        http = HTTPActor(keychain: keychain)
+        http = HTTPActor(keychain: keychain, session: session)
         authenticationActor = MockAuthenticationActor(http: http)
         meActor = MockUserActor()
         authentication = MockAuthenticationObserver(authenticationActor: authenticationActor, meActor: meActor)
@@ -96,8 +98,13 @@ final class HTTPActorTests: XCTestCase {
         }
         do {
             try await http.request(TestRequest())
-        } catch let error as AFError {
-            XCTAssertEqual("\(error)", "\(AFError.responseValidationFailed(reason: AFError.ResponseValidationFailureReason.unacceptableStatusCode(code: 401)))")
+        } catch let error as HTTPActorError {
+            switch error {
+            case .unacceptableStatusCode(let code, _):
+                XCTAssertEqual(code, 401)
+            default:
+                XCTFail("Unexpected error \(error)")
+            }
         } catch {
             throw error
         }
@@ -141,7 +148,10 @@ struct TestResponseObject: Codable, Equatable {
 
 struct TestRequest: URLRequestConvertible {
     static var url = URL(string: "https://example.com/")!
+    @MainActor
     func asURLRequest() throws -> URLRequest {
-        try URLRequest(url: Self.url, method: .get)
+        var request = URLRequest(url: Self.url)
+        request.httpMethod = HTTPMethod.get.rawValue
+        return request
     }
 }

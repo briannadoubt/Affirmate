@@ -9,8 +9,8 @@ import AffirmateShared
 import SwiftUI
 
 struct NewParticipantRow: View {
-    
-    @EnvironmentObject var newParticipantObserver: NewParticipantsObserver
+
+    @Environment(NewParticipantsObserver.self) private var newParticipantObserver
     
     let publicUser: UserPublic
     
@@ -27,7 +27,7 @@ struct NewParticipantRow: View {
                 Label("Role", systemImage: "key")
             }
             .pickerStyle(.menu)
-            .onChange(of: selectedRoleId) { newRoleId in
+            .onChange(of: selectedRoleId) { _, newRoleId in
                 newParticipantObserver.set(
                     role: ParticipantRole(rawValue: newRoleId) ?? .participant,
                     for: publicUser
@@ -41,7 +41,7 @@ struct NewParticipantRow: View {
             }
         } label: {
             HStack {
-                Text("@") + Text(publicUser.username)
+                Text("@\(publicUser.username)")
                 Spacer()
                 Text(newParticipantObserver.selectedParticipants[publicUser.id]?.role.title ?? "")
                     .foregroundStyle(.secondary)

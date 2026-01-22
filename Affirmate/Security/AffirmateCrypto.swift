@@ -8,7 +8,6 @@
 import AffirmateShared
 import CryptoKit
 import Foundation
-import KeychainAccess
 
 enum EncryptionError: LocalizedError {
     case failedToGenerateRandomBytes
@@ -38,22 +37,24 @@ protocol GenericPasswordConvertible: CustomStringConvertible {
     var rawRepresentation: Data { get }
 }
 
-extension Curve25519.KeyAgreement.PrivateKey: GenericPasswordConvertible {
+extension Curve25519.KeyAgreement.PrivateKey: @retroactive CustomStringConvertible {}
+extension Curve25519.KeyAgreement.PrivateKey: @MainActor GenericPasswordConvertible {
     public var description: String {
-        rawRepresentation.base64EncodedString()
+        String(data: rawRepresentation, encoding: .utf8)!
     }
 }
 
-extension Curve25519.Signing.PrivateKey: GenericPasswordConvertible {
+extension Curve25519.Signing.PrivateKey: @retroactive CustomStringConvertible {}
+extension Curve25519.Signing.PrivateKey: @MainActor GenericPasswordConvertible {
     public var description: String {
-        rawRepresentation.base64EncodedString()
+        String(data: rawRepresentation, encoding: .utf8)!
     }
 }
 
 /// A collection of functions for encrypting and decrypting messages.
 actor AffirmateCrypto {
     
-    let keychain: Keychain
+    var keychain: Keychain
     
     init(keychain: Keychain = AffirmateKeychain.chat) {
         self.keychain = keychain
@@ -63,7 +64,11 @@ actor AffirmateCrypto {
     /// - Returns: A ` Data` blob containing 32 random bytes.
     func generateSalt() throws -> Data {
         var bytes = [UInt8](repeating: 0, count: 32)
-        let status = SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
+        let status = unsafe SecRandomCopyBytes(
+            kSecRandomDefault,
+            bytes.count,
+            &bytes
+        )
         guard status == errSecSuccess else {
             throw EncryptionError.failedToGenerateRandomBytes
         }
@@ -77,9 +82,9 @@ actor AffirmateCrypto {
     ///
     /// - Parameter chatId: Used in the Keychain key calculation.
     /// - Returns: A tuple containing the `publicKey` and `privateKey` pair.
-    func generateSigningKeyPair(for chatId: UUID) throws -> (publicKey: Data, privateKey: Data) {
+    func generateSigningKeyPair(for chatId: UUID) async throws -> (publicKey: Data, privateKey: Data) {
         let privateKey = Curve25519.Signing.PrivateKey()
-        try store(privateKey: privateKey, for: chatId)
+        try await store(privateKey: privateKey, for: chatId)
         let publicKey = privateKey.publicKey
         return (publicKey: publicKey.rawRepresentation, privateKey: privateKey.rawRepresentation)
     }
@@ -112,7 +117,7 @@ actor AffirmateCrypto {
     /// - Parameters:
     ///   - privateKey: The `Curve25519.Signing.PrivateKey` to be stored.
     ///   - chatId: The chatId that references the relevant Chat. This is used for the key on the Keychain.
-    func store(privateKey: Curve25519.Signing.PrivateKey, for chatId: UUID) throws {
+    func store(privateKey: Curve25519.Signing.PrivateKey, for chatId: UUID) async throws {
         keychain[data: signingKey(for: chatId)] = privateKey.rawRepresentation
     }
     

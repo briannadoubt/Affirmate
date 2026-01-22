@@ -24,7 +24,7 @@ struct AuthenticationScrollView: View {
             .padding()
         }
         .onAppear {
-            try? AffirmateKeychain.session.remove(Constants.KeyChain.Session.token)
+            _ = try? AffirmateKeychain.session.remove(Constants.KeyChain.Session.token)
         }
     }
 }

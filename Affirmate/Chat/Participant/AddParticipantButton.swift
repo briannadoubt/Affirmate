@@ -9,10 +9,9 @@ import AffirmateShared
 import SwiftUI
 
 struct AddParticipantButton: View {
-    
-    @EnvironmentObject var newParticipantObserver: NewParticipantsObserver
-    
-    @EnvironmentObject var chatObserver: ChatObserver
+
+    @Environment(NewParticipantsObserver.self) private var newParticipantObserver
+    @Environment(ChatObserver.self) private var chatObserver
     
     func addParticipants() {
         Task {

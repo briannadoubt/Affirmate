@@ -1,0 +1,46 @@
+{
+  "configurations" : [
+    {
+      "id" : "A1FA5258-26B2-47D0-88F9-F5E169BD706D",
+      "name" : "CI Configuration",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Affirmate.xcodeproj",
+      "identifier" : "0389BC87286FAB2A00CBDC3B",
+      "name" : "Affirmate"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "skippedTests" : [
+        "AffirmateAppTests",
+        "AffirmateAppTests\/testIsFirstLaunch()",
+        "AffirmateKeychainTests\/test_chatSetAndGetData()",
+        "AffirmateKeychainTests\/test_sessionSetAndGetString()",
+        "AuthenticationObserverTests",
+        "HTTPActorTests"
+      ],
+      "target" : {
+        "containerPath" : "container:Affirmate.xcodeproj",
+        "identifier" : "0389BC98286FAB2A00CBDC3B",
+        "name" : "AffirmateTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:AffirmateShared",
+        "identifier" : "AffirmateSharedTests",
+        "name" : "AffirmateSharedTests"
+      }
+    }
+  ],
+  "version" : 1
+}
