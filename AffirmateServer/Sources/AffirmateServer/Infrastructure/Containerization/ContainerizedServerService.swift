@@ -1,3 +1,4 @@
+#if os(macOS)
 import Containerization
 import ContainerizationExtras
 import ContainerizationOCI
@@ -359,3 +360,4 @@ private extension String {
         replacingOccurrences(of: " ", with: "\\ ")
     }
 }
+#endif
