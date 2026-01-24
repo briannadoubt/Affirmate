@@ -263,8 +263,9 @@ public actor ContainerizedServerService {
             config.process.stderr = stderrWriter
             config.mounts.append(contentsOf: configSnapshot.mounts.map { $0.asMount() })
 
-            if let ip = configSnapshot.ipAddress {
-                let interface = NATInterface(address: ip, gateway: configSnapshot.gateway)
+            if let ip = configSnapshot.ipAddress, let cidr = try? CIDRv4(ip) {
+                let gateway = configSnapshot.gateway.flatMap { try? IPv4Address($0) }
+                let interface = NATInterface(ipv4Address: cidr, ipv4Gateway: gateway)
                 config.interfaces.append(interface)
             }
 
@@ -314,8 +315,9 @@ public actor ContainerizedServerService {
     }
 
     private func createNetwork() async throws -> (any ContainerManager.Network)? {
-        guard let subnet = configuration.vmnetSubnet else { return nil }
+        guard let subnetString = configuration.vmnetSubnet else { return nil }
         if #available(macOS 15.0, *) {
+            let subnet = try CIDRv4(subnetString)
             return try ContainerManager.VmnetNetwork(subnet: subnet)
         } else {
             logger.warning("vmnet networking requested but unavailable on this macOS version")
