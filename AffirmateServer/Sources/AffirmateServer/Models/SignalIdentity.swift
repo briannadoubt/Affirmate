@@ -10,11 +10,11 @@ import Fluent
 import Vapor
 
 /// Stores a user's Signal Protocol identity keys
-final class SignalIdentity: Model, Content {
+final class SignalIdentity: Model, Content, @unchecked Sendable {
 
     static let schema = "signal_identity"
 
-    @ID(key: FieldKey.id) var id: UUID?
+    @ID(key: .id) var id: UUID?
 
     /// The user who owns this identity
     @Parent(key: "user_id") var user: User
@@ -94,11 +94,11 @@ final class SignalIdentity: Model, Content {
 }
 
 /// Stores one-time PreKeys for a user
-final class SignalOneTimePreKey: Model, Content {
+final class SignalOneTimePreKey: Model, Content, @unchecked Sendable {
 
     static let schema = "signal_one_time_prekey"
 
-    @ID(key: FieldKey.id) var id: UUID?
+    @ID(key: .id) var id: UUID?
 
     /// The user who owns this PreKey
     @Parent(key: "user_id") var user: User

@@ -11,7 +11,7 @@ import Foundation
 
 /// A user's public PreKey bundle for Signal Protocol session establishment.
 /// Published to the server and fetched by others to initiate encrypted sessions.
-public struct SignalPreKeyBundle: Codable, Equatable {
+public struct SignalPreKeyBundle: Codable, Equatable, Sendable {
     /// The user's registration ID
     public var registrationId: UInt32
     /// The user's public identity key
@@ -53,7 +53,7 @@ public struct SignalPreKeyBundle: Codable, Equatable {
 // MARK: - PreKey Upload
 
 /// Request to upload/update a user's Signal Protocol keys
-public struct SignalKeysUpload: Codable {
+public struct SignalKeysUpload: Codable, Sendable {
     /// The user's registration ID
     public var registrationId: UInt32
     /// The user's public identity key
@@ -81,7 +81,7 @@ public struct SignalKeysUpload: Codable {
 }
 
 /// Signed PreKey data for upload
-public struct SignedPreKeyUpload: Codable {
+public struct SignedPreKeyUpload: Codable, Sendable {
     /// The PreKey ID
     public var id: UInt32
     /// The public key data
@@ -97,7 +97,7 @@ public struct SignedPreKeyUpload: Codable {
 }
 
 /// One-time PreKey data for upload
-public struct OneTimePreKeyUpload: Codable {
+public struct OneTimePreKeyUpload: Codable, Sendable {
     /// The PreKey ID
     public var id: UInt32
     /// The public key data
@@ -112,7 +112,7 @@ public struct OneTimePreKeyUpload: Codable {
 // MARK: - PreKey Count
 
 /// Response containing the count of remaining one-time PreKeys
-public struct PreKeyCountResponse: Codable {
+public struct PreKeyCountResponse: Codable, Sendable {
     /// Number of one-time PreKeys remaining on the server
     public var count: Int
 
