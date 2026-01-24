@@ -7,6 +7,7 @@
 
 import Foundation
 import KeychainAccess
+import os.log
 
 // MARK: - Signal Keychain Keys
 
@@ -25,6 +26,7 @@ private enum SignalKeychainKeys {
 actor SignalKeychainManager {
 
     private let keychain: Keychain
+    private let logger = Logger(subsystem: "org.affirmate.signal", category: "keychain")
 
     init(keychain: Keychain = AffirmateKeychain.chat) {
         self.keychain = keychain
@@ -107,8 +109,13 @@ actor SignalKeychainManager {
                   let data = try keychain.getData(key) else {
                 continue
             }
-            if let preKey = try? JSONDecoder().decode(OneTimePreKey.self, from: data) {
+            do {
+                let preKey = try JSONDecoder().decode(OneTimePreKey.self, from: data)
                 preKeys.append(preKey)
+            } catch {
+                // Log corrupted key but continue loading others
+                logger.warning("Failed to decode OneTimePreKey for key '\(key)': \(error.localizedDescription)")
+                continue
             }
         }
 

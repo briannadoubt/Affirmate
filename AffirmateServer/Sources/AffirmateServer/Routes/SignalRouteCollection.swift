@@ -6,6 +6,7 @@
 //
 
 import AffirmateShared
+import Crypto
 import Fluent
 import Vapor
 
@@ -25,6 +26,18 @@ struct SignalRouteCollection: RouteCollection {
         protected.post("keys", "onetime", use: uploadOneTimePreKeys)
     }
 
+    // MARK: - Helper Functions
+
+    /// Verify the signed PreKey signature
+    private func verifySignedPreKeySignature(
+        publicKey: Data,
+        signature: Data,
+        identityKey: Data
+    ) throws -> Bool {
+        let signingKey = try Curve25519.Signing.PublicKey(rawRepresentation: identityKey)
+        return signingKey.isValidSignature(signature, for: publicKey)
+    }
+
     // MARK: - Upload Keys
 
     /// Upload initial Signal Protocol keys for the current user.
@@ -36,6 +49,15 @@ struct SignalRouteCollection: RouteCollection {
         let userId = try user.requireID()
 
         let upload = try req.content.decode(SignalKeysUpload.self)
+
+        // Verify signed PreKey signature
+        guard try verifySignedPreKeySignature(
+            publicKey: upload.signedPreKey.publicKey,
+            signature: upload.signedPreKey.signature,
+            identityKey: upload.identityKey
+        ) else {
+            throw Abort(.badRequest, reason: "Invalid signed PreKey signature")
+        }
 
         // Check if identity already exists
         if let existing = try await SignalIdentity.query(on: req.db)
@@ -91,34 +113,37 @@ struct SignalRouteCollection: RouteCollection {
             throw Abort(.badRequest, reason: "Invalid user ID")
         }
 
-        // Get the user's Signal identity
-        guard let identity = try await SignalIdentity.query(on: req.db)
-            .filter(\.$user.$id == userId)
-            .first() else {
-            throw Abort(.notFound, reason: "User has not registered Signal keys")
+        // Use a transaction to atomically fetch and consume a one-time PreKey
+        return try await req.db.transaction { database in
+            // Get the user's Signal identity
+            guard let identity = try await SignalIdentity.query(on: database)
+                .filter(\.$user.$id == userId)
+                .first() else {
+                throw Abort(.notFound, reason: "User has not registered Signal keys")
+            }
+
+            // Get one available one-time PreKey (and consume it atomically)
+            let oneTimePreKey = try await SignalOneTimePreKey.query(on: database)
+                .filter(\.$user.$id == userId)
+                .sort(\.$created, .ascending) // Use oldest first (FIFO)
+                .first()
+
+            // Delete the consumed PreKey within the transaction
+            if let otpk = oneTimePreKey {
+                try await otpk.delete(on: database)
+            }
+
+            return SignalPreKeyBundle(
+                registrationId: identity.registrationId,
+                identityKey: identity.identityKey,
+                identityAgreementKey: identity.identityAgreementKey,
+                signedPreKeyId: identity.signedPreKeyId,
+                signedPreKey: identity.signedPreKey,
+                signedPreKeySignature: identity.signedPreKeySignature,
+                oneTimePreKeyId: oneTimePreKey?.preKeyId,
+                oneTimePreKey: oneTimePreKey?.publicKey
+            )
         }
-
-        // Get one available one-time PreKey (and consume it)
-        let oneTimePreKey = try await SignalOneTimePreKey.query(on: req.db)
-            .filter(\.$user.$id == userId)
-            .sort(\.$created, .ascending) // Use oldest first (FIFO)
-            .first()
-
-        // Delete the consumed PreKey
-        if let otpk = oneTimePreKey {
-            try await otpk.delete(on: req.db)
-        }
-
-        return SignalPreKeyBundle(
-            registrationId: identity.registrationId,
-            identityKey: identity.identityKey,
-            identityAgreementKey: identity.identityAgreementKey,
-            signedPreKeyId: identity.signedPreKeyId,
-            signedPreKey: identity.signedPreKey,
-            signedPreKeySignature: identity.signedPreKeySignature,
-            oneTimePreKeyId: oneTimePreKey?.preKeyId,
-            oneTimePreKey: oneTimePreKey?.publicKey
-        )
     }
 
     // MARK: - Get PreKey Count
@@ -154,6 +179,15 @@ struct SignalRouteCollection: RouteCollection {
             .filter(\.$user.$id == userId)
             .first() else {
             throw Abort(.notFound, reason: "Signal identity not found")
+        }
+
+        // Verify signed PreKey signature
+        guard try verifySignedPreKeySignature(
+            publicKey: signedPreKey.publicKey,
+            signature: signedPreKey.signature,
+            identityKey: identity.identityKey
+        ) else {
+            throw Abort(.badRequest, reason: "Invalid signed PreKey signature")
         }
 
         identity.signedPreKeyId = signedPreKey.id

@@ -46,6 +46,31 @@ enum SignalProtocolError: LocalizedError {
             return "Chain key exhausted, need new DH ratchet"
         }
     }
+
+    var recoverySuggestion: String? {
+        switch self {
+        case .invalidKeyData:
+            return "Regenerate the cryptographic keys"
+        case .sessionNotFound:
+            return "Establish a new session before sending messages"
+        case .invalidPreKeyBundle:
+            return "Request an updated PreKey bundle from the server"
+        case .signatureVerificationFailed:
+            return "The PreKey bundle may be corrupted or from an untrusted source"
+        case .decryptionFailed:
+            return "The message may be corrupted, tampered with, or from a different session"
+        case .messageCounterMismatch:
+            return "Discard the message as it may be a replay attack"
+        case .skippedMessageLimitExceeded:
+            return "Too many messages were lost. Consider establishing a new session"
+        case .invalidMessageFormat:
+            return "The message format is invalid. Check protocol version compatibility"
+        case .noOneTimePreKeyAvailable:
+            return "Upload more one-time PreKeys to the server"
+        case .chainKeyExhausted:
+            return "This is an internal error. The ratchet should perform a DH step automatically"
+        }
+    }
 }
 
 // MARK: - Identity Key Pair

@@ -248,7 +248,7 @@ final class SignalProtocolTests: XCTestCase {
         )
 
         // Initialize ratchets
-        let aliceRatchet = DoubleRatchet(
+        let aliceRatchet = try DoubleRatchet(
             asInitiator: aliceResult.sharedSecret,
             theirSignedPreKey: bobSignedPreKey.keyPair.publicKey,
             ourIdentityKey: aliceIdentity.publicKey,
@@ -293,7 +293,7 @@ final class SignalProtocolTests: XCTestCase {
             preKeyBundle: bobBundle
         )
 
-        let aliceRatchet = DoubleRatchet(
+        let aliceRatchet = try DoubleRatchet(
             asInitiator: aliceResult.sharedSecret,
             theirSignedPreKey: bobSignedPreKey.keyPair.publicKey,
             ourIdentityKey: aliceIdentity.publicKey,
@@ -513,5 +513,439 @@ final class SignalProtocolTests: XCTestCase {
         } else {
             XCTFail("Expected prekey message")
         }
+    }
+
+    // MARK: - Integration Tests
+
+    /// Test complete end-to-end flow: Alice establishes session with Bob and they exchange messages
+    func test_fullMessageFlow_aliceToBob() async throws {
+        // Setup: Both parties generate their identity keys and PreKey bundles
+        let aliceIdentity = IdentityKeyPair()
+        let bobIdentity = IdentityKeyPair()
+        let bobSignedPreKey = try SignedPreKey(id: 1, identityKey: bobIdentity)
+        let bobOneTimePreKey = OneTimePreKey(id: 1)
+
+        // Bob publishes his PreKey bundle
+        let bobBundle = PreKeyBundle(
+            identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
+            signedPreKeyId: bobSignedPreKey.id,
+            signedPreKey: bobSignedPreKey.keyPair.publicKey,
+            signedPreKeySignature: bobSignedPreKey.signature,
+            oneTimePreKeyId: bobOneTimePreKey.id,
+            oneTimePreKey: bobOneTimePreKey.keyPair.publicKey
+        )
+
+        // Alice initiates X3DH
+        let x3dh = X3DH()
+        let aliceX3DHResult = try await x3dh.initiateKeyAgreement(
+            identityKeyPair: aliceIdentity,
+            preKeyBundle: bobBundle
+        )
+
+        // Alice initializes her ratchet
+        let aliceRatchet = try DoubleRatchet(
+            asInitiator: aliceX3DHResult.sharedSecret,
+            theirSignedPreKey: bobBundle.signedPreKey,
+            ourIdentityKey: aliceIdentity.publicKey,
+            theirIdentityKey: bobIdentity.publicKey
+        )
+
+        // Alice encrypts her first message
+        let aliceMessage1 = Data("Hello Bob, this is Alice!".utf8)
+        let encrypted1 = try await aliceRatchet.encrypt(aliceMessage1)
+
+        // Alice creates a PreKey message to send to Bob
+        let preKeyMessage = PreKeySignalMessage(
+            identityKey: aliceIdentity.publicKey,
+            identityAgreementKey: aliceIdentity.agreementKeyPair.publicKey,
+            ephemeralKey: aliceX3DHResult.ephemeralKeyPair.publicKey,
+            signedPreKeyId: bobSignedPreKey.id,
+            oneTimePreKeyId: bobOneTimePreKey.id,
+            message: encrypted1
+        )
+
+        // Bob receives the PreKey message and performs X3DH
+        let bobSharedSecret = try await x3dh.respondToKeyAgreement(
+            identityKeyPair: bobIdentity,
+            signedPreKey: bobSignedPreKey,
+            oneTimePreKey: bobOneTimePreKey,
+            theirIdentityAgreementKey: preKeyMessage.identityAgreementKey,
+            theirEphemeralKey: preKeyMessage.ephemeralKey
+        )
+
+        // Bob initializes his ratchet
+        let bobRatchet = DoubleRatchet(
+            asResponder: bobSharedSecret,
+            ourSignedPreKey: bobSignedPreKey,
+            ourIdentityKey: bobIdentity.publicKey,
+            theirIdentityKey: aliceIdentity.publicKey
+        )
+
+        // Bob decrypts Alice's first message
+        let decrypted1 = try await bobRatchet.decrypt(preKeyMessage.message)
+        XCTAssertEqual(decrypted1, aliceMessage1)
+        XCTAssertEqual(String(data: decrypted1, encoding: .utf8), "Hello Bob, this is Alice!")
+
+        // Bob replies
+        let bobMessage1 = Data("Hi Alice, nice to hear from you!".utf8)
+        let bobEncrypted1 = try await bobRatchet.encrypt(bobMessage1)
+        let aliceDecrypted1 = try await aliceRatchet.decrypt(bobEncrypted1)
+        XCTAssertEqual(aliceDecrypted1, bobMessage1)
+
+        // Alice sends another message
+        let aliceMessage2 = Data("How's the encryption working?".utf8)
+        let encrypted2 = try await aliceRatchet.encrypt(aliceMessage2)
+        let decrypted2 = try await bobRatchet.decrypt(encrypted2)
+        XCTAssertEqual(decrypted2, aliceMessage2)
+
+        // Bob sends final message
+        let bobMessage2 = Data("Perfect! Forward secrecy is amazing.".utf8)
+        let bobEncrypted2 = try await bobRatchet.encrypt(bobMessage2)
+        let aliceDecrypted2 = try await aliceRatchet.decrypt(bobEncrypted2)
+        XCTAssertEqual(aliceDecrypted2, bobMessage2)
+    }
+
+    /// Test out-of-order message delivery
+    func test_outOfOrderMessages() async throws {
+        let aliceIdentity = IdentityKeyPair()
+        let bobIdentity = IdentityKeyPair()
+        let bobSignedPreKey = try SignedPreKey(id: 1, identityKey: bobIdentity)
+
+        let bobBundle = PreKeyBundle(
+            identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
+            signedPreKeyId: bobSignedPreKey.id,
+            signedPreKey: bobSignedPreKey.keyPair.publicKey,
+            signedPreKeySignature: bobSignedPreKey.signature,
+            oneTimePreKeyId: nil,
+            oneTimePreKey: nil
+        )
+
+        let x3dh = X3DH()
+        let aliceResult = try await x3dh.initiateKeyAgreement(
+            identityKeyPair: aliceIdentity,
+            preKeyBundle: bobBundle
+        )
+
+        let aliceRatchet = try DoubleRatchet(
+            asInitiator: aliceResult.sharedSecret,
+            theirSignedPreKey: bobSignedPreKey.keyPair.publicKey,
+            ourIdentityKey: aliceIdentity.publicKey,
+            theirIdentityKey: bobIdentity.publicKey
+        )
+
+        let bobRatchet = DoubleRatchet(
+            asResponder: aliceResult.sharedSecret,
+            ourSignedPreKey: bobSignedPreKey,
+            ourIdentityKey: bobIdentity.publicKey,
+            theirIdentityKey: aliceIdentity.publicKey
+        )
+
+        // Alice sends 3 messages
+        let message1 = Data("Message 1".utf8)
+        let message2 = Data("Message 2".utf8)
+        let message3 = Data("Message 3".utf8)
+
+        let encrypted1 = try await aliceRatchet.encrypt(message1)
+        let encrypted2 = try await aliceRatchet.encrypt(message2)
+        let encrypted3 = try await aliceRatchet.encrypt(message3)
+
+        // Bob receives them out of order: 3, 1, 2
+        let decrypted3 = try await bobRatchet.decrypt(encrypted3)
+        XCTAssertEqual(decrypted3, message3)
+
+        let decrypted1 = try await bobRatchet.decrypt(encrypted1)
+        XCTAssertEqual(decrypted1, message1)
+
+        let decrypted2 = try await bobRatchet.decrypt(encrypted2)
+        XCTAssertEqual(decrypted2, message2)
+    }
+
+    /// Test message tampering detection
+    func test_tamperedMessageRejection() async throws {
+        let aliceIdentity = IdentityKeyPair()
+        let bobIdentity = IdentityKeyPair()
+        let bobSignedPreKey = try SignedPreKey(id: 1, identityKey: bobIdentity)
+
+        let bobBundle = PreKeyBundle(
+            identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
+            signedPreKeyId: bobSignedPreKey.id,
+            signedPreKey: bobSignedPreKey.keyPair.publicKey,
+            signedPreKeySignature: bobSignedPreKey.signature,
+            oneTimePreKeyId: nil,
+            oneTimePreKey: nil
+        )
+
+        let x3dh = X3DH()
+        let aliceResult = try await x3dh.initiateKeyAgreement(
+            identityKeyPair: aliceIdentity,
+            preKeyBundle: bobBundle
+        )
+
+        let aliceRatchet = try DoubleRatchet(
+            asInitiator: aliceResult.sharedSecret,
+            theirSignedPreKey: bobSignedPreKey.keyPair.publicKey,
+            ourIdentityKey: aliceIdentity.publicKey,
+            theirIdentityKey: bobIdentity.publicKey
+        )
+
+        let bobRatchet = DoubleRatchet(
+            asResponder: aliceResult.sharedSecret,
+            ourSignedPreKey: bobSignedPreKey,
+            ourIdentityKey: bobIdentity.publicKey,
+            theirIdentityKey: aliceIdentity.publicKey
+        )
+
+        // Alice sends a message
+        let message = Data("Secret message".utf8)
+        var encrypted = try await aliceRatchet.encrypt(message)
+
+        // Tamper with the ciphertext
+        encrypted = SignalMessage(
+            header: encrypted.header,
+            ciphertext: Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]),
+            mac: encrypted.mac
+        )
+
+        // Bob should reject the tampered message
+        do {
+            _ = try await bobRatchet.decrypt(encrypted)
+            XCTFail("Should have thrown decryption error for tampered message")
+        } catch SignalProtocolError.decryptionFailed {
+            // Expected
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
+    /// Test concurrent session establishment (race condition)
+    func test_concurrentSessionEstablishment() async throws {
+        // Both Alice and Bob try to initiate a session simultaneously
+        let aliceIdentity = IdentityKeyPair()
+        let bobIdentity = IdentityKeyPair()
+        let aliceSignedPreKey = try SignedPreKey(id: 1, identityKey: aliceIdentity)
+        let bobSignedPreKey = try SignedPreKey(id: 1, identityKey: bobIdentity)
+
+        let aliceBundle = PreKeyBundle(
+            identityKey: aliceIdentity.publicKey,
+            identityAgreementKey: aliceIdentity.agreementKeyPair.publicKey,
+            signedPreKeyId: aliceSignedPreKey.id,
+            signedPreKey: aliceSignedPreKey.keyPair.publicKey,
+            signedPreKeySignature: aliceSignedPreKey.signature,
+            oneTimePreKeyId: nil,
+            oneTimePreKey: nil
+        )
+
+        let bobBundle = PreKeyBundle(
+            identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
+            signedPreKeyId: bobSignedPreKey.id,
+            signedPreKey: bobSignedPreKey.keyPair.publicKey,
+            signedPreKeySignature: bobSignedPreKey.signature,
+            oneTimePreKeyId: nil,
+            oneTimePreKey: nil
+        )
+
+        let x3dh = X3DH()
+
+        // Both parties establish sessions concurrently
+        async let aliceSession = x3dh.initiateKeyAgreement(
+            identityKeyPair: aliceIdentity,
+            preKeyBundle: bobBundle
+        )
+        async let bobSession = x3dh.initiateKeyAgreement(
+            identityKeyPair: bobIdentity,
+            preKeyBundle: aliceBundle
+        )
+
+        let (aliceResult, bobResult) = try await (aliceSession, bobSession)
+
+        // Both should succeed
+        XCTAssertEqual(aliceResult.sharedSecret.count, 32)
+        XCTAssertEqual(bobResult.sharedSecret.count, 32)
+        // Note: The shared secrets will be different since they're initiating to each other
+    }
+
+    // MARK: - Session Persistence Tests
+
+    /// Test that ratchet state can be persisted and restored
+    func test_ratchetStatePersistence() async throws {
+        let aliceIdentity = IdentityKeyPair()
+        let bobIdentity = IdentityKeyPair()
+        let bobSignedPreKey = try SignedPreKey(id: 1, identityKey: bobIdentity)
+
+        let bobBundle = PreKeyBundle(
+            identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
+            signedPreKeyId: bobSignedPreKey.id,
+            signedPreKey: bobSignedPreKey.keyPair.publicKey,
+            signedPreKeySignature: bobSignedPreKey.signature,
+            oneTimePreKeyId: nil,
+            oneTimePreKey: nil
+        )
+
+        let x3dh = X3DH()
+        let aliceResult = try await x3dh.initiateKeyAgreement(
+            identityKeyPair: aliceIdentity,
+            preKeyBundle: bobBundle
+        )
+
+        // Create Alice's ratchet and send a message
+        let aliceRatchet = try DoubleRatchet(
+            asInitiator: aliceResult.sharedSecret,
+            theirSignedPreKey: bobSignedPreKey.keyPair.publicKey,
+            ourIdentityKey: aliceIdentity.publicKey,
+            theirIdentityKey: bobIdentity.publicKey
+        )
+
+        let message1 = Data("First message".utf8)
+        let encrypted1 = try await aliceRatchet.encrypt(message1)
+
+        // Get the state for persistence
+        let persistedState = await aliceRatchet.getState()
+
+        // Simulate app restart - create new ratchet from persisted state
+        let restoredRatchet = DoubleRatchet(
+            state: persistedState,
+            ourIdentityKey: aliceIdentity.publicKey,
+            theirIdentityKey: bobIdentity.publicKey
+        )
+
+        // Send another message with the restored ratchet
+        let message2 = Data("Second message after restoration".utf8)
+        let encrypted2 = try await restoredRatchet.encrypt(message2)
+
+        // Bob should be able to decrypt both messages
+        let bobRatchet = DoubleRatchet(
+            asResponder: aliceResult.sharedSecret,
+            ourSignedPreKey: bobSignedPreKey,
+            ourIdentityKey: bobIdentity.publicKey,
+            theirIdentityKey: aliceIdentity.publicKey
+        )
+
+        let decrypted1 = try await bobRatchet.decrypt(encrypted1)
+        XCTAssertEqual(decrypted1, message1)
+
+        let decrypted2 = try await bobRatchet.decrypt(encrypted2)
+        XCTAssertEqual(decrypted2, message2)
+    }
+
+    /// Test that state codable round-trip preserves all data
+    func test_ratchetStateCodable() async throws {
+        let aliceIdentity = IdentityKeyPair()
+        let bobIdentity = IdentityKeyPair()
+        let bobSignedPreKey = try SignedPreKey(id: 1, identityKey: bobIdentity)
+
+        let bobBundle = PreKeyBundle(
+            identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
+            signedPreKeyId: bobSignedPreKey.id,
+            signedPreKey: bobSignedPreKey.keyPair.publicKey,
+            signedPreKeySignature: bobSignedPreKey.signature,
+            oneTimePreKeyId: nil,
+            oneTimePreKey: nil
+        )
+
+        let x3dh = X3DH()
+        let aliceResult = try await x3dh.initiateKeyAgreement(
+            identityKeyPair: aliceIdentity,
+            preKeyBundle: bobBundle
+        )
+
+        let aliceRatchet = try DoubleRatchet(
+            asInitiator: aliceResult.sharedSecret,
+            theirSignedPreKey: bobSignedPreKey.keyPair.publicKey,
+            ourIdentityKey: aliceIdentity.publicKey,
+            theirIdentityKey: bobIdentity.publicKey
+        )
+
+        // Send some messages to advance the ratchet state
+        _ = try await aliceRatchet.encrypt(Data("Message 1".utf8))
+        _ = try await aliceRatchet.encrypt(Data("Message 2".utf8))
+
+        // Get state and encode it
+        let originalState = await aliceRatchet.getState()
+        let encoder = JSONEncoder()
+        let encodedData = try encoder.encode(originalState)
+
+        // Decode it back
+        let decoder = JSONDecoder()
+        let decodedState = try decoder.decode(RatchetState.self, from: encodedData)
+
+        // Verify critical fields are preserved
+        XCTAssertEqual(decodedState.rootKey, originalState.rootKey)
+        XCTAssertEqual(decodedState.sendingChainKey, originalState.sendingChainKey)
+        XCTAssertEqual(decodedState.receivingChainKey, originalState.receivingChainKey)
+        XCTAssertEqual(decodedState.sendingMessageNumber, originalState.sendingMessageNumber)
+        XCTAssertEqual(decodedState.receivingMessageNumber, originalState.receivingMessageNumber)
+        XCTAssertEqual(decodedState.dhKeyPair.publicKey, originalState.dhKeyPair.publicKey)
+        XCTAssertEqual(decodedState.theirDHPublicKey, originalState.theirDHPublicKey)
+    }
+
+    /// Test session persistence with skipped messages
+    func test_sessionPersistenceWithSkippedMessages() async throws {
+        let aliceIdentity = IdentityKeyPair()
+        let bobIdentity = IdentityKeyPair()
+        let bobSignedPreKey = try SignedPreKey(id: 1, identityKey: bobIdentity)
+
+        let bobBundle = PreKeyBundle(
+            identityKey: bobIdentity.publicKey,
+            identityAgreementKey: bobIdentity.agreementKeyPair.publicKey,
+            signedPreKeyId: bobSignedPreKey.id,
+            signedPreKey: bobSignedPreKey.keyPair.publicKey,
+            signedPreKeySignature: bobSignedPreKey.signature,
+            oneTimePreKeyId: nil,
+            oneTimePreKey: nil
+        )
+
+        let x3dh = X3DH()
+        let aliceResult = try await x3dh.initiateKeyAgreement(
+            identityKeyPair: aliceIdentity,
+            preKeyBundle: bobBundle
+        )
+
+        let aliceRatchet = try DoubleRatchet(
+            asInitiator: aliceResult.sharedSecret,
+            theirSignedPreKey: bobSignedPreKey.keyPair.publicKey,
+            ourIdentityKey: aliceIdentity.publicKey,
+            theirIdentityKey: bobIdentity.publicKey
+        )
+
+        let bobRatchet = DoubleRatchet(
+            asResponder: aliceResult.sharedSecret,
+            ourSignedPreKey: bobSignedPreKey,
+            ourIdentityKey: bobIdentity.publicKey,
+            theirIdentityKey: aliceIdentity.publicKey
+        )
+
+        // Alice sends 3 messages
+        let message1 = Data("Message 1".utf8)
+        let message2 = Data("Message 2".utf8)
+        let message3 = Data("Message 3".utf8)
+
+        let encrypted1 = try await aliceRatchet.encrypt(message1)
+        let encrypted2 = try await aliceRatchet.encrypt(message2)
+        let encrypted3 = try await aliceRatchet.encrypt(message3)
+
+        // Bob receives message 3 first (skipping 1 and 2)
+        let decrypted3 = try await bobRatchet.decrypt(encrypted3)
+        XCTAssertEqual(decrypted3, message3)
+
+        // Bob's app "crashes" - persist and restore state
+        let bobState = await bobRatchet.getState()
+        let restoredBobRatchet = DoubleRatchet(
+            state: bobState,
+            ourIdentityKey: bobIdentity.publicKey,
+            theirIdentityKey: aliceIdentity.publicKey
+        )
+
+        // Bob receives the skipped messages after restoration
+        let decrypted1 = try await restoredBobRatchet.decrypt(encrypted1)
+        XCTAssertEqual(decrypted1, message1)
+
+        let decrypted2 = try await restoredBobRatchet.decrypt(encrypted2)
+        XCTAssertEqual(decrypted2, message2)
     }
 }

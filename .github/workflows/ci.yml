@@ -54,26 +54,21 @@ jobs:
 
   server:
     name: Server tests
-    runs-on: macos-26
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install PostgreSQL
-        run: brew install postgresql@16
-
-      - name: Start PostgreSQL
         run: |
-          POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
-          PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
-          mkdir -p "$PGDATA"
-          if [ ! -f "$PGDATA/PG_VERSION" ]; then
-            "$POSTGRES_PREFIX/bin/initdb" -U runner "$PGDATA"
-          fi
-          "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" -o "-c listen_addresses=localhost" -l "$PGDATA/server.log" start
-          "$POSTGRES_PREFIX/bin/createuser" --superuser vapor_username || true
-          "$POSTGRES_PREFIX/bin/createdb" -O vapor_username vapor_database || true
-          "$POSTGRES_PREFIX/bin/psql" -v ON_ERROR_STOP=1 -d postgres -c "ALTER USER vapor_username WITH PASSWORD 'vapor_password';"
+          sudo apt-get update
+          sudo apt-get install -y postgresql postgresql-contrib
+          sudo systemctl start postgresql
+
+      - name: Setup PostgreSQL
+        run: |
+          sudo -u postgres psql -c "CREATE USER vapor_username WITH SUPERUSER PASSWORD 'vapor_password';"
+          sudo -u postgres createdb -O vapor_username vapor_database
 
       - name: Run server tests
         working-directory: AffirmateServer
@@ -83,15 +78,6 @@ jobs:
           DATABASE_PASSWORD: vapor_password
           DATABASE_NAME: vapor_database
         run: swift test
-
-      - name: Stop PostgreSQL
-        if: always()
-        run: |
-          POSTGRES_PREFIX="$(brew --prefix postgresql@16)"
-          PGDATA="$POSTGRES_PREFIX/var/postgresql@16"
-          if [ -f "$PGDATA/postmaster.pid" ]; then
-            "$POSTGRES_PREFIX/bin/pg_ctl" -D "$PGDATA" stop
-          fi
 
   integration:
     name: Integration tests

@@ -159,6 +159,19 @@ struct X3DHInitiatorResult {
 
 // MARK: - PreKey Manager
 
+/// Configuration for PreKey management
+struct PreKeyManagerConfiguration {
+    /// Recommended number of one-time PreKeys to maintain
+    let recommendedPreKeyCount: Int
+    /// Threshold for generating more PreKeys (as fraction of recommended count)
+    let preKeyGenerationThreshold: Double
+
+    static let `default` = PreKeyManagerConfiguration(
+        recommendedPreKeyCount: 100,
+        preKeyGenerationThreshold: 0.5 // Generate when below 50%
+    )
+}
+
 /// Manages PreKey generation and storage
 actor PreKeyManager {
 
@@ -166,9 +179,11 @@ actor PreKeyManager {
     private var oneTimePreKeys: [UInt32: OneTimePreKey] = [:]
     private var nextPreKeyId: UInt32 = 1
     private var nextSignedPreKeyId: UInt32 = 1
+    private let configuration: PreKeyManagerConfiguration
 
-    /// Recommended number of one-time PreKeys to maintain
-    private let recommendedPreKeyCount: Int = 100
+    init(configuration: PreKeyManagerConfiguration = .default) {
+        self.configuration = configuration
+    }
 
     /// Generate a new signed PreKey
     func generateSignedPreKey(identityKey: IdentityKeyPair) throws -> SignedPreKey {
@@ -209,7 +224,8 @@ actor PreKeyManager {
 
     /// Check if more PreKeys need to be generated
     func needsMorePreKeys() -> Bool {
-        oneTimePreKeys.count < recommendedPreKeyCount / 2
+        let threshold = Int(Double(configuration.recommendedPreKeyCount) * configuration.preKeyGenerationThreshold)
+        return oneTimePreKeys.count < threshold
     }
 
     /// Create a PreKey bundle for publishing to the server

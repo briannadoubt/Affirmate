@@ -37,6 +37,21 @@ enum SignalCryptoError: LocalizedError {
             return "Network error: \(reason)"
         }
     }
+
+    var recoverySuggestion: String? {
+        switch self {
+        case .notInitialized:
+            return "Call SignalCrypto.shared.initialize() before performing encryption operations"
+        case .sessionNotFound:
+            return "Establish a new session with the recipient by fetching their PreKey bundle"
+        case .preKeyBundleNotFound:
+            return "The recipient needs to upload their Signal keys to the server"
+        case .encryptionFailed, .decryptionFailed:
+            return "Verify that both parties have valid sessions and matching protocol versions"
+        case .networkError:
+            return "Check network connectivity and retry the operation"
+        }
+    }
 }
 
 // MARK: - Signal Crypto

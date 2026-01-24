@@ -103,7 +103,7 @@ actor SignalSessionManager {
         )
 
         // Initialize Double Ratchet as initiator
-        let ratchet = DoubleRatchet(
+        let ratchet = try DoubleRatchet(
             asInitiator: x3dhResult.sharedSecret,
             theirSignedPreKey: preKeyBundle.signedPreKey,
             ourIdentityKey: identityKeyPair.publicKey,

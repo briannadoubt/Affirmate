@@ -9,11 +9,27 @@
 import CryptoKit
 import Foundation
 
+// MARK: - Double Ratchet Configuration
+
+/// Configuration for Double Ratchet behavior
+struct DoubleRatchetConfiguration {
+    /// Maximum number of skipped message keys to store
+    let maxSkippedMessages: UInt32
+    /// Time-to-live for skipped message keys (in seconds)
+    let skippedMessageKeyTTL: TimeInterval
+    /// Authentication tag size for ChaChaPoly (bytes)
+    let authenticationTagSize: Int
+
+    static let `default` = DoubleRatchetConfiguration(
+        maxSkippedMessages: 1000,
+        skippedMessageKeyTTL: 7 * 24 * 60 * 60, // 7 days
+        authenticationTagSize: 16 // ChaChaPoly standard tag size
+    )
+}
+
 // MARK: - Double Ratchet Constants
 
 private enum DoubleRatchetConstants {
-    /// Maximum number of skipped message keys to store
-    static let maxSkippedMessages = 1000
     /// KDF info for root key derivation
     static let rootKeyInfo = Data("DoubleRatchet_RootKey".utf8)
     /// KDF info for chain key derivation
@@ -22,6 +38,14 @@ private enum DoubleRatchetConstants {
     static let messageKeyConstant: UInt8 = 0x01
     /// KDF info for next chain key derivation
     static let chainKeyConstant: UInt8 = 0x02
+}
+
+// MARK: - Skipped Message Key
+
+/// A skipped message key with its timestamp
+struct SkippedMessageKey: Codable {
+    let key: Data
+    let timestamp: Date
 }
 
 // MARK: - Ratchet State
@@ -44,8 +68,8 @@ struct RatchetState: Codable {
     var receivingMessageNumber: UInt32 = 0
     /// Previous sending chain length (for header)
     var previousSendingChainLength: UInt32 = 0
-    /// Skipped message keys: [DHPublicKey: [MessageNumber: MessageKey]]
-    var skippedMessageKeys: [Data: [UInt32: Data]] = [:]
+    /// Skipped message keys: [DHPublicKey: [MessageNumber: SkippedMessageKey]]
+    var skippedMessageKeys: [Data: [UInt32: SkippedMessageKey]] = [:]
 }
 
 // MARK: - Double Ratchet
@@ -60,6 +84,8 @@ actor DoubleRatchet {
     private let ourIdentityKey: Data
     /// Their identity key for associated data
     private let theirIdentityKey: Data
+    /// Configuration for ratchet behavior
+    private let configuration: DoubleRatchetConfiguration
 
     // MARK: - Initialization
 
@@ -71,18 +97,21 @@ actor DoubleRatchet {
     ///   - theirSignedPreKey: Bob's signed PreKey public key (becomes their initial DH key)
     ///   - ourIdentityKey: Our public identity key
     ///   - theirIdentityKey: Their public identity key
+    ///   - configuration: Configuration for ratchet behavior (defaults to standard settings)
+    /// - Throws: SignalProtocolError if key agreement fails
     init(
         asInitiator sharedSecret: Data,
         theirSignedPreKey: Data,
         ourIdentityKey: Data,
-        theirIdentityKey: Data
-    ) {
+        theirIdentityKey: Data,
+        configuration: DoubleRatchetConfiguration = .default
+    ) throws {
         // Generate our first DH key pair
         let dhKeyPair = KeyAgreementKeyPair()
 
         // Perform initial DH to get first sending chain
-        let dhOutput = try? dhKeyPair.sharedSecret(with: theirSignedPreKey)
-        let dhData = dhOutput?.withUnsafeBytes { Data($0) } ?? Data()
+        let dhOutput = try dhKeyPair.sharedSecret(with: theirSignedPreKey)
+        let dhData = dhOutput.withUnsafeBytes { Data($0) }
 
         // Derive root key and sending chain key
         let (rootKey, chainKey) = Self.kdfRootKey(
@@ -99,6 +128,7 @@ actor DoubleRatchet {
         )
         self.ourIdentityKey = ourIdentityKey
         self.theirIdentityKey = theirIdentityKey
+        self.configuration = configuration
     }
 
     /// Initialize as the session responder (Bob).
@@ -109,11 +139,13 @@ actor DoubleRatchet {
     ///   - ourSignedPreKey: Our signed PreKey key pair
     ///   - ourIdentityKey: Our public identity key
     ///   - theirIdentityKey: Their public identity key
+    ///   - configuration: Configuration for ratchet behavior (defaults to standard settings)
     init(
         asResponder sharedSecret: Data,
         ourSignedPreKey: SignedPreKey,
         ourIdentityKey: Data,
-        theirIdentityKey: Data
+        theirIdentityKey: Data,
+        configuration: DoubleRatchetConfiguration = .default
     ) {
         self.state = RatchetState(
             dhKeyPair: ourSignedPreKey.keyPair,
@@ -124,17 +156,20 @@ actor DoubleRatchet {
         )
         self.ourIdentityKey = ourIdentityKey
         self.theirIdentityKey = theirIdentityKey
+        self.configuration = configuration
     }
 
     /// Initialize from existing state (for session restoration)
     init(
         state: RatchetState,
         ourIdentityKey: Data,
-        theirIdentityKey: Data
+        theirIdentityKey: Data,
+        configuration: DoubleRatchetConfiguration = .default
     ) {
         self.state = state
         self.ourIdentityKey = ourIdentityKey
         self.theirIdentityKey = theirIdentityKey
+        self.configuration = configuration
     }
 
     // MARK: - Encryption
@@ -254,8 +289,11 @@ actor DoubleRatchet {
 
     /// Try to decrypt using a skipped message key
     private func trySkippedMessageKeys(message: SignalMessage) throws -> Data? {
+        // Clean up expired keys before checking
+        cleanupExpiredSkippedKeys()
+
         guard let keysForDH = state.skippedMessageKeys[message.header.dhPublicKey],
-              let messageKey = keysForDH[message.header.messageNumber] else {
+              let skippedKey = keysForDH[message.header.messageNumber] else {
             return nil
         }
 
@@ -268,7 +306,7 @@ actor DoubleRatchet {
             state.skippedMessageKeys.removeValue(forKey: message.header.dhPublicKey)
         }
 
-        return try decryptWithKey(message: message, messageKey: messageKey)
+        return try decryptWithKey(message: message, messageKey: skippedKey.key)
     }
 
     /// Skip message keys and store them for later out-of-order decryption
@@ -276,7 +314,7 @@ actor DoubleRatchet {
         guard let theirDHKey = state.theirDHPublicKey else { return }
 
         let skippedCount = messageNumber - state.receivingMessageNumber
-        if skippedCount > DoubleRatchetConstants.maxSkippedMessages {
+        if skippedCount > configuration.maxSkippedMessages {
             throw SignalProtocolError.skippedMessageLimitExceeded
         }
 
@@ -286,11 +324,14 @@ actor DoubleRatchet {
             let (messageKey, nextChainKey) = Self.kdfChainKey(chainKey: chainKey)
             chainKey = nextChainKey
 
-            // Store skipped key
+            // Store skipped key with timestamp
             if state.skippedMessageKeys[theirDHKey] == nil {
                 state.skippedMessageKeys[theirDHKey] = [:]
             }
-            state.skippedMessageKeys[theirDHKey]?[state.receivingMessageNumber] = messageKey
+            state.skippedMessageKeys[theirDHKey]?[state.receivingMessageNumber] = SkippedMessageKey(
+                key: messageKey,
+                timestamp: Date()
+            )
 
             state.receivingMessageNumber += 1
         }
@@ -313,20 +354,28 @@ actor DoubleRatchet {
         let nonce = try ChaChaPoly.Nonce(data: message.mac)
 
         // Split ciphertext and tag
-        let ciphertextLength = message.ciphertext.count - 16 // Tag is 16 bytes
+        guard message.ciphertext.count >= configuration.authenticationTagSize else {
+            throw SignalProtocolError.invalidMessageFormat
+        }
+        let ciphertextLength = message.ciphertext.count - configuration.authenticationTagSize
         let ciphertext = message.ciphertext.prefix(ciphertextLength)
         let tag = message.ciphertext.suffix(16)
 
-        // Create sealed box
+        // Create sealed box (this validates the tag is the correct size)
         let sealedBox = try ChaChaPoly.SealedBox(
             nonce: nonce,
             ciphertext: ciphertext,
             tag: tag
         )
 
-        // Decrypt
+        // Decrypt and verify MAC (ChaChaPoly.open will verify the authentication tag)
         let symmetricKey = SymmetricKey(data: messageKey)
-        return try ChaChaPoly.open(sealedBox, using: symmetricKey, authenticating: associatedData)
+        do {
+            return try ChaChaPoly.open(sealedBox, using: symmetricKey, authenticating: associatedData)
+        } catch {
+            // If decryption fails, it's likely due to MAC verification failure or wrong key
+            throw SignalProtocolError.decryptionFailed
+        }
     }
 
     // MARK: - KDF Functions
@@ -372,11 +421,36 @@ actor DoubleRatchet {
         )
     }
 
+    // MARK: - Cleanup
+
+    /// Clean up expired skipped message keys based on TTL
+    private func cleanupExpiredSkippedKeys() {
+        let now = Date()
+        let expirationThreshold = now.addingTimeInterval(-configuration.skippedMessageKeyTTL)
+
+        for (dhKey, messageKeys) in state.skippedMessageKeys {
+            var updatedKeys = messageKeys
+            for (messageNumber, skippedKey) in messageKeys {
+                if skippedKey.timestamp < expirationThreshold {
+                    updatedKeys.removeValue(forKey: messageNumber)
+                }
+            }
+
+            if updatedKeys.isEmpty {
+                state.skippedMessageKeys.removeValue(forKey: dhKey)
+            } else if updatedKeys.count < messageKeys.count {
+                state.skippedMessageKeys[dhKey] = updatedKeys
+            }
+        }
+    }
+
     // MARK: - State Access
 
     /// Get the current state (for persistence)
     func getState() -> RatchetState {
-        state
+        // Clean up expired keys before returning state
+        cleanupExpiredSkippedKeys()
+        return state
     }
 
     /// Get our current DH public key
