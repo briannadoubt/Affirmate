@@ -10,6 +10,7 @@ func main() async throws {
 }
 
 private func execute() async throws {
+    #if os(macOS)
     if let containerConfig = try ContainerizedServerConfiguration.load(defaultRepositoryRoot: defaultRepositoryRoot()) {
         let logger = Logger(label: "org.affirmate.container")
         let service = ContainerizedServerService(configuration: containerConfig, logger: logger)
@@ -23,6 +24,7 @@ private func execute() async throws {
         await service.shutdown()
         return
     }
+    #endif
 
     var env = try Environment.detect()
     try LoggingSystem.bootstrap(from: &env)
@@ -45,6 +47,6 @@ do {
     try await main()
 } catch {
     // Print a readable error and exit with failure
-    fputs("Error: \(error)\n", stderr)
+    FileHandle.standardError.write(Data("Error: \(error)\n".utf8))
     exit(EXIT_FAILURE)
 }
